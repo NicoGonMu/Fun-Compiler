@@ -1,3 +1,4 @@
+------------------
 State  0
 
 Kernel
@@ -17,24 +18,34 @@ Closure
 ( 10)  DATA_DEF	: _ RW_DATA IDENTIFIER COLON DERIVATIONS 
 ( 13)  TYPE_DEF	: _ RW_TYPE IDENTIFIER COLON OPERATOR 
 ( 21)  FUNC_DEF	: _ RW_DEC IDENTIFIER COLON OPERATOR SEMICOLON 
-( 22)  BEHAVIOR	: _ S_PATTERN IDENTIFIER O_PAR PATTERNS C_PAR S_ASSIG E SEMICOLON 
+( 22)  BEHAVIOR	: _ S_PATTERN IDENTIFIER O_PAR PATTERNS C_PAR ASSIG_S E SEMICOLON 
 ( 29)  SENT	: _ ASSIG 
 ( 30)  SENT	: _ E 
-( 31)  ASSIG	: _ IDENTIFIER S_ASSIG E 
-( 32)  E	: _ O_PAR E C_PAR 
-( 33)  E	: _ RW_LET ASSIG RW_IN E 
-( 34)  E	: _ E RW_WHERE ASSIG 
-( 35)  E	: _ RW_IF E RW_THEN ELSE 
-( 36)  E	: _ O_BRAQ LIST C_BRAQ 
-( 37)  E	: _ O_PAR LIST C_PAR 
+( 31)  ASSIG	: _ IDENTIFIER ASSIG_S E 
+( 32)  E	: _ RW_LET ASSIG RW_IN E 
+( 33)  E	: _ E RW_WHERE ASSIG 
+( 34)  E	: _ RW_IF E RW_THEN ELSE 
+( 35)  E	: _ O_BRAQ LIST C_BRAQ 
+( 36)  E	: _ O_PAR LIST C_PAR 
+( 37)  E	: _ OP 
 ( 38)  E	: _ IDENTIFIER 
 ( 39)  E	: _ LITERAL 
-( 44)  LITERAL	: _ LIT_CHR 
-( 45)  LITERAL	: _ LIT_INT 
-( 46)  LITERAL	: _ LIT_STR 
+( 44)  OP	: _ AND_S 
+( 45)  OP	: _ OR_S 
+( 46)  OP	: _ NOT_S 
+( 47)  OP	: _ RELOP 
+( 48)  OP	: _ PLUS 
+( 49)  OP	: _ SUB 
+( 50)  OP	: _ MULT 
+( 51)  OP	: _ DIV 
+( 52)  OP	: _ MOD_OP 
+( 53)  LITERAL	: _ CHR_LIT 
+( 54)  LITERAL	: _ INT_LIT 
+( 55)  LITERAL	: _ STR_LIT 
 
 
-	LITERAL 	goto  20
+	LITERAL 	goto  21
+	OP 	goto  20
 	ASSIG 	goto  10
 	E 	goto  11
 	FUNC_DEF 	goto  8
@@ -45,19 +56,28 @@ Closure
 	DEF 	goto  3
 	DECL 	goto  2
 	DECL_PROG 	goto  1
-	S 	goto  24
+	S 	goto  34
  	S_PATTERN 	shift  9
- 	O_PAR 	shift  16
- 	O_BRAQ 	shift  19
+ 	O_PAR 	shift  19
+ 	O_BRAQ 	shift  18
  	RW_DEC 	shift  14
- 	RW_LET 	shift  17
- 	RW_IF 	shift  18
+ 	RW_LET 	shift  16
+ 	RW_IF 	shift  17
  	RW_DATA 	shift  12
  	RW_TYPE 	shift  13
  	IDENTIFIER 	shift  15
- 	LIT_CHR 	shift  21
- 	LIT_INT 	shift  22
- 	LIT_STR 	shift  23
+ 	CHR_LIT 	shift  31
+ 	INT_LIT 	shift  32
+ 	STR_LIT 	shift  33
+ 	AND_S 	shift  22
+ 	OR_S 	shift  23
+ 	NOT_S 	shift  24
+ 	RELOP 	shift  25
+ 	PLUS 	shift  26
+ 	SUB 	shift  27
+ 	MULT 	shift  28
+ 	DIV 	shift  29
+ 	MOD_OP 	shift  30
  	default 	error
 ------------------
 State  1
@@ -78,24 +98,34 @@ Closure
 ( 10)  DATA_DEF	: _ RW_DATA IDENTIFIER COLON DERIVATIONS 
 ( 13)  TYPE_DEF	: _ RW_TYPE IDENTIFIER COLON OPERATOR 
 ( 21)  FUNC_DEF	: _ RW_DEC IDENTIFIER COLON OPERATOR SEMICOLON 
-( 22)  BEHAVIOR	: _ S_PATTERN IDENTIFIER O_PAR PATTERNS C_PAR S_ASSIG E SEMICOLON 
+( 22)  BEHAVIOR	: _ S_PATTERN IDENTIFIER O_PAR PATTERNS C_PAR ASSIG_S E SEMICOLON 
 ( 29)  SENT	: _ ASSIG 
 ( 30)  SENT	: _ E 
-( 31)  ASSIG	: _ IDENTIFIER S_ASSIG E 
-( 32)  E	: _ O_PAR E C_PAR 
-( 33)  E	: _ RW_LET ASSIG RW_IN E 
-( 34)  E	: _ E RW_WHERE ASSIG 
-( 35)  E	: _ RW_IF E RW_THEN ELSE 
-( 36)  E	: _ O_BRAQ LIST C_BRAQ 
-( 37)  E	: _ O_PAR LIST C_PAR 
+( 31)  ASSIG	: _ IDENTIFIER ASSIG_S E 
+( 32)  E	: _ RW_LET ASSIG RW_IN E 
+( 33)  E	: _ E RW_WHERE ASSIG 
+( 34)  E	: _ RW_IF E RW_THEN ELSE 
+( 35)  E	: _ O_BRAQ LIST C_BRAQ 
+( 36)  E	: _ O_PAR LIST C_PAR 
+( 37)  E	: _ OP 
 ( 38)  E	: _ IDENTIFIER 
 ( 39)  E	: _ LITERAL 
-( 44)  LITERAL	: _ LIT_CHR 
-( 45)  LITERAL	: _ LIT_INT 
-( 46)  LITERAL	: _ LIT_STR 
+( 44)  OP	: _ AND_S 
+( 45)  OP	: _ OR_S 
+( 46)  OP	: _ NOT_S 
+( 47)  OP	: _ RELOP 
+( 48)  OP	: _ PLUS 
+( 49)  OP	: _ SUB 
+( 50)  OP	: _ MULT 
+( 51)  OP	: _ DIV 
+( 52)  OP	: _ MOD_OP 
+( 53)  LITERAL	: _ CHR_LIT 
+( 54)  LITERAL	: _ INT_LIT 
+( 55)  LITERAL	: _ STR_LIT 
 
 
-	LITERAL 	goto  20
+	LITERAL 	goto  21
+	OP 	goto  20
 	ASSIG 	goto  10
 	E 	goto  11
 	FUNC_DEF 	goto  8
@@ -104,19 +134,28 @@ Closure
 	SENT 	goto  5
 	BEHAVIOR 	goto  4
 	DEF 	goto  3
-	DECL 	goto  25
+	DECL 	goto  35
  	S_PATTERN 	shift  9
- 	O_PAR 	shift  16
- 	O_BRAQ 	shift  19
+ 	O_PAR 	shift  19
+ 	O_BRAQ 	shift  18
  	RW_DEC 	shift  14
- 	RW_LET 	shift  17
- 	RW_IF 	shift  18
+ 	RW_LET 	shift  16
+ 	RW_IF 	shift  17
  	RW_DATA 	shift  12
  	RW_TYPE 	shift  13
  	IDENTIFIER 	shift  15
- 	LIT_CHR 	shift  21
- 	LIT_INT 	shift  22
- 	LIT_STR 	shift  23
+ 	CHR_LIT 	shift  31
+ 	INT_LIT 	shift  32
+ 	STR_LIT 	shift  33
+ 	AND_S 	shift  22
+ 	OR_S 	shift  23
+ 	NOT_S 	shift  24
+ 	RELOP 	shift  25
+ 	PLUS 	shift  26
+ 	SUB 	shift  27
+ 	MULT 	shift  28
+ 	DIV 	shift  29
+ 	MOD_OP 	shift  30
  	default 	reduce  1
 ------------------
 State  2
@@ -199,13 +238,13 @@ Closure
 State  9
 
 Kernel
-( 22)  BEHAVIOR	: S_PATTERN _ IDENTIFIER O_PAR PATTERNS C_PAR S_ASSIG E SEMICOLON 
+( 22)  BEHAVIOR	: S_PATTERN _ IDENTIFIER O_PAR PATTERNS C_PAR ASSIG_S E SEMICOLON 
 
 Closure
-( 22)  BEHAVIOR	: S_PATTERN _ IDENTIFIER O_PAR PATTERNS C_PAR S_ASSIG E SEMICOLON 
+( 22)  BEHAVIOR	: S_PATTERN _ IDENTIFIER O_PAR PATTERNS C_PAR ASSIG_S E SEMICOLON 
 
 
- 	IDENTIFIER 	shift  26
+ 	IDENTIFIER 	shift  36
  	default 	error
 ------------------
 State  10
@@ -223,14 +262,14 @@ State  11
 
 Kernel
 ( 30)  SENT	: E _ 
-( 34)  E	: E _ RW_WHERE ASSIG 
+( 33)  E	: E _ RW_WHERE ASSIG 
 
 Closure
 ( 30)  SENT	: E _ 
-( 34)  E	: E _ RW_WHERE ASSIG 
+( 33)  E	: E _ RW_WHERE ASSIG 
 
 
- 	RW_WHERE 	shift  27
+ 	RW_WHERE 	shift  37
  	default 	reduce  30
 ------------------
 State  12
@@ -242,7 +281,7 @@ Closure
 ( 10)  DATA_DEF	: RW_DATA _ IDENTIFIER COLON DERIVATIONS 
 
 
- 	IDENTIFIER 	shift  28
+ 	IDENTIFIER 	shift  38
  	default 	error
 ------------------
 State  13
@@ -254,7 +293,7 @@ Closure
 ( 13)  TYPE_DEF	: RW_TYPE _ IDENTIFIER COLON OPERATOR 
 
 
- 	IDENTIFIER 	shift  29
+ 	IDENTIFIER 	shift  39
  	default 	error
 ------------------
 State  14
@@ -266,142 +305,208 @@ Closure
 ( 21)  FUNC_DEF	: RW_DEC _ IDENTIFIER COLON OPERATOR SEMICOLON 
 
 
- 	IDENTIFIER 	shift  30
+ 	IDENTIFIER 	shift  40
  	default 	error
 ------------------
 State  15
 
 Kernel
-( 31)  ASSIG	: IDENTIFIER _ S_ASSIG E 
+( 31)  ASSIG	: IDENTIFIER _ ASSIG_S E 
 ( 38)  E	: IDENTIFIER _ 
 
 Closure
-( 31)  ASSIG	: IDENTIFIER _ S_ASSIG E 
+( 31)  ASSIG	: IDENTIFIER _ ASSIG_S E 
 ( 38)  E	: IDENTIFIER _ 
 
 
- 	S_ASSIG 	shift  31
+ 	ASSIG_S 	shift  41
  	default 	reduce  38
 ------------------
 State  16
 
 Kernel
-( 32)  E	: O_PAR _ E C_PAR 
-( 37)  E	: O_PAR _ LIST C_PAR 
+( 32)  E	: RW_LET _ ASSIG RW_IN E 
 
 Closure
-( 32)  E	: _ O_PAR E C_PAR 
-( 32)  E	: O_PAR _ E C_PAR 
-( 33)  E	: _ RW_LET ASSIG RW_IN E 
-( 34)  E	: _ E RW_WHERE ASSIG 
-( 35)  E	: _ RW_IF E RW_THEN ELSE 
-( 36)  E	: _ O_BRAQ LIST C_BRAQ 
-( 37)  E	: _ O_PAR LIST C_PAR 
-( 37)  E	: O_PAR _ LIST C_PAR 
-( 38)  E	: _ IDENTIFIER 
-( 39)  E	: _ LITERAL 
-( 42)  LIST	: _ E 
-( 43)  LIST	: _ LIST COMMA E 
-( 44)  LITERAL	: _ LIT_CHR 
-( 45)  LITERAL	: _ LIT_INT 
-( 46)  LITERAL	: _ LIT_STR 
+( 31)  ASSIG	: _ IDENTIFIER ASSIG_S E 
+( 32)  E	: RW_LET _ ASSIG RW_IN E 
 
 
-	LITERAL 	goto  20
-	LIST 	goto  34
-	E 	goto  32
- 	O_PAR 	shift  16
- 	O_BRAQ 	shift  19
- 	RW_LET 	shift  17
- 	RW_IF 	shift  18
- 	IDENTIFIER 	shift  33
- 	LIT_CHR 	shift  21
- 	LIT_INT 	shift  22
- 	LIT_STR 	shift  23
+	ASSIG 	goto  43
+ 	IDENTIFIER 	shift  42
  	default 	error
 ------------------
 State  17
 
 Kernel
-( 33)  E	: RW_LET _ ASSIG RW_IN E 
+( 34)  E	: RW_IF _ E RW_THEN ELSE 
 
 Closure
-( 31)  ASSIG	: _ IDENTIFIER S_ASSIG E 
-( 33)  E	: RW_LET _ ASSIG RW_IN E 
+( 32)  E	: _ RW_LET ASSIG RW_IN E 
+( 33)  E	: _ E RW_WHERE ASSIG 
+( 34)  E	: _ RW_IF E RW_THEN ELSE 
+( 34)  E	: RW_IF _ E RW_THEN ELSE 
+( 35)  E	: _ O_BRAQ LIST C_BRAQ 
+( 36)  E	: _ O_PAR LIST C_PAR 
+( 37)  E	: _ OP 
+( 38)  E	: _ IDENTIFIER 
+( 39)  E	: _ LITERAL 
+( 44)  OP	: _ AND_S 
+( 45)  OP	: _ OR_S 
+( 46)  OP	: _ NOT_S 
+( 47)  OP	: _ RELOP 
+( 48)  OP	: _ PLUS 
+( 49)  OP	: _ SUB 
+( 50)  OP	: _ MULT 
+( 51)  OP	: _ DIV 
+( 52)  OP	: _ MOD_OP 
+( 53)  LITERAL	: _ CHR_LIT 
+( 54)  LITERAL	: _ INT_LIT 
+( 55)  LITERAL	: _ STR_LIT 
 
 
-	ASSIG 	goto  36
- 	IDENTIFIER 	shift  35
+	LITERAL 	goto  21
+	OP 	goto  20
+	E 	goto  44
+ 	O_PAR 	shift  19
+ 	O_BRAQ 	shift  18
+ 	RW_LET 	shift  16
+ 	RW_IF 	shift  17
+ 	IDENTIFIER 	shift  45
+ 	CHR_LIT 	shift  31
+ 	INT_LIT 	shift  32
+ 	STR_LIT 	shift  33
+ 	AND_S 	shift  22
+ 	OR_S 	shift  23
+ 	NOT_S 	shift  24
+ 	RELOP 	shift  25
+ 	PLUS 	shift  26
+ 	SUB 	shift  27
+ 	MULT 	shift  28
+ 	DIV 	shift  29
+ 	MOD_OP 	shift  30
  	default 	error
 ------------------
 State  18
 
 Kernel
-( 35)  E	: RW_IF _ E RW_THEN ELSE 
+( 35)  E	: O_BRAQ _ LIST C_BRAQ 
 
 Closure
-( 32)  E	: _ O_PAR E C_PAR 
-( 33)  E	: _ RW_LET ASSIG RW_IN E 
-( 34)  E	: _ E RW_WHERE ASSIG 
-( 35)  E	: _ RW_IF E RW_THEN ELSE 
-( 35)  E	: RW_IF _ E RW_THEN ELSE 
-( 36)  E	: _ O_BRAQ LIST C_BRAQ 
-( 37)  E	: _ O_PAR LIST C_PAR 
+( 32)  E	: _ RW_LET ASSIG RW_IN E 
+( 33)  E	: _ E RW_WHERE ASSIG 
+( 34)  E	: _ RW_IF E RW_THEN ELSE 
+( 35)  E	: _ O_BRAQ LIST C_BRAQ 
+( 35)  E	: O_BRAQ _ LIST C_BRAQ 
+( 36)  E	: _ O_PAR LIST C_PAR 
+( 37)  E	: _ OP 
 ( 38)  E	: _ IDENTIFIER 
 ( 39)  E	: _ LITERAL 
-( 44)  LITERAL	: _ LIT_CHR 
-( 45)  LITERAL	: _ LIT_INT 
-( 46)  LITERAL	: _ LIT_STR 
+( 42)  LIST	: _ E 
+( 43)  LIST	: _ LIST COMMA E 
+( 44)  OP	: _ AND_S 
+( 45)  OP	: _ OR_S 
+( 46)  OP	: _ NOT_S 
+( 47)  OP	: _ RELOP 
+( 48)  OP	: _ PLUS 
+( 49)  OP	: _ SUB 
+( 50)  OP	: _ MULT 
+( 51)  OP	: _ DIV 
+( 52)  OP	: _ MOD_OP 
+( 53)  LITERAL	: _ CHR_LIT 
+( 54)  LITERAL	: _ INT_LIT 
+( 55)  LITERAL	: _ STR_LIT 
 
 
-	LITERAL 	goto  20
-	E 	goto  37
- 	O_PAR 	shift  16
- 	O_BRAQ 	shift  19
- 	RW_LET 	shift  17
- 	RW_IF 	shift  18
- 	IDENTIFIER 	shift  33
- 	LIT_CHR 	shift  21
- 	LIT_INT 	shift  22
- 	LIT_STR 	shift  23
+	LITERAL 	goto  21
+	OP 	goto  20
+	LIST 	goto  47
+	E 	goto  46
+ 	O_PAR 	shift  19
+ 	O_BRAQ 	shift  18
+ 	RW_LET 	shift  16
+ 	RW_IF 	shift  17
+ 	IDENTIFIER 	shift  45
+ 	CHR_LIT 	shift  31
+ 	INT_LIT 	shift  32
+ 	STR_LIT 	shift  33
+ 	AND_S 	shift  22
+ 	OR_S 	shift  23
+ 	NOT_S 	shift  24
+ 	RELOP 	shift  25
+ 	PLUS 	shift  26
+ 	SUB 	shift  27
+ 	MULT 	shift  28
+ 	DIV 	shift  29
+ 	MOD_OP 	shift  30
  	default 	error
 ------------------
 State  19
 
 Kernel
-( 36)  E	: O_BRAQ _ LIST C_BRAQ 
+( 36)  E	: O_PAR _ LIST C_PAR 
 
 Closure
-( 32)  E	: _ O_PAR E C_PAR 
-( 33)  E	: _ RW_LET ASSIG RW_IN E 
-( 34)  E	: _ E RW_WHERE ASSIG 
-( 35)  E	: _ RW_IF E RW_THEN ELSE 
-( 36)  E	: _ O_BRAQ LIST C_BRAQ 
-( 36)  E	: O_BRAQ _ LIST C_BRAQ 
-( 37)  E	: _ O_PAR LIST C_PAR 
+( 32)  E	: _ RW_LET ASSIG RW_IN E 
+( 33)  E	: _ E RW_WHERE ASSIG 
+( 34)  E	: _ RW_IF E RW_THEN ELSE 
+( 35)  E	: _ O_BRAQ LIST C_BRAQ 
+( 36)  E	: _ O_PAR LIST C_PAR 
+( 36)  E	: O_PAR _ LIST C_PAR 
+( 37)  E	: _ OP 
 ( 38)  E	: _ IDENTIFIER 
 ( 39)  E	: _ LITERAL 
 ( 42)  LIST	: _ E 
 ( 43)  LIST	: _ LIST COMMA E 
-( 44)  LITERAL	: _ LIT_CHR 
-( 45)  LITERAL	: _ LIT_INT 
-( 46)  LITERAL	: _ LIT_STR 
+( 44)  OP	: _ AND_S 
+( 45)  OP	: _ OR_S 
+( 46)  OP	: _ NOT_S 
+( 47)  OP	: _ RELOP 
+( 48)  OP	: _ PLUS 
+( 49)  OP	: _ SUB 
+( 50)  OP	: _ MULT 
+( 51)  OP	: _ DIV 
+( 52)  OP	: _ MOD_OP 
+( 53)  LITERAL	: _ CHR_LIT 
+( 54)  LITERAL	: _ INT_LIT 
+( 55)  LITERAL	: _ STR_LIT 
 
 
-	LITERAL 	goto  20
-	LIST 	goto  39
-	E 	goto  38
- 	O_PAR 	shift  16
- 	O_BRAQ 	shift  19
- 	RW_LET 	shift  17
- 	RW_IF 	shift  18
- 	IDENTIFIER 	shift  33
- 	LIT_CHR 	shift  21
- 	LIT_INT 	shift  22
- 	LIT_STR 	shift  23
+	LITERAL 	goto  21
+	OP 	goto  20
+	LIST 	goto  48
+	E 	goto  46
+ 	O_PAR 	shift  19
+ 	O_BRAQ 	shift  18
+ 	RW_LET 	shift  16
+ 	RW_IF 	shift  17
+ 	IDENTIFIER 	shift  45
+ 	CHR_LIT 	shift  31
+ 	INT_LIT 	shift  32
+ 	STR_LIT 	shift  33
+ 	AND_S 	shift  22
+ 	OR_S 	shift  23
+ 	NOT_S 	shift  24
+ 	RELOP 	shift  25
+ 	PLUS 	shift  26
+ 	SUB 	shift  27
+ 	MULT 	shift  28
+ 	DIV 	shift  29
+ 	MOD_OP 	shift  30
  	default 	error
 ------------------
 State  20
+
+Kernel
+( 37)  E	: OP _ 
+
+Closure
+( 37)  E	: OP _ 
+
+
+ 	default 	reduce  37
+------------------
+State  21
 
 Kernel
 ( 39)  E	: LITERAL _ 
@@ -412,40 +517,139 @@ Closure
 
  	default 	reduce  39
 ------------------
-State  21
+State  22
 
 Kernel
-( 44)  LITERAL	: LIT_CHR _ 
+( 44)  OP	: AND_S _ 
 
 Closure
-( 44)  LITERAL	: LIT_CHR _ 
+( 44)  OP	: AND_S _ 
 
 
  	default 	reduce  44
 ------------------
-State  22
+State  23
 
 Kernel
-( 45)  LITERAL	: LIT_INT _ 
+( 45)  OP	: OR_S _ 
 
 Closure
-( 45)  LITERAL	: LIT_INT _ 
+( 45)  OP	: OR_S _ 
 
 
  	default 	reduce  45
 ------------------
-State  23
+State  24
 
 Kernel
-( 46)  LITERAL	: LIT_STR _ 
+( 46)  OP	: NOT_S _ 
 
 Closure
-( 46)  LITERAL	: LIT_STR _ 
+( 46)  OP	: NOT_S _ 
 
 
  	default 	reduce  46
 ------------------
-State  24
+State  25
+
+Kernel
+( 47)  OP	: RELOP _ 
+
+Closure
+( 47)  OP	: RELOP _ 
+
+
+ 	default 	reduce  47
+------------------
+State  26
+
+Kernel
+( 48)  OP	: PLUS _ 
+
+Closure
+( 48)  OP	: PLUS _ 
+
+
+ 	default 	reduce  48
+------------------
+State  27
+
+Kernel
+( 49)  OP	: SUB _ 
+
+Closure
+( 49)  OP	: SUB _ 
+
+
+ 	default 	reduce  49
+------------------
+State  28
+
+Kernel
+( 50)  OP	: MULT _ 
+
+Closure
+( 50)  OP	: MULT _ 
+
+
+ 	default 	reduce  50
+------------------
+State  29
+
+Kernel
+( 51)  OP	: DIV _ 
+
+Closure
+( 51)  OP	: DIV _ 
+
+
+ 	default 	reduce  51
+------------------
+State  30
+
+Kernel
+( 52)  OP	: MOD_OP _ 
+
+Closure
+( 52)  OP	: MOD_OP _ 
+
+
+ 	default 	reduce  52
+------------------
+State  31
+
+Kernel
+( 53)  LITERAL	: CHR_LIT _ 
+
+Closure
+( 53)  LITERAL	: CHR_LIT _ 
+
+
+ 	default 	reduce  53
+------------------
+State  32
+
+Kernel
+( 54)  LITERAL	: INT_LIT _ 
+
+Closure
+( 54)  LITERAL	: INT_LIT _ 
+
+
+ 	default 	reduce  54
+------------------
+State  33
+
+Kernel
+( 55)  LITERAL	: STR_LIT _ 
+
+Closure
+( 55)  LITERAL	: STR_LIT _ 
+
+
+ 	default 	reduce  55
+------------------
+State  34
 
 Kernel
 ( 0)  $accept	: S _ END_OF_INPUT 
@@ -457,7 +661,7 @@ Closure
  	END_OF_INPUT 	accept
  	default 	error
 ------------------
-State  25
+State  35
 
 Kernel
 ( 3)  DECL_PROG	: DECL_PROG DECL _ 
@@ -468,33 +672,33 @@ Closure
 
  	default 	reduce  3
 ------------------
-State  26
+State  36
 
 Kernel
-( 22)  BEHAVIOR	: S_PATTERN IDENTIFIER _ O_PAR PATTERNS C_PAR S_ASSIG E SEMICOLON 
+( 22)  BEHAVIOR	: S_PATTERN IDENTIFIER _ O_PAR PATTERNS C_PAR ASSIG_S E SEMICOLON 
 
 Closure
-( 22)  BEHAVIOR	: S_PATTERN IDENTIFIER _ O_PAR PATTERNS C_PAR S_ASSIG E SEMICOLON 
+( 22)  BEHAVIOR	: S_PATTERN IDENTIFIER _ O_PAR PATTERNS C_PAR ASSIG_S E SEMICOLON 
 
 
- 	O_PAR 	shift  41
+ 	O_PAR 	shift  50
  	default 	error
 ------------------
-State  27
+State  37
 
 Kernel
-( 34)  E	: E RW_WHERE _ ASSIG 
+( 33)  E	: E RW_WHERE _ ASSIG 
 
 Closure
-( 31)  ASSIG	: _ IDENTIFIER S_ASSIG E 
-( 34)  E	: E RW_WHERE _ ASSIG 
+( 31)  ASSIG	: _ IDENTIFIER ASSIG_S E 
+( 33)  E	: E RW_WHERE _ ASSIG 
 
 
-	ASSIG 	goto  42
- 	IDENTIFIER 	shift  35
+	ASSIG 	goto  51
+ 	IDENTIFIER 	shift  42
  	default 	error
 ------------------
-State  28
+State  38
 
 Kernel
 ( 10)  DATA_DEF	: RW_DATA IDENTIFIER _ COLON DERIVATIONS 
@@ -503,10 +707,10 @@ Closure
 ( 10)  DATA_DEF	: RW_DATA IDENTIFIER _ COLON DERIVATIONS 
 
 
- 	COLON 	shift  43
+ 	COLON 	shift  52
  	default 	error
 ------------------
-State  29
+State  39
 
 Kernel
 ( 13)  TYPE_DEF	: RW_TYPE IDENTIFIER _ COLON OPERATOR 
@@ -515,10 +719,10 @@ Closure
 ( 13)  TYPE_DEF	: RW_TYPE IDENTIFIER _ COLON OPERATOR 
 
 
- 	COLON 	shift  44
+ 	COLON 	shift  53
  	default 	error
 ------------------
-State  30
+State  40
 
 Kernel
 ( 21)  FUNC_DEF	: RW_DEC IDENTIFIER _ COLON OPERATOR SEMICOLON 
@@ -527,62 +731,100 @@ Closure
 ( 21)  FUNC_DEF	: RW_DEC IDENTIFIER _ COLON OPERATOR SEMICOLON 
 
 
- 	COLON 	shift  45
+ 	COLON 	shift  54
  	default 	error
 ------------------
-State  31
+State  41
 
 Kernel
-( 31)  ASSIG	: IDENTIFIER S_ASSIG _ E 
+( 31)  ASSIG	: IDENTIFIER ASSIG_S _ E 
 
 Closure
-( 31)  ASSIG	: IDENTIFIER S_ASSIG _ E 
-( 32)  E	: _ O_PAR E C_PAR 
-( 33)  E	: _ RW_LET ASSIG RW_IN E 
-( 34)  E	: _ E RW_WHERE ASSIG 
-( 35)  E	: _ RW_IF E RW_THEN ELSE 
-( 36)  E	: _ O_BRAQ LIST C_BRAQ 
-( 37)  E	: _ O_PAR LIST C_PAR 
+( 31)  ASSIG	: IDENTIFIER ASSIG_S _ E 
+( 32)  E	: _ RW_LET ASSIG RW_IN E 
+( 33)  E	: _ E RW_WHERE ASSIG 
+( 34)  E	: _ RW_IF E RW_THEN ELSE 
+( 35)  E	: _ O_BRAQ LIST C_BRAQ 
+( 36)  E	: _ O_PAR LIST C_PAR 
+( 37)  E	: _ OP 
 ( 38)  E	: _ IDENTIFIER 
 ( 39)  E	: _ LITERAL 
-( 44)  LITERAL	: _ LIT_CHR 
-( 45)  LITERAL	: _ LIT_INT 
-( 46)  LITERAL	: _ LIT_STR 
+( 44)  OP	: _ AND_S 
+( 45)  OP	: _ OR_S 
+( 46)  OP	: _ NOT_S 
+( 47)  OP	: _ RELOP 
+( 48)  OP	: _ PLUS 
+( 49)  OP	: _ SUB 
+( 50)  OP	: _ MULT 
+( 51)  OP	: _ DIV 
+( 52)  OP	: _ MOD_OP 
+( 53)  LITERAL	: _ CHR_LIT 
+( 54)  LITERAL	: _ INT_LIT 
+( 55)  LITERAL	: _ STR_LIT 
 
 
-	LITERAL 	goto  20
-	E 	goto  46
- 	O_PAR 	shift  16
- 	O_BRAQ 	shift  19
- 	RW_LET 	shift  17
- 	RW_IF 	shift  18
- 	IDENTIFIER 	shift  33
- 	LIT_CHR 	shift  21
- 	LIT_INT 	shift  22
- 	LIT_STR 	shift  23
+	LITERAL 	goto  21
+	OP 	goto  20
+	E 	goto  55
+ 	O_PAR 	shift  19
+ 	O_BRAQ 	shift  18
+ 	RW_LET 	shift  16
+ 	RW_IF 	shift  17
+ 	IDENTIFIER 	shift  45
+ 	CHR_LIT 	shift  31
+ 	INT_LIT 	shift  32
+ 	STR_LIT 	shift  33
+ 	AND_S 	shift  22
+ 	OR_S 	shift  23
+ 	NOT_S 	shift  24
+ 	RELOP 	shift  25
+ 	PLUS 	shift  26
+ 	SUB 	shift  27
+ 	MULT 	shift  28
+ 	DIV 	shift  29
+ 	MOD_OP 	shift  30
  	default 	error
 ------------------
-State  32
+State  42
 
 Kernel
-( 32)  E	: O_PAR E _ C_PAR 
-( 34)  E	: E _ RW_WHERE ASSIG 
-( 42)  LIST	: E _ 
+( 31)  ASSIG	: IDENTIFIER _ ASSIG_S E 
 
 Closure
-( 32)  E	: O_PAR E _ C_PAR 
-( 34)  E	: E _ RW_WHERE ASSIG 
-( 42)  LIST	: E _ 
+( 31)  ASSIG	: IDENTIFIER _ ASSIG_S E 
 
 
-*** Conflict on input C_PAR
-	Reduce  42	or	Shift  47
-
- 	C_PAR 	shift  47
- 	RW_WHERE 	shift  27
- 	default 	reduce  42
+ 	ASSIG_S 	shift  41
+ 	default 	error
 ------------------
-State  33
+State  43
+
+Kernel
+( 32)  E	: RW_LET ASSIG _ RW_IN E 
+
+Closure
+( 32)  E	: RW_LET ASSIG _ RW_IN E 
+
+
+ 	RW_IN 	shift  56
+ 	default 	error
+------------------
+State  44
+
+Kernel
+( 33)  E	: E _ RW_WHERE ASSIG 
+( 34)  E	: RW_IF E _ RW_THEN ELSE 
+
+Closure
+( 33)  E	: E _ RW_WHERE ASSIG 
+( 34)  E	: RW_IF E _ RW_THEN ELSE 
+
+
+ 	RW_WHERE 	shift  37
+ 	RW_THEN 	shift  57
+ 	default 	error
+------------------
+State  45
 
 Kernel
 ( 38)  E	: IDENTIFIER _ 
@@ -593,90 +835,51 @@ Closure
 
  	default 	reduce  38
 ------------------
-State  34
+State  46
 
 Kernel
-( 37)  E	: O_PAR LIST _ C_PAR 
-( 43)  LIST	: LIST _ COMMA E 
-
-Closure
-( 37)  E	: O_PAR LIST _ C_PAR 
-( 43)  LIST	: LIST _ COMMA E 
-
-
- 	C_PAR 	shift  48
- 	COMMA 	shift  49
- 	default 	error
-------------------
-State  35
-
-Kernel
-( 31)  ASSIG	: IDENTIFIER _ S_ASSIG E 
-
-Closure
-( 31)  ASSIG	: IDENTIFIER _ S_ASSIG E 
-
-
- 	S_ASSIG 	shift  31
- 	default 	error
-------------------
-State  36
-
-Kernel
-( 33)  E	: RW_LET ASSIG _ RW_IN E 
-
-Closure
-( 33)  E	: RW_LET ASSIG _ RW_IN E 
-
-
- 	RW_IN 	shift  50
- 	default 	error
-------------------
-State  37
-
-Kernel
-( 34)  E	: E _ RW_WHERE ASSIG 
-( 35)  E	: RW_IF E _ RW_THEN ELSE 
-
-Closure
-( 34)  E	: E _ RW_WHERE ASSIG 
-( 35)  E	: RW_IF E _ RW_THEN ELSE 
-
-
- 	RW_WHERE 	shift  27
- 	RW_THEN 	shift  51
- 	default 	error
-------------------
-State  38
-
-Kernel
-( 34)  E	: E _ RW_WHERE ASSIG 
+( 33)  E	: E _ RW_WHERE ASSIG 
 ( 42)  LIST	: E _ 
 
 Closure
-( 34)  E	: E _ RW_WHERE ASSIG 
+( 33)  E	: E _ RW_WHERE ASSIG 
 ( 42)  LIST	: E _ 
 
 
- 	RW_WHERE 	shift  27
+ 	RW_WHERE 	shift  37
  	default 	reduce  42
 ------------------
-State  39
+State  47
 
 Kernel
-( 36)  E	: O_BRAQ LIST _ C_BRAQ 
+( 35)  E	: O_BRAQ LIST _ C_BRAQ 
 ( 43)  LIST	: LIST _ COMMA E 
 
 Closure
-( 36)  E	: O_BRAQ LIST _ C_BRAQ 
+( 35)  E	: O_BRAQ LIST _ C_BRAQ 
 ( 43)  LIST	: LIST _ COMMA E 
 
 
- 	C_BRAQ 	shift  52
- 	COMMA 	shift  49
+ 	C_BRAQ 	shift  58
+ 	COMMA 	shift  59
  	default 	error
 ------------------
-State  40
+State  48
+
+Kernel
+( 36)  E	: O_PAR LIST _ C_PAR 
+( 43)  LIST	: LIST _ COMMA E 
+
+Closure
+( 36)  E	: O_PAR LIST _ C_PAR 
+( 43)  LIST	: LIST _ COMMA E 
+
+
+ 	C_PAR 	shift  60
+ 	COMMA 	shift  59
+ 	default 	error
+------------------
+State  49
 
 Kernel
 ( 0)  $accept	: S END_OF_INPUT _ 
@@ -687,13 +890,13 @@ Closure
 
  	default 	error
 ------------------
-State  41
+State  50
 
 Kernel
-( 22)  BEHAVIOR	: S_PATTERN IDENTIFIER O_PAR _ PATTERNS C_PAR S_ASSIG E SEMICOLON 
+( 22)  BEHAVIOR	: S_PATTERN IDENTIFIER O_PAR _ PATTERNS C_PAR ASSIG_S E SEMICOLON 
 
 Closure
-( 22)  BEHAVIOR	: S_PATTERN IDENTIFIER O_PAR _ PATTERNS C_PAR S_ASSIG E SEMICOLON 
+( 22)  BEHAVIOR	: S_PATTERN IDENTIFIER O_PAR _ PATTERNS C_PAR ASSIG_S E SEMICOLON 
 ( 23)  PATTERNS	: _ PATTERN 
 ( 24)  PATTERNS	: _ PATTERNS COMMA PATTERN 
 ( 25)  PATTERN	: _ IDENTIFIER 
@@ -702,24 +905,24 @@ Closure
 ( 28)  PATTERN	: _ E_PATTERN CONC PATTERN 
 
 
-	PATTERN 	goto  53
-	PATTERNS 	goto  54
- 	E_PATTERN 	shift  56
- 	IDENTIFIER 	shift  55
+	PATTERN 	goto  61
+	PATTERNS 	goto  62
+ 	E_PATTERN 	shift  64
+ 	IDENTIFIER 	shift  63
  	default 	error
 ------------------
-State  42
+State  51
 
 Kernel
-( 34)  E	: E RW_WHERE ASSIG _ 
+( 33)  E	: E RW_WHERE ASSIG _ 
 
 Closure
-( 34)  E	: E RW_WHERE ASSIG _ 
+( 33)  E	: E RW_WHERE ASSIG _ 
 
 
- 	default 	reduce  34
+ 	default 	reduce  33
 ------------------
-State  43
+State  52
 
 Kernel
 ( 10)  DATA_DEF	: RW_DATA IDENTIFIER COLON _ DERIVATIONS 
@@ -728,33 +931,52 @@ Closure
 ( 10)  DATA_DEF	: RW_DATA IDENTIFIER COLON _ DERIVATIONS 
 ( 11)  DERIVATIONS	: _ E 
 ( 12)  DERIVATIONS	: _ E DERIVATOR DERIVATIONS 
-( 32)  E	: _ O_PAR E C_PAR 
-( 33)  E	: _ RW_LET ASSIG RW_IN E 
-( 34)  E	: _ E RW_WHERE ASSIG 
-( 35)  E	: _ RW_IF E RW_THEN ELSE 
-( 36)  E	: _ O_BRAQ LIST C_BRAQ 
-( 37)  E	: _ O_PAR LIST C_PAR 
+( 32)  E	: _ RW_LET ASSIG RW_IN E 
+( 33)  E	: _ E RW_WHERE ASSIG 
+( 34)  E	: _ RW_IF E RW_THEN ELSE 
+( 35)  E	: _ O_BRAQ LIST C_BRAQ 
+( 36)  E	: _ O_PAR LIST C_PAR 
+( 37)  E	: _ OP 
 ( 38)  E	: _ IDENTIFIER 
 ( 39)  E	: _ LITERAL 
-( 44)  LITERAL	: _ LIT_CHR 
-( 45)  LITERAL	: _ LIT_INT 
-( 46)  LITERAL	: _ LIT_STR 
+( 44)  OP	: _ AND_S 
+( 45)  OP	: _ OR_S 
+( 46)  OP	: _ NOT_S 
+( 47)  OP	: _ RELOP 
+( 48)  OP	: _ PLUS 
+( 49)  OP	: _ SUB 
+( 50)  OP	: _ MULT 
+( 51)  OP	: _ DIV 
+( 52)  OP	: _ MOD_OP 
+( 53)  LITERAL	: _ CHR_LIT 
+( 54)  LITERAL	: _ INT_LIT 
+( 55)  LITERAL	: _ STR_LIT 
 
 
-	LITERAL 	goto  20
-	E 	goto  57
-	DERIVATIONS 	goto  58
- 	O_PAR 	shift  16
- 	O_BRAQ 	shift  19
- 	RW_LET 	shift  17
- 	RW_IF 	shift  18
- 	IDENTIFIER 	shift  33
- 	LIT_CHR 	shift  21
- 	LIT_INT 	shift  22
- 	LIT_STR 	shift  23
+	LITERAL 	goto  21
+	OP 	goto  20
+	E 	goto  65
+	DERIVATIONS 	goto  66
+ 	O_PAR 	shift  19
+ 	O_BRAQ 	shift  18
+ 	RW_LET 	shift  16
+ 	RW_IF 	shift  17
+ 	IDENTIFIER 	shift  45
+ 	CHR_LIT 	shift  31
+ 	INT_LIT 	shift  32
+ 	STR_LIT 	shift  33
+ 	AND_S 	shift  22
+ 	OR_S 	shift  23
+ 	NOT_S 	shift  24
+ 	RELOP 	shift  25
+ 	PLUS 	shift  26
+ 	SUB 	shift  27
+ 	MULT 	shift  28
+ 	DIV 	shift  29
+ 	MOD_OP 	shift  30
  	default 	error
 ------------------
-State  44
+State  53
 
 Kernel
 ( 13)  TYPE_DEF	: RW_TYPE IDENTIFIER COLON _ OPERATOR 
@@ -770,14 +992,14 @@ Closure
 ( 20)  TYPE	: _ O_BRAQ TYPE O_BRAQ 
 
 
-	TYPE 	goto  59
-	OPERATOR 	goto  60
- 	O_PAR 	shift  61
- 	O_BRAQ 	shift  63
- 	IDENTIFIER 	shift  62
+	TYPE 	goto  67
+	OPERATOR 	goto  68
+ 	O_PAR 	shift  69
+ 	O_BRAQ 	shift  71
+ 	IDENTIFIER 	shift  70
  	default 	error
 ------------------
-State  45
+State  54
 
 Kernel
 ( 21)  FUNC_DEF	: RW_DEC IDENTIFIER COLON _ OPERATOR SEMICOLON 
@@ -793,143 +1015,166 @@ Closure
 ( 21)  FUNC_DEF	: RW_DEC IDENTIFIER COLON _ OPERATOR SEMICOLON 
 
 
-	TYPE 	goto  59
-	OPERATOR 	goto  64
- 	O_PAR 	shift  61
- 	O_BRAQ 	shift  63
- 	IDENTIFIER 	shift  62
+	TYPE 	goto  67
+	OPERATOR 	goto  72
+ 	O_PAR 	shift  69
+ 	O_BRAQ 	shift  71
+ 	IDENTIFIER 	shift  70
  	default 	error
 ------------------
-State  46
+State  55
 
 Kernel
-( 31)  ASSIG	: IDENTIFIER S_ASSIG E _ 
-( 34)  E	: E _ RW_WHERE ASSIG 
+( 31)  ASSIG	: IDENTIFIER ASSIG_S E _ 
+( 33)  E	: E _ RW_WHERE ASSIG 
 
 Closure
-( 31)  ASSIG	: IDENTIFIER S_ASSIG E _ 
-( 34)  E	: E _ RW_WHERE ASSIG 
+( 31)  ASSIG	: IDENTIFIER ASSIG_S E _ 
+( 33)  E	: E _ RW_WHERE ASSIG 
 
 
-*** Conflict on input RW_WHERE
-	Reduce  31	or	Shift  27
-
- 	RW_WHERE 	shift  27
  	default 	reduce  31
 ------------------
-State  47
+State  56
 
 Kernel
-( 32)  E	: O_PAR E C_PAR _ 
+( 32)  E	: RW_LET ASSIG RW_IN _ E 
 
 Closure
-( 32)  E	: O_PAR E C_PAR _ 
-
-
- 	default 	reduce  32
-------------------
-State  48
-
-Kernel
-( 37)  E	: O_PAR LIST C_PAR _ 
-
-Closure
-( 37)  E	: O_PAR LIST C_PAR _ 
-
-
- 	default 	reduce  37
-------------------
-State  49
-
-Kernel
-( 43)  LIST	: LIST COMMA _ E 
-
-Closure
-( 32)  E	: _ O_PAR E C_PAR 
-( 33)  E	: _ RW_LET ASSIG RW_IN E 
-( 34)  E	: _ E RW_WHERE ASSIG 
-( 35)  E	: _ RW_IF E RW_THEN ELSE 
-( 36)  E	: _ O_BRAQ LIST C_BRAQ 
-( 37)  E	: _ O_PAR LIST C_PAR 
+( 32)  E	: _ RW_LET ASSIG RW_IN E 
+( 32)  E	: RW_LET ASSIG RW_IN _ E 
+( 33)  E	: _ E RW_WHERE ASSIG 
+( 34)  E	: _ RW_IF E RW_THEN ELSE 
+( 35)  E	: _ O_BRAQ LIST C_BRAQ 
+( 36)  E	: _ O_PAR LIST C_PAR 
+( 37)  E	: _ OP 
 ( 38)  E	: _ IDENTIFIER 
 ( 39)  E	: _ LITERAL 
-( 43)  LIST	: LIST COMMA _ E 
-( 44)  LITERAL	: _ LIT_CHR 
-( 45)  LITERAL	: _ LIT_INT 
-( 46)  LITERAL	: _ LIT_STR 
+( 44)  OP	: _ AND_S 
+( 45)  OP	: _ OR_S 
+( 46)  OP	: _ NOT_S 
+( 47)  OP	: _ RELOP 
+( 48)  OP	: _ PLUS 
+( 49)  OP	: _ SUB 
+( 50)  OP	: _ MULT 
+( 51)  OP	: _ DIV 
+( 52)  OP	: _ MOD_OP 
+( 53)  LITERAL	: _ CHR_LIT 
+( 54)  LITERAL	: _ INT_LIT 
+( 55)  LITERAL	: _ STR_LIT 
 
 
-	LITERAL 	goto  20
-	E 	goto  65
- 	O_PAR 	shift  16
- 	O_BRAQ 	shift  19
- 	RW_LET 	shift  17
- 	RW_IF 	shift  18
- 	IDENTIFIER 	shift  33
- 	LIT_CHR 	shift  21
- 	LIT_INT 	shift  22
- 	LIT_STR 	shift  23
+	LITERAL 	goto  21
+	OP 	goto  20
+	E 	goto  73
+ 	O_PAR 	shift  19
+ 	O_BRAQ 	shift  18
+ 	RW_LET 	shift  16
+ 	RW_IF 	shift  17
+ 	IDENTIFIER 	shift  45
+ 	CHR_LIT 	shift  31
+ 	INT_LIT 	shift  32
+ 	STR_LIT 	shift  33
+ 	AND_S 	shift  22
+ 	OR_S 	shift  23
+ 	NOT_S 	shift  24
+ 	RELOP 	shift  25
+ 	PLUS 	shift  26
+ 	SUB 	shift  27
+ 	MULT 	shift  28
+ 	DIV 	shift  29
+ 	MOD_OP 	shift  30
  	default 	error
 ------------------
-State  50
+State  57
 
 Kernel
-( 33)  E	: RW_LET ASSIG RW_IN _ E 
+( 34)  E	: RW_IF E RW_THEN _ ELSE 
 
 Closure
-( 32)  E	: _ O_PAR E C_PAR 
-( 33)  E	: _ RW_LET ASSIG RW_IN E 
-( 33)  E	: RW_LET ASSIG RW_IN _ E 
-( 34)  E	: _ E RW_WHERE ASSIG 
-( 35)  E	: _ RW_IF E RW_THEN ELSE 
-( 36)  E	: _ O_BRAQ LIST C_BRAQ 
-( 37)  E	: _ O_PAR LIST C_PAR 
-( 38)  E	: _ IDENTIFIER 
-( 39)  E	: _ LITERAL 
-( 44)  LITERAL	: _ LIT_CHR 
-( 45)  LITERAL	: _ LIT_INT 
-( 46)  LITERAL	: _ LIT_STR 
-
-
-	LITERAL 	goto  20
-	E 	goto  66
- 	O_PAR 	shift  16
- 	O_BRAQ 	shift  19
- 	RW_LET 	shift  17
- 	RW_IF 	shift  18
- 	IDENTIFIER 	shift  33
- 	LIT_CHR 	shift  21
- 	LIT_INT 	shift  22
- 	LIT_STR 	shift  23
- 	default 	error
-------------------
-State  51
-
-Kernel
-( 35)  E	: RW_IF E RW_THEN _ ELSE 
-
-Closure
-( 35)  E	: RW_IF E RW_THEN _ ELSE 
+( 34)  E	: RW_IF E RW_THEN _ ELSE 
 ( 40)  ELSE	: _ IDENTIFIER 
 ( 41)  ELSE	: _ IDENTIFIER RW_ELSE IDENTIFIER 
 
 
-	ELSE 	goto  68
- 	IDENTIFIER 	shift  67
+	ELSE 	goto  75
+ 	IDENTIFIER 	shift  74
  	default 	error
 ------------------
-State  52
+State  58
 
 Kernel
-( 36)  E	: O_BRAQ LIST C_BRAQ _ 
+( 35)  E	: O_BRAQ LIST C_BRAQ _ 
 
 Closure
-( 36)  E	: O_BRAQ LIST C_BRAQ _ 
+( 35)  E	: O_BRAQ LIST C_BRAQ _ 
+
+
+ 	default 	reduce  35
+------------------
+State  59
+
+Kernel
+( 43)  LIST	: LIST COMMA _ E 
+
+Closure
+( 32)  E	: _ RW_LET ASSIG RW_IN E 
+( 33)  E	: _ E RW_WHERE ASSIG 
+( 34)  E	: _ RW_IF E RW_THEN ELSE 
+( 35)  E	: _ O_BRAQ LIST C_BRAQ 
+( 36)  E	: _ O_PAR LIST C_PAR 
+( 37)  E	: _ OP 
+( 38)  E	: _ IDENTIFIER 
+( 39)  E	: _ LITERAL 
+( 43)  LIST	: LIST COMMA _ E 
+( 44)  OP	: _ AND_S 
+( 45)  OP	: _ OR_S 
+( 46)  OP	: _ NOT_S 
+( 47)  OP	: _ RELOP 
+( 48)  OP	: _ PLUS 
+( 49)  OP	: _ SUB 
+( 50)  OP	: _ MULT 
+( 51)  OP	: _ DIV 
+( 52)  OP	: _ MOD_OP 
+( 53)  LITERAL	: _ CHR_LIT 
+( 54)  LITERAL	: _ INT_LIT 
+( 55)  LITERAL	: _ STR_LIT 
+
+
+	LITERAL 	goto  21
+	OP 	goto  20
+	E 	goto  76
+ 	O_PAR 	shift  19
+ 	O_BRAQ 	shift  18
+ 	RW_LET 	shift  16
+ 	RW_IF 	shift  17
+ 	IDENTIFIER 	shift  45
+ 	CHR_LIT 	shift  31
+ 	INT_LIT 	shift  32
+ 	STR_LIT 	shift  33
+ 	AND_S 	shift  22
+ 	OR_S 	shift  23
+ 	NOT_S 	shift  24
+ 	RELOP 	shift  25
+ 	PLUS 	shift  26
+ 	SUB 	shift  27
+ 	MULT 	shift  28
+ 	DIV 	shift  29
+ 	MOD_OP 	shift  30
+ 	default 	error
+------------------
+State  60
+
+Kernel
+( 36)  E	: O_PAR LIST C_PAR _ 
+
+Closure
+( 36)  E	: O_PAR LIST C_PAR _ 
 
 
  	default 	reduce  36
 ------------------
-State  53
+State  61
 
 Kernel
 ( 23)  PATTERNS	: PATTERN _ 
@@ -940,22 +1185,22 @@ Closure
 
  	default 	reduce  23
 ------------------
-State  54
+State  62
 
 Kernel
-( 22)  BEHAVIOR	: S_PATTERN IDENTIFIER O_PAR PATTERNS _ C_PAR S_ASSIG E SEMICOLON 
+( 22)  BEHAVIOR	: S_PATTERN IDENTIFIER O_PAR PATTERNS _ C_PAR ASSIG_S E SEMICOLON 
 ( 24)  PATTERNS	: PATTERNS _ COMMA PATTERN 
 
 Closure
-( 22)  BEHAVIOR	: S_PATTERN IDENTIFIER O_PAR PATTERNS _ C_PAR S_ASSIG E SEMICOLON 
+( 22)  BEHAVIOR	: S_PATTERN IDENTIFIER O_PAR PATTERNS _ C_PAR ASSIG_S E SEMICOLON 
 ( 24)  PATTERNS	: PATTERNS _ COMMA PATTERN 
 
 
- 	C_PAR 	shift  69
- 	COMMA 	shift  70
+ 	C_PAR 	shift  77
+ 	COMMA 	shift  78
  	default 	error
 ------------------
-State  55
+State  63
 
 Kernel
 ( 25)  PATTERN	: IDENTIFIER _ 
@@ -966,10 +1211,10 @@ Closure
 ( 27)  PATTERN	: IDENTIFIER _ CONC PATTERN 
 
 
- 	CONC 	shift  71
+ 	CONC 	shift  79
  	default 	reduce  25
 ------------------
-State  56
+State  64
 
 Kernel
 ( 26)  PATTERN	: E_PATTERN _ 
@@ -980,27 +1225,27 @@ Closure
 ( 28)  PATTERN	: E_PATTERN _ CONC PATTERN 
 
 
- 	CONC 	shift  72
+ 	CONC 	shift  80
  	default 	reduce  26
 ------------------
-State  57
+State  65
 
 Kernel
 ( 11)  DERIVATIONS	: E _ 
 ( 12)  DERIVATIONS	: E _ DERIVATOR DERIVATIONS 
-( 34)  E	: E _ RW_WHERE ASSIG 
+( 33)  E	: E _ RW_WHERE ASSIG 
 
 Closure
 ( 11)  DERIVATIONS	: E _ 
 ( 12)  DERIVATIONS	: E _ DERIVATOR DERIVATIONS 
-( 34)  E	: E _ RW_WHERE ASSIG 
+( 33)  E	: E _ RW_WHERE ASSIG 
 
 
- 	DERIVATOR 	shift  73
- 	RW_WHERE 	shift  27
+ 	DERIVATOR 	shift  81
+ 	RW_WHERE 	shift  37
  	default 	reduce  11
 ------------------
-State  58
+State  66
 
 Kernel
 ( 10)  DATA_DEF	: RW_DATA IDENTIFIER COLON DERIVATIONS _ 
@@ -1011,7 +1256,7 @@ Closure
 
  	default 	reduce  10
 ------------------
-State  59
+State  67
 
 Kernel
 ( 14)  OPERATOR	: TYPE _ 
@@ -1022,10 +1267,10 @@ Closure
 ( 18)  TYPE	: TYPE _ CART_PROD IDENTIFIER 
 
 
- 	CART_PROD 	shift  74
+ 	CART_PROD 	shift  82
  	default 	reduce  14
 ------------------
-State  60
+State  68
 
 Kernel
 ( 13)  TYPE_DEF	: RW_TYPE IDENTIFIER COLON OPERATOR _ 
@@ -1036,10 +1281,10 @@ Closure
 ( 15)  OPERATOR	: OPERATOR _ ARROW TYPE 
 
 
- 	ARROW 	shift  75
+ 	ARROW 	shift  83
  	default 	reduce  13
 ------------------
-State  61
+State  69
 
 Kernel
 ( 16)  OPERATOR	: O_PAR _ OPERATOR O_PAR 
@@ -1057,14 +1302,14 @@ Closure
 ( 20)  TYPE	: _ O_BRAQ TYPE O_BRAQ 
 
 
-	TYPE 	goto  76
-	OPERATOR 	goto  77
- 	O_PAR 	shift  61
- 	O_BRAQ 	shift  63
- 	IDENTIFIER 	shift  62
+	TYPE 	goto  84
+	OPERATOR 	goto  85
+ 	O_PAR 	shift  69
+ 	O_BRAQ 	shift  71
+ 	IDENTIFIER 	shift  70
  	default 	error
 ------------------
-State  62
+State  70
 
 Kernel
 ( 17)  TYPE	: IDENTIFIER _ 
@@ -1075,7 +1320,7 @@ Closure
 
  	default 	reduce  17
 ------------------
-State  63
+State  71
 
 Kernel
 ( 20)  TYPE	: O_BRAQ _ TYPE O_BRAQ 
@@ -1088,134 +1333,130 @@ Closure
 ( 20)  TYPE	: O_BRAQ _ TYPE O_BRAQ 
 
 
-	TYPE 	goto  78
- 	O_PAR 	shift  79
- 	O_BRAQ 	shift  63
- 	IDENTIFIER 	shift  62
- 	default 	error
-------------------
-State  64
-
-Kernel
-( 15)  OPERATOR	: OPERATOR _ ARROW TYPE 
-( 21)  FUNC_DEF	: RW_DEC IDENTIFIER COLON OPERATOR _ SEMICOLON 
-
-Closure
-( 15)  OPERATOR	: OPERATOR _ ARROW TYPE 
-( 21)  FUNC_DEF	: RW_DEC IDENTIFIER COLON OPERATOR _ SEMICOLON 
-
-
- 	ARROW 	shift  75
- 	SEMICOLON 	shift  80
- 	default 	error
-------------------
-State  65
-
-Kernel
-( 34)  E	: E _ RW_WHERE ASSIG 
-( 43)  LIST	: LIST COMMA E _ 
-
-Closure
-( 34)  E	: E _ RW_WHERE ASSIG 
-( 43)  LIST	: LIST COMMA E _ 
-
-
- 	RW_WHERE 	shift  27
- 	default 	reduce  43
-------------------
-State  66
-
-Kernel
-( 33)  E	: RW_LET ASSIG RW_IN E _ 
-( 34)  E	: E _ RW_WHERE ASSIG 
-
-Closure
-( 33)  E	: RW_LET ASSIG RW_IN E _ 
-( 34)  E	: E _ RW_WHERE ASSIG 
-
-
-*** Conflict on input RW_WHERE
-	Reduce  33	or	Shift  27
-
- 	RW_WHERE 	shift  27
- 	default 	reduce  33
-------------------
-State  67
-
-Kernel
-( 40)  ELSE	: IDENTIFIER _ 
-( 41)  ELSE	: IDENTIFIER _ RW_ELSE IDENTIFIER 
-
-Closure
-( 40)  ELSE	: IDENTIFIER _ 
-( 41)  ELSE	: IDENTIFIER _ RW_ELSE IDENTIFIER 
-
-
- 	RW_ELSE 	shift  81
- 	default 	reduce  40
-------------------
-State  68
-
-Kernel
-( 35)  E	: RW_IF E RW_THEN ELSE _ 
-
-Closure
-( 35)  E	: RW_IF E RW_THEN ELSE _ 
-
-
- 	default 	reduce  35
-------------------
-State  69
-
-Kernel
-( 22)  BEHAVIOR	: S_PATTERN IDENTIFIER O_PAR PATTERNS C_PAR _ S_ASSIG E SEMICOLON 
-
-Closure
-( 22)  BEHAVIOR	: S_PATTERN IDENTIFIER O_PAR PATTERNS C_PAR _ S_ASSIG E SEMICOLON 
-
-
- 	S_ASSIG 	shift  82
- 	default 	error
-------------------
-State  70
-
-Kernel
-( 24)  PATTERNS	: PATTERNS COMMA _ PATTERN 
-
-Closure
-( 24)  PATTERNS	: PATTERNS COMMA _ PATTERN 
-( 25)  PATTERN	: _ IDENTIFIER 
-( 26)  PATTERN	: _ E_PATTERN 
-( 27)  PATTERN	: _ IDENTIFIER CONC PATTERN 
-( 28)  PATTERN	: _ E_PATTERN CONC PATTERN 
-
-
-	PATTERN 	goto  83
- 	E_PATTERN 	shift  56
- 	IDENTIFIER 	shift  55
- 	default 	error
-------------------
-State  71
-
-Kernel
-( 27)  PATTERN	: IDENTIFIER CONC _ PATTERN 
-
-Closure
-( 25)  PATTERN	: _ IDENTIFIER 
-( 26)  PATTERN	: _ E_PATTERN 
-( 27)  PATTERN	: _ IDENTIFIER CONC PATTERN 
-( 27)  PATTERN	: IDENTIFIER CONC _ PATTERN 
-( 28)  PATTERN	: _ E_PATTERN CONC PATTERN 
-
-
-	PATTERN 	goto  84
- 	E_PATTERN 	shift  56
- 	IDENTIFIER 	shift  55
+	TYPE 	goto  86
+ 	O_PAR 	shift  87
+ 	O_BRAQ 	shift  71
+ 	IDENTIFIER 	shift  70
  	default 	error
 ------------------
 State  72
 
 Kernel
+( 15)  OPERATOR	: OPERATOR _ ARROW TYPE 
+( 21)  FUNC_DEF	: RW_DEC IDENTIFIER COLON OPERATOR _ SEMICOLON 
+
+Closure
+( 15)  OPERATOR	: OPERATOR _ ARROW TYPE 
+( 21)  FUNC_DEF	: RW_DEC IDENTIFIER COLON OPERATOR _ SEMICOLON 
+
+
+ 	ARROW 	shift  83
+ 	SEMICOLON 	shift  88
+ 	default 	error
+------------------
+State  73
+
+Kernel
+( 32)  E	: RW_LET ASSIG RW_IN E _ 
+( 33)  E	: E _ RW_WHERE ASSIG 
+
+Closure
+( 32)  E	: RW_LET ASSIG RW_IN E _ 
+( 33)  E	: E _ RW_WHERE ASSIG 
+
+
+ 	default 	reduce  32
+------------------
+State  74
+
+Kernel
+( 40)  ELSE	: IDENTIFIER _ 
+( 41)  ELSE	: IDENTIFIER _ RW_ELSE IDENTIFIER 
+
+Closure
+( 40)  ELSE	: IDENTIFIER _ 
+( 41)  ELSE	: IDENTIFIER _ RW_ELSE IDENTIFIER 
+
+
+ 	RW_ELSE 	shift  89
+ 	default 	reduce  40
+------------------
+State  75
+
+Kernel
+( 34)  E	: RW_IF E RW_THEN ELSE _ 
+
+Closure
+( 34)  E	: RW_IF E RW_THEN ELSE _ 
+
+
+ 	default 	reduce  34
+------------------
+State  76
+
+Kernel
+( 33)  E	: E _ RW_WHERE ASSIG 
+( 43)  LIST	: LIST COMMA E _ 
+
+Closure
+( 33)  E	: E _ RW_WHERE ASSIG 
+( 43)  LIST	: LIST COMMA E _ 
+
+
+ 	RW_WHERE 	shift  37
+ 	default 	reduce  43
+------------------
+State  77
+
+Kernel
+( 22)  BEHAVIOR	: S_PATTERN IDENTIFIER O_PAR PATTERNS C_PAR _ ASSIG_S E SEMICOLON 
+
+Closure
+( 22)  BEHAVIOR	: S_PATTERN IDENTIFIER O_PAR PATTERNS C_PAR _ ASSIG_S E SEMICOLON 
+
+
+ 	ASSIG_S 	shift  90
+ 	default 	error
+------------------
+State  78
+
+Kernel
+( 24)  PATTERNS	: PATTERNS COMMA _ PATTERN 
+
+Closure
+( 24)  PATTERNS	: PATTERNS COMMA _ PATTERN 
+( 25)  PATTERN	: _ IDENTIFIER 
+( 26)  PATTERN	: _ E_PATTERN 
+( 27)  PATTERN	: _ IDENTIFIER CONC PATTERN 
+( 28)  PATTERN	: _ E_PATTERN CONC PATTERN 
+
+
+	PATTERN 	goto  91
+ 	E_PATTERN 	shift  64
+ 	IDENTIFIER 	shift  63
+ 	default 	error
+------------------
+State  79
+
+Kernel
+( 27)  PATTERN	: IDENTIFIER CONC _ PATTERN 
+
+Closure
+( 25)  PATTERN	: _ IDENTIFIER 
+( 26)  PATTERN	: _ E_PATTERN 
+( 27)  PATTERN	: _ IDENTIFIER CONC PATTERN 
+( 27)  PATTERN	: IDENTIFIER CONC _ PATTERN 
+( 28)  PATTERN	: _ E_PATTERN CONC PATTERN 
+
+
+	PATTERN 	goto  92
+ 	E_PATTERN 	shift  64
+ 	IDENTIFIER 	shift  63
+ 	default 	error
+------------------
+State  80
+
+Kernel
 ( 28)  PATTERN	: E_PATTERN CONC _ PATTERN 
 
 Closure
@@ -1226,12 +1467,12 @@ Closure
 ( 28)  PATTERN	: E_PATTERN CONC _ PATTERN 
 
 
-	PATTERN 	goto  85
- 	E_PATTERN 	shift  56
- 	IDENTIFIER 	shift  55
+	PATTERN 	goto  93
+ 	E_PATTERN 	shift  64
+ 	IDENTIFIER 	shift  63
  	default 	error
 ------------------
-State  73
+State  81
 
 Kernel
 ( 12)  DERIVATIONS	: E DERIVATOR _ DERIVATIONS 
@@ -1240,33 +1481,52 @@ Closure
 ( 11)  DERIVATIONS	: _ E 
 ( 12)  DERIVATIONS	: _ E DERIVATOR DERIVATIONS 
 ( 12)  DERIVATIONS	: E DERIVATOR _ DERIVATIONS 
-( 32)  E	: _ O_PAR E C_PAR 
-( 33)  E	: _ RW_LET ASSIG RW_IN E 
-( 34)  E	: _ E RW_WHERE ASSIG 
-( 35)  E	: _ RW_IF E RW_THEN ELSE 
-( 36)  E	: _ O_BRAQ LIST C_BRAQ 
-( 37)  E	: _ O_PAR LIST C_PAR 
+( 32)  E	: _ RW_LET ASSIG RW_IN E 
+( 33)  E	: _ E RW_WHERE ASSIG 
+( 34)  E	: _ RW_IF E RW_THEN ELSE 
+( 35)  E	: _ O_BRAQ LIST C_BRAQ 
+( 36)  E	: _ O_PAR LIST C_PAR 
+( 37)  E	: _ OP 
 ( 38)  E	: _ IDENTIFIER 
 ( 39)  E	: _ LITERAL 
-( 44)  LITERAL	: _ LIT_CHR 
-( 45)  LITERAL	: _ LIT_INT 
-( 46)  LITERAL	: _ LIT_STR 
+( 44)  OP	: _ AND_S 
+( 45)  OP	: _ OR_S 
+( 46)  OP	: _ NOT_S 
+( 47)  OP	: _ RELOP 
+( 48)  OP	: _ PLUS 
+( 49)  OP	: _ SUB 
+( 50)  OP	: _ MULT 
+( 51)  OP	: _ DIV 
+( 52)  OP	: _ MOD_OP 
+( 53)  LITERAL	: _ CHR_LIT 
+( 54)  LITERAL	: _ INT_LIT 
+( 55)  LITERAL	: _ STR_LIT 
 
 
-	LITERAL 	goto  20
-	E 	goto  57
-	DERIVATIONS 	goto  86
- 	O_PAR 	shift  16
- 	O_BRAQ 	shift  19
- 	RW_LET 	shift  17
- 	RW_IF 	shift  18
- 	IDENTIFIER 	shift  33
- 	LIT_CHR 	shift  21
- 	LIT_INT 	shift  22
- 	LIT_STR 	shift  23
+	LITERAL 	goto  21
+	OP 	goto  20
+	E 	goto  65
+	DERIVATIONS 	goto  94
+ 	O_PAR 	shift  19
+ 	O_BRAQ 	shift  18
+ 	RW_LET 	shift  16
+ 	RW_IF 	shift  17
+ 	IDENTIFIER 	shift  45
+ 	CHR_LIT 	shift  31
+ 	INT_LIT 	shift  32
+ 	STR_LIT 	shift  33
+ 	AND_S 	shift  22
+ 	OR_S 	shift  23
+ 	NOT_S 	shift  24
+ 	RELOP 	shift  25
+ 	PLUS 	shift  26
+ 	SUB 	shift  27
+ 	MULT 	shift  28
+ 	DIV 	shift  29
+ 	MOD_OP 	shift  30
  	default 	error
 ------------------
-State  74
+State  82
 
 Kernel
 ( 18)  TYPE	: TYPE CART_PROD _ IDENTIFIER 
@@ -1275,10 +1535,10 @@ Closure
 ( 18)  TYPE	: TYPE CART_PROD _ IDENTIFIER 
 
 
- 	IDENTIFIER 	shift  87
+ 	IDENTIFIER 	shift  95
  	default 	error
 ------------------
-State  75
+State  83
 
 Kernel
 ( 15)  OPERATOR	: OPERATOR ARROW _ TYPE 
@@ -1291,13 +1551,13 @@ Closure
 ( 20)  TYPE	: _ O_BRAQ TYPE O_BRAQ 
 
 
-	TYPE 	goto  88
- 	O_PAR 	shift  79
- 	O_BRAQ 	shift  63
- 	IDENTIFIER 	shift  62
+	TYPE 	goto  96
+ 	O_PAR 	shift  87
+ 	O_BRAQ 	shift  71
+ 	IDENTIFIER 	shift  70
  	default 	error
 ------------------
-State  76
+State  84
 
 Kernel
 ( 14)  OPERATOR	: TYPE _ 
@@ -1310,11 +1570,11 @@ Closure
 ( 19)  TYPE	: O_PAR TYPE _ C_PAR 
 
 
- 	CART_PROD 	shift  74
- 	C_PAR 	shift  89
+ 	CART_PROD 	shift  82
+ 	C_PAR 	shift  97
  	default 	reduce  14
 ------------------
-State  77
+State  85
 
 Kernel
 ( 15)  OPERATOR	: OPERATOR _ ARROW TYPE 
@@ -1325,11 +1585,11 @@ Closure
 ( 16)  OPERATOR	: O_PAR OPERATOR _ O_PAR 
 
 
- 	ARROW 	shift  75
- 	O_PAR 	shift  90
+ 	ARROW 	shift  83
+ 	O_PAR 	shift  98
  	default 	error
 ------------------
-State  78
+State  86
 
 Kernel
 ( 18)  TYPE	: TYPE _ CART_PROD IDENTIFIER 
@@ -1340,11 +1600,11 @@ Closure
 ( 20)  TYPE	: O_BRAQ TYPE _ O_BRAQ 
 
 
- 	CART_PROD 	shift  74
- 	O_BRAQ 	shift  91
+ 	CART_PROD 	shift  82
+ 	O_BRAQ 	shift  99
  	default 	error
 ------------------
-State  79
+State  87
 
 Kernel
 ( 19)  TYPE	: O_PAR _ TYPE C_PAR 
@@ -1357,13 +1617,13 @@ Closure
 ( 20)  TYPE	: _ O_BRAQ TYPE O_BRAQ 
 
 
-	TYPE 	goto  92
- 	O_PAR 	shift  79
- 	O_BRAQ 	shift  63
- 	IDENTIFIER 	shift  62
+	TYPE 	goto  100
+ 	O_PAR 	shift  87
+ 	O_BRAQ 	shift  71
+ 	IDENTIFIER 	shift  70
  	default 	error
 ------------------
-State  80
+State  88
 
 Kernel
 ( 21)  FUNC_DEF	: RW_DEC IDENTIFIER COLON OPERATOR SEMICOLON _ 
@@ -1374,7 +1634,7 @@ Closure
 
  	default 	reduce  21
 ------------------
-State  81
+State  89
 
 Kernel
 ( 41)  ELSE	: IDENTIFIER RW_ELSE _ IDENTIFIER 
@@ -1383,42 +1643,61 @@ Closure
 ( 41)  ELSE	: IDENTIFIER RW_ELSE _ IDENTIFIER 
 
 
- 	IDENTIFIER 	shift  93
+ 	IDENTIFIER 	shift  101
  	default 	error
 ------------------
-State  82
+State  90
 
 Kernel
-( 22)  BEHAVIOR	: S_PATTERN IDENTIFIER O_PAR PATTERNS C_PAR S_ASSIG _ E SEMICOLON 
+( 22)  BEHAVIOR	: S_PATTERN IDENTIFIER O_PAR PATTERNS C_PAR ASSIG_S _ E SEMICOLON 
 
 Closure
-( 22)  BEHAVIOR	: S_PATTERN IDENTIFIER O_PAR PATTERNS C_PAR S_ASSIG _ E SEMICOLON 
-( 32)  E	: _ O_PAR E C_PAR 
-( 33)  E	: _ RW_LET ASSIG RW_IN E 
-( 34)  E	: _ E RW_WHERE ASSIG 
-( 35)  E	: _ RW_IF E RW_THEN ELSE 
-( 36)  E	: _ O_BRAQ LIST C_BRAQ 
-( 37)  E	: _ O_PAR LIST C_PAR 
+( 22)  BEHAVIOR	: S_PATTERN IDENTIFIER O_PAR PATTERNS C_PAR ASSIG_S _ E SEMICOLON 
+( 32)  E	: _ RW_LET ASSIG RW_IN E 
+( 33)  E	: _ E RW_WHERE ASSIG 
+( 34)  E	: _ RW_IF E RW_THEN ELSE 
+( 35)  E	: _ O_BRAQ LIST C_BRAQ 
+( 36)  E	: _ O_PAR LIST C_PAR 
+( 37)  E	: _ OP 
 ( 38)  E	: _ IDENTIFIER 
 ( 39)  E	: _ LITERAL 
-( 44)  LITERAL	: _ LIT_CHR 
-( 45)  LITERAL	: _ LIT_INT 
-( 46)  LITERAL	: _ LIT_STR 
+( 44)  OP	: _ AND_S 
+( 45)  OP	: _ OR_S 
+( 46)  OP	: _ NOT_S 
+( 47)  OP	: _ RELOP 
+( 48)  OP	: _ PLUS 
+( 49)  OP	: _ SUB 
+( 50)  OP	: _ MULT 
+( 51)  OP	: _ DIV 
+( 52)  OP	: _ MOD_OP 
+( 53)  LITERAL	: _ CHR_LIT 
+( 54)  LITERAL	: _ INT_LIT 
+( 55)  LITERAL	: _ STR_LIT 
 
 
-	LITERAL 	goto  20
-	E 	goto  94
- 	O_PAR 	shift  16
- 	O_BRAQ 	shift  19
- 	RW_LET 	shift  17
- 	RW_IF 	shift  18
- 	IDENTIFIER 	shift  33
- 	LIT_CHR 	shift  21
- 	LIT_INT 	shift  22
- 	LIT_STR 	shift  23
+	LITERAL 	goto  21
+	OP 	goto  20
+	E 	goto  102
+ 	O_PAR 	shift  19
+ 	O_BRAQ 	shift  18
+ 	RW_LET 	shift  16
+ 	RW_IF 	shift  17
+ 	IDENTIFIER 	shift  45
+ 	CHR_LIT 	shift  31
+ 	INT_LIT 	shift  32
+ 	STR_LIT 	shift  33
+ 	AND_S 	shift  22
+ 	OR_S 	shift  23
+ 	NOT_S 	shift  24
+ 	RELOP 	shift  25
+ 	PLUS 	shift  26
+ 	SUB 	shift  27
+ 	MULT 	shift  28
+ 	DIV 	shift  29
+ 	MOD_OP 	shift  30
  	default 	error
 ------------------
-State  83
+State  91
 
 Kernel
 ( 24)  PATTERNS	: PATTERNS COMMA PATTERN _ 
@@ -1429,7 +1708,7 @@ Closure
 
  	default 	reduce  24
 ------------------
-State  84
+State  92
 
 Kernel
 ( 27)  PATTERN	: IDENTIFIER CONC PATTERN _ 
@@ -1440,7 +1719,7 @@ Closure
 
  	default 	reduce  27
 ------------------
-State  85
+State  93
 
 Kernel
 ( 28)  PATTERN	: E_PATTERN CONC PATTERN _ 
@@ -1451,7 +1730,7 @@ Closure
 
  	default 	reduce  28
 ------------------
-State  86
+State  94
 
 Kernel
 ( 12)  DERIVATIONS	: E DERIVATOR DERIVATIONS _ 
@@ -1462,7 +1741,7 @@ Closure
 
  	default 	reduce  12
 ------------------
-State  87
+State  95
 
 Kernel
 ( 18)  TYPE	: TYPE CART_PROD IDENTIFIER _ 
@@ -1473,7 +1752,7 @@ Closure
 
  	default 	reduce  18
 ------------------
-State  88
+State  96
 
 Kernel
 ( 15)  OPERATOR	: OPERATOR ARROW TYPE _ 
@@ -1484,10 +1763,10 @@ Closure
 ( 18)  TYPE	: TYPE _ CART_PROD IDENTIFIER 
 
 
- 	CART_PROD 	shift  74
+ 	CART_PROD 	shift  82
  	default 	reduce  15
 ------------------
-State  89
+State  97
 
 Kernel
 ( 19)  TYPE	: O_PAR TYPE C_PAR _ 
@@ -1498,7 +1777,7 @@ Closure
 
  	default 	reduce  19
 ------------------
-State  90
+State  98
 
 Kernel
 ( 16)  OPERATOR	: O_PAR OPERATOR O_PAR _ 
@@ -1509,7 +1788,7 @@ Closure
 
  	default 	reduce  16
 ------------------
-State  91
+State  99
 
 Kernel
 ( 20)  TYPE	: O_BRAQ TYPE O_BRAQ _ 
@@ -1520,7 +1799,7 @@ Closure
 
  	default 	reduce  20
 ------------------
-State  92
+State  100
 
 Kernel
 ( 18)  TYPE	: TYPE _ CART_PROD IDENTIFIER 
@@ -1531,11 +1810,11 @@ Closure
 ( 19)  TYPE	: O_PAR TYPE _ C_PAR 
 
 
- 	CART_PROD 	shift  74
- 	C_PAR 	shift  89
+ 	CART_PROD 	shift  82
+ 	C_PAR 	shift  97
  	default 	error
 ------------------
-State  93
+State  101
 
 Kernel
 ( 41)  ELSE	: IDENTIFIER RW_ELSE IDENTIFIER _ 
@@ -1546,28 +1825,28 @@ Closure
 
  	default 	reduce  41
 ------------------
-State  94
+State  102
 
 Kernel
-( 22)  BEHAVIOR	: S_PATTERN IDENTIFIER O_PAR PATTERNS C_PAR S_ASSIG E _ SEMICOLON 
-( 34)  E	: E _ RW_WHERE ASSIG 
+( 22)  BEHAVIOR	: S_PATTERN IDENTIFIER O_PAR PATTERNS C_PAR ASSIG_S E _ SEMICOLON 
+( 33)  E	: E _ RW_WHERE ASSIG 
 
 Closure
-( 22)  BEHAVIOR	: S_PATTERN IDENTIFIER O_PAR PATTERNS C_PAR S_ASSIG E _ SEMICOLON 
-( 34)  E	: E _ RW_WHERE ASSIG 
+( 22)  BEHAVIOR	: S_PATTERN IDENTIFIER O_PAR PATTERNS C_PAR ASSIG_S E _ SEMICOLON 
+( 33)  E	: E _ RW_WHERE ASSIG 
 
 
- 	SEMICOLON 	shift  95
- 	RW_WHERE 	shift  27
+ 	SEMICOLON 	shift  103
+ 	RW_WHERE 	shift  37
  	default 	error
 ------------------
-State  95
+State  103
 
 Kernel
-( 22)  BEHAVIOR	: S_PATTERN IDENTIFIER O_PAR PATTERNS C_PAR S_ASSIG E SEMICOLON _ 
+( 22)  BEHAVIOR	: S_PATTERN IDENTIFIER O_PAR PATTERNS C_PAR ASSIG_S E SEMICOLON _ 
 
 Closure
-( 22)  BEHAVIOR	: S_PATTERN IDENTIFIER O_PAR PATTERNS C_PAR S_ASSIG E SEMICOLON _ 
+( 22)  BEHAVIOR	: S_PATTERN IDENTIFIER O_PAR PATTERNS C_PAR ASSIG_S E SEMICOLON _ 
 
 
  	default 	reduce  22

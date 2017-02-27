@@ -1,6 +1,6 @@
 #!/bin/bash
 cp -R $1.l AYACCNAT/
-./AYACCNAT/ayacc $1 off off on on
+./AYACCNAT/ayacc $1.y off off on on
 
 rm -rf Result
 mkdir Result

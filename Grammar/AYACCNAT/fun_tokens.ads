@@ -2,7 +2,7 @@ package Fun_Tokens is
 
     YYLVal, YYVal : YYSType; 
     type Token is
-        (End_Of_Input, Error, Colon, S_Assig,
+        (End_Of_Input, Error, Colon, Assig_S,
          Derivator, Arrow, Lambda,
          Cart_Prod, S_Pattern, Conc,
          E_Pattern, O_Par, C_Par,
@@ -10,8 +10,8 @@ package Fun_Tokens is
          Comma, Rw_Dec, Rw_Let,
          Rw_In, Rw_Where, Rw_If,
          Rw_Then, Rw_Else, Rw_Data,
-         Rw_Type, Identifier, Lit_Chr,
-         Lit_Int, Lit_Str, And_S,
+         Rw_Type, Identifier, Chr_Lit,
+         Int_Lit, Str_Lit, And_S,
          Or_S, Not_S, Relop,
          Plus, Sub, Mult,
          Div, Mod_Op );
