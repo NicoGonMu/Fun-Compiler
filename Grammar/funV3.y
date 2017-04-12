@@ -27,15 +27,13 @@
 %token int_lit
 %token str_lit
 
-%left rw_where
-%left rw_in
 %left assig_s
 %left and_s
 %left or_s
 %left not_s
 %nonassoc relop
 %left plus sub
-%left mult div mod_op
+%left prod div mod_op
 
 
 %%
@@ -72,84 +70,102 @@ TYPE_DECL:
 
 ALTS:
      ALT                {}
-  |  ALT derivator ALTS {}
+  |  ALTS derivator ALT {}
   ;
 
 ALT:
-     identifier			{}
-  |  identifier o_par LID c_par {}
+     identifier		 {}
+  |  identifier ALT_COMP {}
   ;
 
+ALT_COMP:
+     o_par COMP_L c_par {}
+  |
+  ;
+
+COMP_L:
+     ALT
+  |  COMP_L comma ALT
+  ;
 
 FUNC_DECL:
-     rw_dec identifier colon TYPE_EXP semicolon {}
+     rw_dec identifier colon FORM_PARAM arrow FORM_PARAM semicolon {}
   ;
 
-TYPE_EXP:
-     TYPE		  {}
-  |  TYPE_EXP arrow TYPE  {}
-  |  o_par TYPE_EXP c_par {}
+FORM_PARM:
+     FORM_PARAM_L	  {}
+  |  			  {}
   ;
 
-TYPE:
-     identifier		       {}
-  |  TYPE cart_prod identifier {}
-  |  o_braq identifier o_braq  {}
+FORM_PARAM_L:
+     FORM_PARAM		       	       {}
+  |  FORM_PARAM_L cart_prod FORM_PARAM {}
+  ;
+
+FORM_PARAM:
+     ALT
+  |  o_par ALT arrow ALT c_par
   ;
 
 EQUATION:
-     s_pattern identifier o_par LPATTERNS c_par assig_s E semicolon {}
-  ;
-
-LPATTERNS:
-     PATTERN                 {}
-  |  LPATTERNS comma PATTERN {}
+     s_pattern identifier PATTERN assig_s E semicolon {}
   ;
 
 PATTERN:
-     identifier              {}
-  |  e_pattern               {}
-  |  PATTERN conc identifier {}
-  |  PATTERN conc e_pattern  {} 
+     o_par LMODELS c_par
+  |
   ;
 
+LMODELS:
+     LMODELS comma MODEL
+  |  MODEL
+  ;
 
-E:   
-     rw_let ASSIG rw_in E    {}	
-  |  E rw_where ASSIG	     {}     
-  |  rw_if E rw_then ELSE    {}
-  |  o_braq LIST c_braq	     {}
-  |  o_par LIST c_par	     {}
-  |  OP			     {}
+MODEL:
+     ALT
+  |  MODEL conc ALT
+  ;
+
+E:
+     o_par E c_par       
+  |  E plus E		     {}
+  |  E sub E		     {}
+  |  E prod E		     {}
+  |  E div E		     {}
+  |  E mod_op E		     {}
+  |  E and_s E		     {}
+  |  E or_s E		     {}
+  |  not_s E		     {}
+  |  sub E		     {}
+  |  E relop E		     {}
+  |  COND		     {}
+  |  LIST_E		     {}
+  |  NPLE		     {}
   |  identifier		     {}
   |  LITERAL		     {}
+  |  ALT		     {}
   ;
 
-ASSIG:
-     identifier assig_s E {}
+COND:
+     rw_if E rw_then ELSE {}
   ;
-
 
 ELSE:
      identifier			   {}
   |  identifier rw_else identifier {}
   ;
 
-LIST:
-     E	     	  {}
-  |  LIST comma E {}
+NPLE:
+     o_par LIST c_par {}
   ;
 
-OP:
-     and_s	{}
-  |  or_s	{}
-  |  not_s	{}
-  |  relop	{}
-  |  plus	{}
-  |  sub	{}
-  |  mult	{}
-  |  div	{}
-  |  mod_op	{}     
+LIST:
+     LIST comma E {}
+  |  E            {}
+  ;
+
+LIST_E:
+     o_braq LIST c_braq {}
   ;
 
 LITERAL:

@@ -1,0 +1,34 @@
+[GENERATED OBJECT FILE]
+b__fun.o
+[PROJECT FILES]
+/home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/fun.gpr
+20170216182631
+[BOUND OBJECT FILES]
+/home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/obj/decls.o
+/home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/obj/decls-general_defs.o
+/home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/obj/decls-d_description.o
+/home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/obj/decls-d_names_table.o
+/home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/obj/decls-d_symbol_table.o
+/home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/obj/decls-d_tree.o
+/home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/obj/fun_dfa.o
+/home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/obj/fun_goto.o
+/home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/obj/fun_io.o
+/home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/obj/fun_shift_reduce.o
+/home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/obj/fun_tokens.o
+/home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/obj/semantic.o
+/home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/obj/semantic-c_tree.o
+/home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/obj/lexical_a.o
+/home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/obj/syntactic_a.o
+/home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/obj/fun.o
+[GENERATED SOURCE FILES]
+b__fun.ads
+b__fun.adb
+b__fun.ali
+[RESULTING OPTIONS]
+-L/home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/obj/
+-L/home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/obj/
+-L/usr/gnat/lib/gcc/x86_64-pc-linux-gnu/4.9.4/adalib/
+-static
+-static-libgcc
+/usr/gnat/lib/gcc/x86_64-pc-linux-gnu/4.9.4/adalib/libgnat.a
+-ldl

@@ -1,6 +1,6 @@
 
-with fun_io, fun_dfa, decls.general_defs, semantic.tree_c;
-use fun_io, fun_dfa, decls.general_defs, semantic.tree_c;
+with fun_io, fun_dfa, decls.general_defs, semantic.c_tree;
+use fun_io, fun_dfa, decls.general_defs, semantic.c_tree;
 package body lexical_a is
   function pos return position is
     p: position;
@@ -24,21 +24,20 @@ subtype short is integer range -32768..32767;
 
 -- returned upon end-of-file
 YY_END_TOK : constant integer := 0;
-YY_END_OF_BUFFER : constant := 49;
+YY_END_OF_BUFFER : constant := 43;
 subtype yy_state_type is integer;
 yy_current_state : yy_state_type;
 INITIAL : constant := 0;
-yy_accept : constant array(0..85) of short :=
+yy_accept : constant array(0..71) of short :=
     (   0,
-       41,   41,   49,   47,   45,   46,   38,   47,    6,   20,
-       47,   47,   21,   22,   17,   16,   26,   18,   19,   41,
-        1,   25,   10,   14,   12,   39,   23,    5,   24,    9,
-       39,   39,   39,   39,   39,   39,   37,   45,    0,   43,
-       36,    0,    3,   44,    4,   15,   41,    0,    8,    2,
-       11,   13,   39,    0,   39,   39,   39,   31,   29,   39,
-       39,   39,   39,   40,   44,    7,   41,    0,   39,   27,
-       39,   28,   39,   39,   39,   41,    0,   34,   33,   32,
-       35,   39,   42,   30,    0
+       35,   35,   43,   41,   39,   40,   32,   41,    5,   18,
+       41,   41,   19,   20,   15,   14,   24,   16,   17,   35,
+        1,   23,    8,   12,   10,   33,   21,   22,   33,   33,
+       33,   33,   31,   39,    0,   37,   30,    0,    3,   38,
+        4,   13,   35,    0,    7,    2,    9,   11,   33,    0,
+       33,   33,   33,   26,   33,   34,   38,    6,   35,    0,
+       33,   25,   33,   33,   35,    0,   29,   28,   27,   36,
+        0
     ) ;
 
 yy_ec : constant array(ASCII.NUL..ASCII.DEL) of short :=
@@ -52,94 +51,83 @@ yy_ec : constant array(ASCII.NUL..ASCII.DEL) of short :=
        23,   24,    8,    8,   25,   25,   25,   25,   25,   25,
        25,   25,   25,   25,   25,   25,   25,   25,   25,   25,
        25,   25,   25,   25,   25,   25,   25,   25,   25,   25,
-       26,   27,   28,    8,   29,    8,   30,   25,   31,   32,
+       26,    8,   27,    8,   28,    8,   29,   25,   30,   31,
 
-       33,   34,   25,   35,   36,   25,   25,   37,   25,   38,
-       25,   39,   25,   40,   41,   42,   25,   25,   43,   25,
-       44,   25,    8,   45,    8,    8,    1
+       32,   33,   25,   34,   35,   25,   25,   36,   25,   37,
+       25,   25,   25,   25,   38,   39,   25,   25,   25,   25,
+       25,   25,    8,   40,    8,    8,    1
     ) ;
 
-yy_meta : constant array(0..45) of short :=
+yy_meta : constant array(0..40) of short :=
     (   0,
         1,    1,    2,    3,    3,    3,    3,    3,    3,    3,
         3,    3,    3,    3,    3,    3,    3,    3,    4,    3,
-        3,    3,    3,    3,    4,    3,    3,    3,    4,    4,
-        4,    4,    4,    4,    4,    4,    4,    4,    4,    4,
-        4,    4,    4,    4,    3
+        3,    3,    3,    3,    4,    3,    3,    4,    4,    4,
+        4,    4,    4,    4,    4,    4,    4,    4,    4,    3
     ) ;
 
-yy_base : constant array(0..89) of short :=
+yy_base : constant array(0..75) of short :=
     (   0,
-        0,    0,  136,  137,   44,  137,  137,  129,  137,  137,
-      124,    0,  137,  137,  137,  118,  137,   30,  109,   30,
-       30,  137,  108,  137,  107,  100,  137,  137,  137,  137,
-       22,   27,   28,   32,   34,   38,  137,   56,  122,  121,
-      137,  115,  137,  108,  137,  137,   51,  105,  137,  137,
-      137,  137,   94,   93,   39,   43,   42,   92,   91,   46,
-       53,   48,   56,  137,    0,    0,   65,  100,   61,   89,
-       63,   88,   64,   66,   68,   95,   88,   77,   76,   74,
-       72,   71,   69,   50,  137,  106,  108,   72,  112
+        0,    0,  109,  110,   39,  110,  110,  102,  110,  110,
+       97,    0,  110,  110,  110,   91,  110,   25,   82,   25,
+       25,  110,   81,  110,   80,   74,  110,  110,   18,   23,
+       24,   26,  110,   54,   95,   94,  110,   88,  110,   81,
+      110,  110,   36,   78,  110,  110,  110,  110,   68,   67,
+       33,   35,   38,   66,   39,  110,    0,    0,   49,   74,
+       41,   64,   46,   45,   72,   69,   53,   52,   51,   47,
+      110,   80,   82,   58,   86
     ) ;
 
-yy_def : constant array(0..89) of short :=
+yy_def : constant array(0..75) of short :=
     (   0,
-       85,    1,   85,   85,   85,   85,   85,   86,   85,   85,
-       85,   87,   85,   85,   85,   85,   85,   85,   85,   85,
-       85,   85,   85,   85,   85,   88,   85,   85,   85,   85,
-       88,   88,   88,   88,   88,   88,   85,   85,   86,   85,
-       85,   85,   85,   89,   85,   85,   85,   85,   85,   85,
-       85,   85,   88,   88,   88,   88,   88,   88,   88,   88,
-       88,   88,   88,   85,   89,   89,   85,   85,   88,   88,
-       88,   88,   88,   88,   88,   85,   85,   88,   88,   88,
-       88,   88,   85,   88,    0,   85,   85,   85,   85
+       71,    1,   71,   71,   71,   71,   71,   72,   71,   71,
+       71,   73,   71,   71,   71,   71,   71,   71,   71,   71,
+       71,   71,   71,   71,   71,   74,   71,   71,   74,   74,
+       74,   74,   71,   71,   72,   71,   71,   71,   71,   75,
+       71,   71,   71,   71,   71,   71,   71,   71,   74,   74,
+       74,   74,   74,   74,   74,   71,   75,   75,   71,   71,
+       74,   74,   74,   74,   71,   71,   74,   74,   74,   71,
+        0,   71,   71,   71,   71
     ) ;
 
-yy_nxt : constant array(0..182) of short :=
+yy_nxt : constant array(0..150) of short :=
     (   0,
         4,    5,    6,    5,    7,    8,    9,    4,   10,   11,
        12,   13,   14,   15,   16,   17,   18,   19,   20,   21,
-       22,   23,   24,   25,   26,   27,   28,   29,   30,   26,
-       26,   31,   32,   26,   26,   33,   34,   26,   26,   26,
-       26,   35,   36,   26,   37,   38,   44,   38,   47,   49,
-       54,   55,   50,   45,   56,   54,   54,   38,   48,   38,
-       54,   58,   54,   57,   60,   59,   54,   54,   61,   67,
-       54,   54,   63,   70,   54,   53,   54,   62,   54,   48,
-       69,   54,   71,   76,   54,   73,   74,   72,   75,   54,
-       78,   54,   54,   48,   54,   79,   54,   48,   81,   54,
+       22,   23,   24,   25,   26,   27,   28,    4,   26,   26,
+       29,   30,   26,   26,   31,   26,   26,   26,   32,   33,
+       34,   40,   34,   43,   45,   50,   51,   46,   41,   52,
+       50,   50,   44,   50,   59,   34,   54,   34,   53,   55,
+       50,   49,   50,   44,   62,   50,   50,   65,   50,   67,
+       64,   61,   50,   50,   44,   63,   44,   68,   50,   50,
+       50,   69,   35,   35,   38,   38,   57,   70,   57,   57,
+       65,   50,   66,   50,   71,   50,   60,   58,   56,   35,
 
-       54,   80,   54,   84,   54,   54,   83,   82,   39,   39,
-       42,   42,   65,   76,   65,   65,   54,   54,   77,   54,
-       54,   85,   54,   68,   66,   64,   39,   40,   54,   52,
-       51,   46,   43,   41,   40,   85,    3,   85,   85,   85,
-       85,   85,   85,   85,   85,   85,   85,   85,   85,   85,
-       85,   85,   85,   85,   85,   85,   85,   85,   85,   85,
-       85,   85,   85,   85,   85,   85,   85,   85,   85,   85,
-       85,   85,   85,   85,   85,   85,   85,   85,   85,   85,
-       85,   85
+       36,   50,   48,   47,   42,   39,   37,   36,   71,    3,
+       71,   71,   71,   71,   71,   71,   71,   71,   71,   71,
+       71,   71,   71,   71,   71,   71,   71,   71,   71,   71,
+       71,   71,   71,   71,   71,   71,   71,   71,   71,   71,
+       71,   71,   71,   71,   71,   71,   71,   71,   71,   71
     ) ;
 
-yy_chk : constant array(0..182) of short :=
+yy_chk : constant array(0..150) of short :=
     (   0,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
-        1,    1,    1,    1,    1,    5,   18,    5,   20,   21,
-       31,   31,   21,   18,   31,   32,   33,   38,   20,   38,
-       34,   33,   35,   32,   34,   33,   36,   55,   35,   47,
-       57,   56,   36,   56,   60,   88,   62,   35,   84,   47,
-       55,   61,   57,   67,   63,   61,   62,   60,   63,   69,
-       69,   71,   73,   67,   74,   71,   75,   83,   74,   82,
+        5,   18,    5,   20,   21,   29,   29,   21,   18,   29,
+       30,   31,   20,   32,   43,   34,   31,   34,   30,   32,
+       51,   74,   52,   43,   52,   53,   55,   59,   61,   61,
+       55,   51,   64,   63,   70,   53,   59,   63,   69,   68,
+       67,   64,   72,   72,   73,   73,   75,   66,   75,   75,
+       65,   62,   60,   54,   50,   49,   44,   40,   38,   36,
 
-       81,   73,   80,   82,   79,   78,   77,   75,   86,   86,
-       87,   87,   89,   76,   89,   89,   72,   70,   68,   59,
-       58,   54,   53,   48,   44,   42,   40,   39,   26,   25,
-       23,   19,   16,   11,    8,    3,   85,   85,   85,   85,
-       85,   85,   85,   85,   85,   85,   85,   85,   85,   85,
-       85,   85,   85,   85,   85,   85,   85,   85,   85,   85,
-       85,   85,   85,   85,   85,   85,   85,   85,   85,   85,
-       85,   85,   85,   85,   85,   85,   85,   85,   85,   85,
-       85,   85
+       35,   26,   25,   23,   19,   16,   11,    8,    3,   71,
+       71,   71,   71,   71,   71,   71,   71,   71,   71,   71,
+       71,   71,   71,   71,   71,   71,   71,   71,   71,   71,
+       71,   71,   71,   71,   71,   71,   71,   71,   71,   71,
+       71,   71,   71,   71,   71,   71,   71,   71,   71,   71
     ) ;
 
 
@@ -200,7 +188,7 @@ begin
 	end if;
 	while ( yy_chk(yy_base(yy_current_state) + yy_c) /= yy_current_state ) loop
 	    yy_current_state := yy_def(yy_current_state);
-	    if ( yy_current_state >= 86 ) then
+	    if ( yy_current_state >= 72 ) then
 		yy_c := yy_meta(yy_c);
 	    end if;
 	end loop;
@@ -285,13 +273,13 @@ begin -- of YYLex
 		end if;
 		while ( yy_chk(yy_base(yy_current_state) + yy_c) /= yy_current_state ) loop
 		    yy_current_state := yy_def(yy_current_state);
-		    if ( yy_current_state >= 86 ) then
+		    if ( yy_current_state >= 72 ) then
 			yy_c := yy_meta(yy_c);
 		    end if;
 		end loop;
 		yy_current_state := yy_nxt(yy_base(yy_current_state) + yy_c);
 	    yy_cp := yy_cp + 1;
-if ( yy_current_state = 85 ) then
+if ( yy_current_state = 71 ) then
     exit;
 end if;
 	end loop;
@@ -336,237 +324,207 @@ end if;
 
 when 1 => 
 --# line 8 "fun.l"
-rl_atom(YYlval, pos);
+lr_atom(YYlval, pos);
 	return colon;
 
 when 2 => 
 --# line 10 "fun.l"
-rl_assig(YYlval, pos);
+lr_atom(YYlval, pos);
 	return assig_s;
 
 when 3 => 
 --# line 12 "fun.l"
-rl_derivator(YYlval, pos);
+lr_atom(YYlval, pos);
 	return derivator;
 
 when 4 => 
 --# line 14 "fun.l"
-rl_arrow(YYlval, pos);
+lr_atom(YYlval, pos);
 	return arrow;
 
 when 5 => 
 --# line 16 "fun.l"
-rl_lambda(YYlval, pos);
-	return lambda;
+lr_atom(YYlval, pos);
+	return cart_prod;
 
 when 6 => 
 --# line 18 "fun.l"
-rl_cart_prod(YYlval, pos);
-	return cart_prod;
+lr_atom(YYlval, pos);
+	return pattern_s;
 
 when 7 => 
 --# line 20 "fun.l"
-rl_pattern(YYlval, pos);
-	return pattern_s;
+lr_atom(YYlval, pos);
+	return conc;
 
 when 8 => 
 --# line 22 "fun.l"
-rl_conc(YYlval, pos);
-	return conc;
+lr_lt(YYlval, pos);
+	return relop;
 
 when 9 => 
 --# line 24 "fun.l"
-rl_e_pattern(YYlval, pos);
-	return e_pattern;
+lr_le(YYlval, pos);
+	return relop;
 
 when 10 => 
 --# line 26 "fun.l"
-rl_lt(YYlval, pos);
+lr_gt(YYlval, pos);
 	return relop;
 
 when 11 => 
 --# line 28 "fun.l"
-rl_le(YYlval, pos);
+lr_ge(YYlval, pos);
 	return relop;
 
 when 12 => 
 --# line 30 "fun.l"
-rl_gt(YYlval, pos);
+lr_eq(YYlval, pos);
 	return relop;
 
 when 13 => 
 --# line 32 "fun.l"
-rl_ge(YYlval, pos);
+lr_ne(YYlval, pos);
 	return relop;
 
 when 14 => 
 --# line 34 "fun.l"
-rl_equal(YYlval, pos);
-	return relop;
+lr_atom(YYlval, pos);
+	return plus;
 
 when 15 => 
 --# line 36 "fun.l"
-rl_ne(YYlval, pos);
-	return relop;
+lr_atom(YYlval, pos);
+	return prod;
 
 when 16 => 
 --# line 38 "fun.l"
-rl_atom(YYlval, pos);
-	return plus;
+lr_atom(YYlval, pos);
+	return sub;
 
 when 17 => 
 --# line 40 "fun.l"
-rl_atom(YYlval, pos);
-	return mult;
+lr_atom(YYlval, pos);
+	return div;
 
 when 18 => 
 --# line 42 "fun.l"
-rl_atom(YYlval, pos);
-	return sub;
+lr_atom(YYlval, pos);
+	return mod_op;
 
 when 19 => 
 --# line 44 "fun.l"
-rl_atom(YYlval, pos);
-	return div;
+lr_atom(YYlval, pos);
+	return o_par;
 
 when 20 => 
 --# line 46 "fun.l"
-rl_atom(YYlval, pos);
-	return mod_op;
+lr_atom(YYlval, pos);
+	return c_par;
 
 when 21 => 
 --# line 48 "fun.l"
-rl_atom(YYlval, pos);
-	return o_par;
+lr_atom(YYlval, pos);
+	return o_braq;
 
 when 22 => 
 --# line 50 "fun.l"
-rl_atom(YYlval, pos);
-	return c_par;
+lr_atom(YYlval, pos);
+	return c_braq;
 
 when 23 => 
 --# line 52 "fun.l"
-rl_atom(YYlval, pos);
-	return o_braq;
+lr_atom(YYlval, pos);
+	return semicolon;
 
 when 24 => 
 --# line 54 "fun.l"
-rl_atom(YYlval, pos);
-	return c_braq;
-
-when 25 => 
---# line 56 "fun.l"
-rl_atom(YYlval, pos);
-	return semicolon;
-
-when 26 => 
---# line 58 "fun.l"
-rl_atom(YYlval, pos);
+lr_atom(YYlval, pos);
 	return comma;
 
-when 27 => 
---# line 63 "fun.l"
-rl_atom(YYlval, pos);
+when 25 => 
+--# line 57 "fun.l"
+lr_atom(YYlval, pos);
 	return rw_dec;
 
+when 26 => 
+--# line 60 "fun.l"
+lr_atom(YYlval, pos);
+		return rw_if;
+
+when 27 => 
+--# line 62 "fun.l"
+lr_atom(YYlval, pos);
+		return rw_then;
+
 when 28 => 
---# line 65 "fun.l"
-rl_atom(YYlval, pos);
-	return rw_let;
+--# line 64 "fun.l"
+lr_atom(YYlval, pos);
+		return rw_else;
 
 when 29 => 
 --# line 67 "fun.l"
-rl_atom(YYlval, pos);
-	return rw_in;
+lr_atom(YYlval, pos);
+		return rw_data;
 
 when 30 => 
---# line 69 "fun.l"
-rl_atom(YYlval, pos);
-	return rw_where;
+--# line 70 "fun.l"
+lr_atom(YYlval, pos);
+		return and_s;
 
 when 31 => 
---# line 73 "fun.l"
-rl_atom(YYlval, pos);
-		return rw_if;
+--# line 72 "fun.l"
+lr_atom(YYlval, pos);
+		return or_s;
 
 when 32 => 
---# line 75 "fun.l"
-rl_atom(YYlval, pos);
-		return rw_then;
+--# line 74 "fun.l"
+lr_atom(YYlval, pos);
+		return not_s;
 
 when 33 => 
---# line 77 "fun.l"
-rl_atom(YYlval, pos);
-		return rw_else;
+--# line 78 "fun.l"
+lr_ident(YYlval, pos, YYText);
+							return identifier;
 
 when 34 => 
 --# line 80 "fun.l"
-rl_atom(YYlval, pos);
-		return rw_data;
+lr_lit_chr(YYlval, pos, YYText);
+							return chr_lit;
 
 when 35 => 
 --# line 82 "fun.l"
-rl_atom(YYlval, pos);
-		return rw_type;
+lr_lit_int(YYlval, pos, YYText);
+							return int_lit;
 
 when 36 => 
---# line 85 "fun.l"
-rl_atom(YYlval, pos);
-		return and_s;
+--# line 84 "fun.l"
+lr_lit_int(YYlval, pos, YYText);
+							return int_lit;
 
 when 37 => 
---# line 87 "fun.l"
-rl_atom(YYlval, pos);
-		return or_s;
-
-when 38 => 
---# line 89 "fun.l"
-rl_atom(YYlval, pos);
-		return not_s;
-
-when 39 => 
---# line 93 "fun.l"
-rl_ident(YYlval, pos, YYText);
-							return identifier;
-
-when 40 => 
---# line 95 "fun.l"
-rl_lit_car(YYlval, pos, YYText);
-							return chr_lit;
-
-when 41 => 
---# line 97 "fun.l"
-rl_lit_ent(YYlval, pos, YYText);
-							return int_lit;
-
-when 42 => 
---# line 99 "fun.l"
-rl_lit_ent(YYlval, pos, YYText);
-							return int_lit;
-
-when 43 => 
---# line 101 "fun.l"
-rl_lit_str(YYlval, pos, YYText);
+--# line 86 "fun.l"
+lr_lit_str(YYlval, pos, YYText);
 							return str_lit; 
 
-when 44 => 
---# line 103 "fun.l"
+when 38 => 
+--# line 88 "fun.l"
 null; 
 
-when 45 => 
---# line 104 "fun.l"
+when 39 => 
+--# line 89 "fun.l"
 null; 
 
-when 46 => 
---# line 105 "fun.l"
+when 40 => 
+--# line 90 "fun.l"
 null;
 
-when 47 => 
---# line 106 "fun.l"
+when 41 => 
+--# line 91 "fun.l"
 return Error;
 
-when 48 => 
---# line 108 "fun.l"
+when 42 => 
+--# line 93 "fun.l"
 ECHO;
 when YY_END_OF_BUFFER + INITIAL + 1 => 
     return End_Of_Input;
@@ -619,6 +577,6 @@ when YY_END_OF_BUFFER + INITIAL + 1 =>
             end case; -- case (yy_act)
         end loop; -- end of loop waiting for end of file
 end YYLex;
---# line 108 "fun.l"
+--# line 93 "fun.l"
 end lexical_a;
 

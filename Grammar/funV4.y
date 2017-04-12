@@ -2,11 +2,9 @@
 %token assig_s
 %token derivator
 %token arrow
-%token lambda
 %token cart_prod
 %token s_pattern
 %token conc
-%token e_pattern
 %token o_par
 %token c_par
 %token o_braq
@@ -14,9 +12,6 @@
 %token semicolon
 %token comma
 %token rw_dec
-%token rw_let
-%token rw_in
-%token rw_where
 %token rw_if
 %token rw_then
 %token rw_else
@@ -27,20 +22,18 @@
 %token int_lit
 %token str_lit
 
-%left rw_where
-%left rw_in
 %left assig_s
 %left and_s
 %left or_s
 %left not_s
 %nonassoc relop
 %left plus sub
-%left mult div mod_op
+%left prod div mod_op
 
 
 %%
 S:
-     DECLS {}
+     DECLS E {}
   ;
 
 DECLS:
@@ -61,8 +54,8 @@ TYPEVAR_DECL:
   ;
 
 LID:
-     identifier		  {}
-  |  LID comma identifier {}
+     LID comma identifier {}
+  |  identifier 	  {}
   ;
 
 
@@ -71,85 +64,101 @@ TYPE_DECL:
   ;
 
 ALTS:
-     ALT                {}
-  |  ALT derivator ALTS {}
+     FCALL                {}
+  |  ALTS derivator FCALL {}
   ;
 
-ALT:
-     identifier			{}
-  |  identifier o_par LID c_par {}
+FCALL:
+     identifier PARAMS {}
   ;
 
+PARAMS:
+     o_par EL c_par {}
+  |
+  ;
+
+EL:
+     E		{}
+  |  EL comma E {}
+  ;
 
 FUNC_DECL:
-     rw_dec identifier colon TYPE_EXP semicolon {}
+     rw_dec identifier colon FORM_PARAM arrow FORM_PARAM semicolon {}
   ;
 
-TYPE_EXP:
-     TYPE		  {}
-  |  TYPE_EXP arrow TYPE  {}
-  |  o_par TYPE_EXP c_par {}
+FORM_PARAM:
+     FORM_PARAM_L	  {}
+  |  			  {}
   ;
 
-TYPE:
-     identifier		       {}
-  |  TYPE cart_prod identifier {}
-  |  o_braq identifier o_braq  {}
+FORM_PARAM_L:
+     FP	       	       	       {}
+  |  FORM_PARAM_L cart_prod FP {}
+  ;
+
+FP:
+     FCALL                         {}
+  |  o_par FCALL arrow FCALL c_par {}
   ;
 
 EQUATION:
-     s_pattern identifier o_par LPATTERNS c_par assig_s E semicolon {}
-  ;
-
-LPATTERNS:
-     PATTERN                 {}
-  |  LPATTERNS comma PATTERN {}
+     s_pattern identifier PATTERN assig_s E semicolon {}
   ;
 
 PATTERN:
-     identifier              {}
-  |  e_pattern               {}
-  |  PATTERN conc identifier {}
-  |  PATTERN conc e_pattern  {} 
+     o_par LMODELS c_par {}
+  |			 {}
   ;
 
+LMODELS:
+     LMODELS comma MODEL {}
+  |  MODEL		 {}
+  ;
 
-E:   
-     rw_let ASSIG rw_in E    {}	
-  |  E rw_where ASSIG	     {}     
-  |  rw_if E rw_then ELSE    {}
-  |  o_braq LIST c_braq	     {}
-  |  o_par LIST c_par	     {}
-  |  OP			     {}
-  |  identifier		     {}
+MODEL:
+     E
+  |  MODEL conc E
+  ;
+
+E:
+     o_par E c_par       
+  |  E plus E		     {}
+  |  E sub E		     {}
+  |  E prod E		     {}
+  |  E div E		     {}
+  |  E mod_op E		     {}
+  |  E and_s E		     {}
+  |  E or_s E		     {}
+  |  not_s E		     {}
+  |  sub E		     {}
+  |  E relop E		     {}
+  |  COND		     {}
+  |  LIST_E		     {}
+  |  NPLE		     {}
   |  LITERAL		     {}
+  |  FCALL		     {}
   ;
 
-ASSIG:
-     identifier assig_s E {}
+COND:
+     rw_if E rw_then ELSE {}
   ;
-
 
 ELSE:
      identifier			   {}
   |  identifier rw_else identifier {}
   ;
 
-LIST:
-     E	     	  {}
-  |  LIST comma E {}
+NPLE:
+     o_par LIST c_par {}
   ;
 
-OP:
-     and_s	{}
-  |  or_s	{}
-  |  not_s	{}
-  |  relop	{}
-  |  plus	{}
-  |  sub	{}
-  |  mult	{}
-  |  div	{}
-  |  mod_op	{}     
+LIST:
+     LIST comma E {}
+  |  E            {}
+  ;
+
+LIST_E:
+     o_braq LIST c_braq {}
   ;
 
 LITERAL:

@@ -1,0 +1,58 @@
+<?xml version="1.0"?>
+<Locations >
+  <Project>
+    <vfs_file>/home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/fun.gpr</vfs_file>
+    <file_marker column=" 9" line=" 176" >
+      <vfs_project>/home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/fun.gpr</vfs_project>
+      <vfs_file>/home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/src/semantic-type_checking.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 41" line=" 184" >
+      <vfs_project>/home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/fun.gpr</vfs_project>
+      <vfs_file>/home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/src/semantic-c_tree.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 70" line=" 19" >
+      <vfs_project>/home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/fun.gpr</vfs_project>
+      <vfs_file>/home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/src/decls-d_tree.ads</vfs_file>
+    </file_marker>
+    <file_marker column=" 26" line=" 15" >
+      <vfs_project>/home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/fun.gpr</vfs_project>
+      <vfs_file>/home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/src/decls-d_description.ads</vfs_file>
+    </file_marker>
+    <file_marker column=" 25" line=" 2" >
+      <vfs_project>/home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/fun.gpr</vfs_project>
+      <vfs_file>/home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/src/semantic.ads</vfs_file>
+    </file_marker>
+    <file_marker column=" 8" line=" 62" >
+      <vfs_project>/home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/fun.gpr</vfs_project>
+      <vfs_file>/home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/src/decls-d_names_table.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 14" line=" 9" >
+      <vfs_project>/home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/fun.gpr</vfs_project>
+      <vfs_file>/home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/src/decls-d_names_table.ads</vfs_file>
+    </file_marker>
+    <file_marker column=" 31" line=" 2" >
+      <vfs_project>/home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/fun.gpr</vfs_project>
+      <vfs_file>/home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/src/semantic-type_checking.ads</vfs_file>
+    </file_marker>
+    <file_marker column=" 1" line=" 3" >
+      <vfs_project>/home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/fun.gpr</vfs_project>
+      <vfs_file>/home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/src/decls-d_symbol_table.ads</vfs_file>
+    </file_marker>
+    <file_marker column=" 39" line=" 25" >
+      <vfs_project>/home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/fun.gpr</vfs_project>
+      <vfs_file>/home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/src/decls-general_defs.ads</vfs_file>
+    </file_marker>
+    <file_marker column=" 20" line=" 8" >
+      <vfs_project>/home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/fun.gpr</vfs_project>
+      <vfs_file>/home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/src/semantic.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 1" line=" 1" >
+      <vfs_project>/home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/fun.gpr</vfs_project>
+      <vfs_file>/home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/src/semantic-type_checking.adb</vfs_file>
+    </file_marker>
+    <file_marker current="true" column=" 1" line=" 1" >
+      <vfs_project>/home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/fun.gpr</vfs_project>
+      <vfs_file>/home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/src/decls-d_description.ads</vfs_file>
+    </file_marker>
+  </Project>
+</Locations>

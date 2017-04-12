@@ -21,7 +21,7 @@
 %token rw_then
 %token rw_else
 %token rw_data
-%token rw_typevar
+%token rw_type
 %token identifier
 %token chr_lit
 %token int_lit
@@ -40,79 +40,80 @@
 
 %%
 S:
-     DECLS {}
+     DECL_PROG {}
   ;
 
-DECLS:
-     DECLS DECL {}
-  |  		{}
+DECL_PROG:
+     DECL      	    {}
+  |  DECL_PROG DECL {}
   ;
 
 DECL:
-     TYPEVAR_DECL {}
-  |  TYPE_DECL    {}
-  |  FUNC_DECL    {}
-  |  EQUATION     {}
+     DEF      {}
+  |  BEHAVIOR {}
+  |  SENT     {}
   ;
 
-
-TYPEVAR_DECL:
-     rw_typevar LID semicolon {}
+DEF: 
+     DATA_DEF {}
+  |  TYPE_DEF {}
+  |  FUNC_DEF {}
   ;
 
-LID:
-     identifier		  {}
-  |  LID comma identifier {}
+DATA_DEF:
+     rw_data identifier colon DERIVATIONS {}
   ;
 
-
-TYPE_DECL:
-     rw_data identifier colon ALTS semicolon {}
+DERIVATIONS:
+     E			     {}
+  |  E derivator DERIVATIONS {}
   ;
 
-ALTS:
-     ALT                {}
-  |  ALT derivator ALTS {}
+TYPE_DEF:
+    rw_type identifier colon OPERATOR
   ;
 
-ALT:
-     identifier			{}
-  |  identifier o_par LID c_par {}
-  ;
-
-
-FUNC_DECL:
-     rw_dec identifier colon TYPE_EXP semicolon {}
-  ;
-
-TYPE_EXP:
-     TYPE		  {}
-  |  TYPE_EXP arrow TYPE  {}
-  |  o_par TYPE_EXP c_par {}
+OPERATOR:
+     TYPE 		  {}
+  |  OPERATOR arrow TYPE  {}
+  |  o_par OPERATOR o_par {}
   ;
 
 TYPE:
      identifier		       {}
   |  TYPE cart_prod identifier {}
-  |  o_braq identifier o_braq  {}
+  |  o_par  TYPE c_par	       {}
+  |  o_braq TYPE o_braq	       {}
   ;
 
-EQUATION:
-     s_pattern identifier o_par LPATTERNS c_par assig_s E semicolon {}
+FUNC_DEF:
+     rw_dec identifier colon OPERATOR semicolon {}
   ;
 
-LPATTERNS:
-     PATTERN                 {}
-  |  LPATTERNS comma PATTERN {}
+BEHAVIOR:
+     s_pattern identifier o_par PATTERNS c_par assig_s E semicolon {}
+  ;
+
+PATTERNS:
+     PATTERN                {}
+  |  PATTERNS comma PATTERN {}
   ;
 
 PATTERN:
      identifier              {}
   |  e_pattern               {}
-  |  PATTERN conc identifier {}
-  |  PATTERN conc e_pattern  {} 
+  |  identifier conc PATTERN {}
+  |  e_pattern  conc PATTERN {} 
   ;
 
+SENT:
+     ASSIG {}
+  |  E	   {}
+  ;
+
+ASSIG:
+     identifier assig_s E {}
+  ;
 
 E:   
      rw_let ASSIG rw_in E    {}	
@@ -124,11 +125,6 @@ E:
   |  identifier		     {}
   |  LITERAL		     {}
   ;
-
-ASSIG:
-     identifier assig_s E {}
-  ;
-
 
 ELSE:
      identifier			   {}
