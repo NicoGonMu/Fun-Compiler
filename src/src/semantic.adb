@@ -1,20 +1,23 @@
---with semantic.missatges, semantic.g_codi_int;
+with semantic.messages;--, semantic.g_codi_int;
 package body semantic is
 
-   procedure prepare (nom: in String) is
+   procedure prepare (fname: in String) is
    begin
+      --Prepare names table
       empty(nt);
       empty(st);
-      empty(altst);
+
       error := false;
 
-
       fn := 0;
---      nv := 0;
+
+      alt_id := 0;
+
+
 --      np := 0;
 --      ne := 0;
 --      prof := 0;
---      semantic.missatges.prepara_missatges(nom);
+      semantic.messages.prepare_messages(fname);
    end prepare;
 
 --   procedure conclou_analisi is

@@ -4,5 +4,21 @@ project Fun is
    for Object_Dir use "obj";
    for Main use ("fun.adb");
 
+   package Check is
+      for Default_Switches ("ada") use ("-d");
+   end Check;
+
+   package Builder is
+      for Default_Switches ("ada") use ("-g");
+   end Builder;
+
+   package Compiler is
+      for Default_Switches ("ada") use ("-g");
+   end Compiler;
+
+   package Linker is
+      for Default_Switches ("ada") use ("-g");
+   end Linker;
+
 end Fun;
 

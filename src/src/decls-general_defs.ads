@@ -1,10 +1,10 @@
 package decls.general_defs is
    -- Names table constants and types
-   max_id:       constant integer:= 550;
-   max_str: 	 constant integer:= 197;
+   max_id:       constant integer := 550;
+   max_str: 	 constant integer := 197;
 
-   max_long_id:  constant integer:= 89;
-   max_long_str: constant integer:= 97;
+   max_long_id:  constant integer := 89;
+   max_long_str: constant integer := 97;
 
    type name_id is new integer range 0..max_id;
    type str_id  is new integer range 0..max_str;
@@ -13,8 +13,18 @@ package decls.general_defs is
    null_str: constant str_id  := 0;
 
    -- Symbol table constants
-   max_ide: 	 constant integer:=100;
-   max_prof: 	 constant integer:=100;
+   max_ide: 	 constant integer := 100;
+   max_prof: 	 constant integer := 100;
+
+   -- Max number of variables
+   max_var: 	 constant integer := 1000;
+   -- Max number of functions
+   max_func: 	 constant integer := 200;
+   -- Max number of equations
+   max_eq: 	 constant integer := 600;
+
+   --Max number of generics appearing in an instance
+   max_gen:      constant integer := 20;
 
    type position is
       record
@@ -35,11 +45,10 @@ package decls.general_defs is
 
    --type tuple_type is array name_id of name_id;
 
-   subtype profundity is integer range -1..1;
+   subtype profundity is integer range -1..2;
+
 
    --Function identifier
-   type func_id is new natural;
-
-   type lambda_position is array (natural) of positive;
+   type func_id is new integer range 0..max_func;
 
 end decls.general_defs;

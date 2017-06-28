@@ -12,7 +12,8 @@ package body decls.d_symbol_table is
       end loop;
       pt(0) := 0;
       pt(1) := 0;
-      pr := 1;
+      pt(2) := 0;
+      pr := 0;
    end empty;
 
    procedure put(st: in out symbol_table; nid: in name_id; d: in description;
@@ -35,6 +36,29 @@ package body decls.d_symbol_table is
          dt(nid).succ := 0;
       end if;
    end put;
+
+   procedure putSub(st: in out symbol_table; nid: in name_id; d: in description;
+                    e: out boolean) is
+      dt: disp_table renames st.dt;
+      pr: profundity renames st.prof;
+      pt: prof_table renames st.pt;
+      et: expn_table renames st.et;
+      ie: natural;
+   begin
+      e := false;
+      pr := pr - 1;
+      if dt(nid).prof = pr then e := true; end if;
+      if not e then
+         ie := pt(pr); ie := ie + 1; pt(pr) := ie;
+         et(ie).prof := dt(nid).prof;
+         et(ie).desc := dt(nid).desc;
+         et(ie).id := nid;
+         dt(nid).prof := pr;
+         dt(nid).desc := d;
+         dt(nid).succ := 0;
+      end if;
+      pr := pr + 1;
+   end putSub;
 
    function cons(st: in symbol_table; id: in name_id) return description is
       dt: disp_table renames st.dt;

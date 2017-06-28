@@ -12,6 +12,7 @@ use lexical_a, syntactic_a, fun_dfa, fun_io, fun_tokens,
 procedure Fun is
    error: boolean renames semantic.error;
 begin
+   Put_Line("Compilation started...");
    open(Argument(1)&".fn");
    prepare(Argument(1));
    yyparse;
@@ -26,7 +27,7 @@ begin
    --   generacio_codi_ass(Argument(1));
    --end if;
    --m_finalitzat(error);
-
+   Put_Line("Successfully compiled");
 exception
       when Syntax_error => null;
 end Fun;

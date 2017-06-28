@@ -25,10 +25,11 @@ package decls.d_description is
             when null_d =>
                null;
             when vartype_d =>
-               tpos: natural;
+               --tpos: natural;
+               null;
             when type_d =>
                type_tree: pnode;
-
+               type_id: name_id;
             when var_d =>
                vpos:  natural;
                vtype: name_id;
@@ -38,6 +39,7 @@ package decls.d_description is
                cons_tree: pnode;
             when func_d =>
                fn_id: func_id;
+               fn_type: pnode;
          end case;
       end record;
 end decls.d_description;

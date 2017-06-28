@@ -10,11 +10,12 @@ subtype yystype is decls.d_tree.pnode;
          C_Par, O_Braq, C_Braq,
          Semicolon, Comma, Rw_Dec,
          Rw_If, Rw_Then, Rw_Else,
-         Rw_Data, Rw_Typevar, Identifier,
-         Chr_Lit, Int_Lit, Str_Lit,
-         And_S, Or_S, Not_S,
-         Relop, Plus, Sub,
-         Prod, Div, Mod_Op );
+         Rw_Type, Rw_Data, Rw_Typevar,
+         Identifier, Chr_Lit, Int_Lit,
+         Str_Lit, And_S, Or_S,
+         Not_S, Relop, Plus,
+         Sub, Prod, Div,
+         Mod_Op );
 
     Syntax_Error : exception;
 

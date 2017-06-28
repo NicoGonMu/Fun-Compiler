@@ -10,7 +10,7 @@ package body ada_main is
    E103 : Short_Integer; pragma Import (Ada, E103, "system__os_lib_E");
    E013 : Short_Integer; pragma Import (Ada, E013, "system__soft_links_E");
    E019 : Short_Integer; pragma Import (Ada, E019, "system__exception_table_E");
-   E135 : Short_Integer; pragma Import (Ada, E135, "ada__containers_E");
+   E134 : Short_Integer; pragma Import (Ada, E134, "ada__containers_E");
    E096 : Short_Integer; pragma Import (Ada, E096, "ada__io_exceptions_E");
    E049 : Short_Integer; pragma Import (Ada, E049, "ada__strings_E");
    E051 : Short_Integer; pragma Import (Ada, E051, "ada__strings__maps_E");
@@ -28,15 +28,18 @@ package body ada_main is
    E009 : Short_Integer; pragma Import (Ada, E009, "system__secondary_stack_E");
    E034 : Short_Integer; pragma Import (Ada, E034, "system__traceback__symbolic_E");
    E093 : Short_Integer; pragma Import (Ada, E093, "ada__text_io_E");
-   E132 : Short_Integer; pragma Import (Ada, E132, "decls__d_names_table_E");
-   E124 : Short_Integer; pragma Import (Ada, E124, "decls__d_symbol_table_E");
+   E131 : Short_Integer; pragma Import (Ada, E131, "decls__d_names_table_E");
+   E136 : Short_Integer; pragma Import (Ada, E136, "decls__d_symbol_table_E");
+   E147 : Short_Integer; pragma Import (Ada, E147, "decls__d_vtype_table_E");
    E108 : Short_Integer; pragma Import (Ada, E108, "fun_dfa_E");
    E110 : Short_Integer; pragma Import (Ada, E110, "fun_io_E");
    E120 : Short_Integer; pragma Import (Ada, E120, "fun_tokens_E");
-   E128 : Short_Integer; pragma Import (Ada, E128, "lexical_a_E");
-   E130 : Short_Integer; pragma Import (Ada, E130, "semantic_E");
-   E137 : Short_Integer; pragma Import (Ada, E137, "semantic__c_tree_E");
-   E143 : Short_Integer; pragma Import (Ada, E143, "syntactic_a_E");
+   E125 : Short_Integer; pragma Import (Ada, E125, "lexical_a_E");
+   E127 : Short_Integer; pragma Import (Ada, E127, "semantic_E");
+   E129 : Short_Integer; pragma Import (Ada, E129, "semantic__messages_E");
+   E139 : Short_Integer; pragma Import (Ada, E139, "semantic__c_tree_E");
+   E145 : Short_Integer; pragma Import (Ada, E145, "semantic__type_checking_E");
+   E149 : Short_Integer; pragma Import (Ada, E149, "syntactic_a_E");
 
    Local_Priority_Specific_Dispatching : constant String := "";
    Local_Interrupt_States : constant String := "";
@@ -154,7 +157,7 @@ package body ada_main is
       System.Exception_Table'Elab_Body;
       E019 := E019 + 1;
       Ada.Containers'Elab_Spec;
-      E135 := E135 + 1;
+      E134 := E134 + 1;
       Ada.Io_Exceptions'Elab_Spec;
       E096 := E096 + 1;
       Ada.Strings'Elab_Spec;
@@ -196,17 +199,24 @@ package body ada_main is
       Ada.Text_Io'Elab_Body;
       E093 := E093 + 1;
       decls.d_names_table'elab_spec;
-      E132 := E132 + 1;
-      E124 := E124 + 1;
+      E131 := E131 + 1;
+      E136 := E136 + 1;
+      decls.d_vtype_table'elab_spec;
+      E147 := E147 + 1;
       E108 := E108 + 1;
       fun_io'elab_spec;
       E110 := E110 + 1;
       Fun_Tokens'Elab_Spec;
       E120 := E120 + 1;
-      E130 := E130 + 1;
-      E137 := E137 + 1;
-      E128 := E128 + 1;
-      E143 := E143 + 1;
+      semantic'elab_spec;
+      semantic.messages'elab_spec;
+      E129 := E129 + 1;
+      E127 := E127 + 1;
+      E139 := E139 + 1;
+      E125 := E125 + 1;
+      semantic.type_checking'elab_spec;
+      E145 := E145 + 1;
+      E149 := E149 + 1;
    end adainit;
 
    procedure Ada_Main_Program;
@@ -244,18 +254,21 @@ package body ada_main is
 --  BEGIN Object file/option list
    --   /home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/obj/decls.o
    --   /home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/obj/decls-general_defs.o
-   --   /home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/obj/decls-d_description.o
    --   /home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/obj/decls-d_names_table.o
-   --   /home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/obj/decls-d_symbol_table.o
    --   /home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/obj/decls-d_tree.o
+   --   /home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/obj/decls-d_description.o
+   --   /home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/obj/decls-d_symbol_table.o
+   --   /home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/obj/decls-d_vtype_table.o
    --   /home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/obj/fun_dfa.o
    --   /home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/obj/fun_goto.o
    --   /home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/obj/fun_io.o
    --   /home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/obj/fun_shift_reduce.o
    --   /home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/obj/fun_tokens.o
+   --   /home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/obj/semantic-messages.o
    --   /home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/obj/semantic.o
    --   /home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/obj/semantic-c_tree.o
    --   /home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/obj/lexical_a.o
+   --   /home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/obj/semantic-type_checking.o
    --   /home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/obj/syntactic_a.o
    --   /home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/obj/fun.o
    --   -L/home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/obj/

@@ -15,12 +15,15 @@
 %token rw_if
 %token rw_then
 %token rw_else
-%token rw_data
+%token rw_type
 %token rw_typevar
 %token identifier
 %token chr_lit
 %token int_lit
 %token str_lit
+
+%left arrow
+%left cart_prod
 
 %left and_s
 %left or_s
@@ -55,7 +58,19 @@ DECL:
 
 
 TYPEVAR_DECL:
-     rw_typevar LID semicolon {sr_typevar($$, $2);}
+     rw_typevar LID TYPEDEF semicolon {sr_typevar($$, $2, $3);}
+  ;
+
+TYPEDEF:
+     colon DESC {sr_typedef($$, $1);}
+  |             {sr_typedef($$);}
+  ;
+
+DESC:
+    o_par DESC c_par    {sr_desc($$, $2);}
+  | DESC cart_prod DESC {sr_desc($$, $1, $3);}
+  | DESC arrow DESC     {sr_desc_func($$, $1, $3);}
+  | FCALL               {sr_desc_id($$, $1);}
   ;
 
 LID:
@@ -65,13 +80,12 @@ LID:
 
 
 TYPE_DECL:
-     rw_data identifier PARAMS colon ALTS semicolon {sr_type($$, $2, $3, $4);}
+     rw_type identifier PARAMS colon ALTS semicolon {sr_type($$, $2, $3, $5);}
   ;
 
 ALTS:
      FCALL                {sr_alts($$, $1);}
-     LIST_E               {sr_alts_list($$, $1);}
-  |  ALTS derivator ALTS  {sr_alts($$, $1, $3);}
+  |  ALTS derivator FCALL {sr_alts($$, $1, $3);}
   ;
 
 FCALL:
@@ -89,23 +103,9 @@ EL:
   ;
 
 FUNC_DECL:
-     rw_dec identifier colon FORM_PARAM arrow FORM_PARAM semicolon {sr_func($$, $2, $4, $6);}
+     rw_dec identifier colon DESC semicolon {sr_func($$, $2, $4);}
   ;
 
-FORM_PARAM:
-     FORM_PARAM_L	  {sr_fparam($$, $1);}
-  |  			  {sr_fparam($$);}
-  ;
-
-FORM_PARAM_L:
-     FP	       	       	       {sr_param_list($$, $1);}
-  |  FORM_PARAM_L cart_prod FP {sr_param_list($$, $1, $3);}
-  ;
-
-FP:
-     FCALL                         {sr_fp($$, $1);}
-  |  o_par FCALL arrow FCALL c_par {sr_fp($$, $2, $4);}
-  ;
 
 EQUATION:
      pattern_s identifier PATTERN assig_s E semicolon {sr_equation($$, $2, $3, $5);}

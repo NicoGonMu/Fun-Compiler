@@ -1,0 +1,73 @@
+//Test functions
+dec tuple_test: int # char;
+---tuple_test := (3, 'c');
+
+dec tuple_test2: char -> int # char;
+---tuple_test2(c) := (3, c);
+
+//dec tuple_test3: int # char;
+//---tuple_test3 := (3, c);
+
+
+//3.1 (p 51)
+typevar alpha, beta;
+dec map: (alpha -> beta) # list(alpha) -> list(beta);
+---map(f, nil) := nil;
+---map(f, x :: l) := f(x) :: map(f, l);
+
+dec reduce: (alpha # beta -> beta) # beta # list(alpha) -> beta;
+---reduce(f, b, nil) := b;
+---reduce(f, b, x :: l) := f(x, reduce(f, b, l));
+
+
+
+//3.4 (p 57, 58-9)
+data word: list(char);
+data tuple: word ++ int;
+dec Update: word # list(tuple) -> list(tuple);
+// ---Update(w, nil) := [ (w, 1) ];
+// ---Update(w, (Word, Count) :: Rest) :=
+// 	if w = Word 
+//  	then (Word, Count + 1) :: Rest
+// 	else (Word, Count) :: Update(w, Rest);
+
+
+data tree(alpha): empty ++ leaf(alpha) ++ node(tree(alpha), alpha, tree(alpha));
+
+type Ordering: (alpha # alpha -> bool);
+dec Treesort: list(alpha) # Ordering -> list(alpha);
+dec MakeTree: list(alpha) # Ordering -> tree(alpha);
+dec Flatten:  tree -> list(int);
+dec Insert:   alpha # tree(alpha) # Ordering -> tree(alpha);
+// ---Treesort(UnsList, TestFun) := Flatten (MakeTree(UnsList, TestFun));
+// dec lamda(alpha, beta, gamma): tree(alpha);
+// ---lambda(x, y, z) := Insert(x, y, z);
+// ---MakeTree(List, f) := reduce(lamda( ), empty, List);
+// ---Insert(n, empty, x) := leaf(n);
+// ---Insert(n, leaf(m), f) := if f(n, m) then node(empty, n, leaf(m)) else node(leaf(m), n, empty);
+// ---Insert(n, node(left, value, right), f) := if f(n, value) then node(Insert(n, left, f), value, //right) else node(left, value, Insert(n, right, f));
+// ---Flatten(empty)   := nil;
+// ---Flatten(leaf(n)) := [ n ];
+// ---Flatten(node(left, value, right)) := cons(Flatten(left), cons(value, Flatten(right)));
+
+
+//4.2 (p 66, 67, 69)
+dec form: int -> list(int);
+---form(x) := x :: form(x + 1);
+
+//dec from: int -> [int];
+// ---from(x) := x :: from(x + 1);
+
+
+//dec sum: int # [int] -> int;
+// ---sum(n, x :: l) := if n = 0 then 0 else x + sum(n - 1, l);
+
+
+//dec Sieve:  [int] -> [int];
+//dec Filter: int # [int] -> [int];
+// ---Filter(n, m :: l) := if (n % m) = 0
+//			then Filter(n, l)
+//			else m :: Filter(n, l);
+// ---Sieve(n::l) := n :: Sieve(Filter(n, l);
+
+1

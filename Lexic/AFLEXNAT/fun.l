@@ -66,6 +66,10 @@ else		{lr_atom(YYlval, pos);
 
 data 		{lr_atom(YYlval, pos);
 		return rw_data;}
+type 		{lr_atom(YYlval, pos);
+		return rw_type;}
+typevar		{lr_atom(YYlval, pos);
+		return rw_typevar;}
 
 "&&"		{lr_atom(YYlval, pos);
 		return and_s;}
@@ -85,7 +89,7 @@ data 		{lr_atom(YYlval, pos);
 							return int_lit;}
 \"({REPCHARNOQUO}|(\"\"))*\"				{lr_lit_str(YYlval, pos, YYText);
 							return str_lit;} 
-"--"[^\n]*				{null;} 
+"//"[^\n]*				{null;} 
 [ \t\r]+				{null;} 
 \n					{null;}
 .					{return Error;}

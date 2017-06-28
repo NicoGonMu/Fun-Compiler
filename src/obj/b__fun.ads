@@ -35,7 +35,7 @@ package ada_main is
    pragma Export (C, main, "main");
 
    type Version_32 is mod 2 ** 32;
-   u00001 : constant Version_32 := 16#c155b7f2#;
+   u00001 : constant Version_32 := 16#ee9734ba#;
    pragma Export (C, u00001, "funB");
    u00002 : constant Version_32 := 16#b6df930e#;
    pragma Export (C, u00002, "system__standard_libraryB");
@@ -273,66 +273,78 @@ package ada_main is
    pragma Export (C, u00118, "system__concat_2S");
    u00119 : constant Version_32 := 16#7dbbd31d#;
    pragma Export (C, u00119, "text_ioS");
-   u00120 : constant Version_32 := 16#b73bb594#;
+   u00120 : constant Version_32 := 16#6a82149a#;
    pragma Export (C, u00120, "fun_tokensS");
    u00121 : constant Version_32 := 16#5a629ca4#;
    pragma Export (C, u00121, "declsS");
-   u00122 : constant Version_32 := 16#ec9c8c72#;
+   u00122 : constant Version_32 := 16#330d1b0f#;
    pragma Export (C, u00122, "decls__d_treeS");
-   u00123 : constant Version_32 := 16#fd66b81d#;
-   pragma Export (C, u00123, "decls__d_symbol_tableB");
-   u00124 : constant Version_32 := 16#cf172d38#;
-   pragma Export (C, u00124, "decls__d_symbol_tableS");
-   u00125 : constant Version_32 := 16#336703c1#;
-   pragma Export (C, u00125, "decls__d_descriptionS");
-   u00126 : constant Version_32 := 16#1baaac05#;
-   pragma Export (C, u00126, "decls__general_defsS");
-   u00127 : constant Version_32 := 16#d9a819b1#;
-   pragma Export (C, u00127, "lexical_aB");
-   u00128 : constant Version_32 := 16#d9d36d1d#;
-   pragma Export (C, u00128, "lexical_aS");
-   u00129 : constant Version_32 := 16#24a1a406#;
-   pragma Export (C, u00129, "semanticB");
-   u00130 : constant Version_32 := 16#45565c31#;
-   pragma Export (C, u00130, "semanticS");
-   u00131 : constant Version_32 := 16#47e5afcb#;
-   pragma Export (C, u00131, "decls__d_names_tableB");
-   u00132 : constant Version_32 := 16#dc5ecba1#;
-   pragma Export (C, u00132, "decls__d_names_tableS");
-   u00133 : constant Version_32 := 16#75de1dee#;
-   pragma Export (C, u00133, "ada__strings__hashB");
-   u00134 : constant Version_32 := 16#3655ad4c#;
-   pragma Export (C, u00134, "ada__strings__hashS");
-   u00135 : constant Version_32 := 16#5e196e91#;
-   pragma Export (C, u00135, "ada__containersS");
-   u00136 : constant Version_32 := 16#53b16233#;
-   pragma Export (C, u00136, "semantic__c_treeB");
-   u00137 : constant Version_32 := 16#33a9302a#;
-   pragma Export (C, u00137, "semantic__c_treeS");
-   u00138 : constant Version_32 := 16#d763507a#;
-   pragma Export (C, u00138, "system__val_intB");
-   u00139 : constant Version_32 := 16#2b83eab5#;
-   pragma Export (C, u00139, "system__val_intS");
-   u00140 : constant Version_32 := 16#1d9142a4#;
-   pragma Export (C, u00140, "system__val_unsB");
-   u00141 : constant Version_32 := 16#47085132#;
-   pragma Export (C, u00141, "system__val_unsS");
-   u00142 : constant Version_32 := 16#1e980831#;
-   pragma Export (C, u00142, "syntactic_aB");
-   u00143 : constant Version_32 := 16#3e726665#;
-   pragma Export (C, u00143, "syntactic_aS");
-   u00144 : constant Version_32 := 16#8ab815e6#;
-   pragma Export (C, u00144, "fun_gotoS");
-   u00145 : constant Version_32 := 16#349c513d#;
-   pragma Export (C, u00145, "fun_shift_reduceS");
-   u00146 : constant Version_32 := 16#d0432c8d#;
-   pragma Export (C, u00146, "system__img_enum_newB");
-   u00147 : constant Version_32 := 16#026ac64a#;
-   pragma Export (C, u00147, "system__img_enum_newS");
-   u00148 : constant Version_32 := 16#a6359005#;
-   pragma Export (C, u00148, "system__memoryB");
-   u00149 : constant Version_32 := 16#3a5ba6be#;
-   pragma Export (C, u00149, "system__memoryS");
+   u00123 : constant Version_32 := 16#1b6af8d9#;
+   pragma Export (C, u00123, "decls__general_defsS");
+   u00124 : constant Version_32 := 16#c79d24a8#;
+   pragma Export (C, u00124, "lexical_aB");
+   u00125 : constant Version_32 := 16#274b214b#;
+   pragma Export (C, u00125, "lexical_aS");
+   u00126 : constant Version_32 := 16#e3927198#;
+   pragma Export (C, u00126, "semanticB");
+   u00127 : constant Version_32 := 16#846303e0#;
+   pragma Export (C, u00127, "semanticS");
+   u00128 : constant Version_32 := 16#c46fba7e#;
+   pragma Export (C, u00128, "semantic__messagesB");
+   u00129 : constant Version_32 := 16#42d85c42#;
+   pragma Export (C, u00129, "semantic__messagesS");
+   u00130 : constant Version_32 := 16#47e5afcb#;
+   pragma Export (C, u00130, "decls__d_names_tableB");
+   u00131 : constant Version_32 := 16#dc9e9f7d#;
+   pragma Export (C, u00131, "decls__d_names_tableS");
+   u00132 : constant Version_32 := 16#75de1dee#;
+   pragma Export (C, u00132, "ada__strings__hashB");
+   u00133 : constant Version_32 := 16#3655ad4c#;
+   pragma Export (C, u00133, "ada__strings__hashS");
+   u00134 : constant Version_32 := 16#5e196e91#;
+   pragma Export (C, u00134, "ada__containersS");
+   u00135 : constant Version_32 := 16#f7815c90#;
+   pragma Export (C, u00135, "decls__d_symbol_tableB");
+   u00136 : constant Version_32 := 16#e0e10993#;
+   pragma Export (C, u00136, "decls__d_symbol_tableS");
+   u00137 : constant Version_32 := 16#9715e2e7#;
+   pragma Export (C, u00137, "decls__d_descriptionS");
+   u00138 : constant Version_32 := 16#2ad27ceb#;
+   pragma Export (C, u00138, "semantic__c_treeB");
+   u00139 : constant Version_32 := 16#f32364f7#;
+   pragma Export (C, u00139, "semantic__c_treeS");
+   u00140 : constant Version_32 := 16#d763507a#;
+   pragma Export (C, u00140, "system__val_intB");
+   u00141 : constant Version_32 := 16#2b83eab5#;
+   pragma Export (C, u00141, "system__val_intS");
+   u00142 : constant Version_32 := 16#1d9142a4#;
+   pragma Export (C, u00142, "system__val_unsB");
+   u00143 : constant Version_32 := 16#47085132#;
+   pragma Export (C, u00143, "system__val_unsS");
+   u00144 : constant Version_32 := 16#b96348ec#;
+   pragma Export (C, u00144, "semantic__type_checkingB");
+   u00145 : constant Version_32 := 16#5c1c236a#;
+   pragma Export (C, u00145, "semantic__type_checkingS");
+   u00146 : constant Version_32 := 16#6945aa05#;
+   pragma Export (C, u00146, "decls__d_vtype_tableB");
+   u00147 : constant Version_32 := 16#61354aad#;
+   pragma Export (C, u00147, "decls__d_vtype_tableS");
+   u00148 : constant Version_32 := 16#a1681889#;
+   pragma Export (C, u00148, "syntactic_aB");
+   u00149 : constant Version_32 := 16#3e726665#;
+   pragma Export (C, u00149, "syntactic_aS");
+   u00150 : constant Version_32 := 16#f6ae94e4#;
+   pragma Export (C, u00150, "fun_gotoS");
+   u00151 : constant Version_32 := 16#86ec8811#;
+   pragma Export (C, u00151, "fun_shift_reduceS");
+   u00152 : constant Version_32 := 16#d0432c8d#;
+   pragma Export (C, u00152, "system__img_enum_newB");
+   u00153 : constant Version_32 := 16#026ac64a#;
+   pragma Export (C, u00153, "system__img_enum_newS");
+   u00154 : constant Version_32 := 16#a6359005#;
+   pragma Export (C, u00154, "system__memoryB");
+   u00155 : constant Version_32 := 16#3a5ba6be#;
+   pragma Export (C, u00155, "system__memoryS");
    --  BEGIN ELABORATION ORDER
    --  ada%s
    --  ada.characters%s
@@ -461,12 +473,14 @@ package ada_main is
    --  text_io%s
    --  decls%s
    --  decls.general_defs%s
-   --  decls.d_description%s
    --  decls.d_names_table%s
    --  decls.d_names_table%b
+   --  decls.d_tree%s
+   --  decls.d_description%s
    --  decls.d_symbol_table%s
    --  decls.d_symbol_table%b
-   --  decls.d_tree%s
+   --  decls.d_vtype_table%s
+   --  decls.d_vtype_table%b
    --  fun_dfa%s
    --  fun_dfa%b
    --  fun_goto%s
@@ -476,10 +490,14 @@ package ada_main is
    --  fun_tokens%s
    --  lexical_a%s
    --  semantic%s
+   --  semantic.messages%s
+   --  semantic.messages%b
    --  semantic%b
    --  semantic.c_tree%s
    --  semantic.c_tree%b
    --  lexical_a%b
+   --  semantic.type_checking%s
+   --  semantic.type_checking%b
    --  syntactic_a%s
    --  syntactic_a%b
    --  fun%b

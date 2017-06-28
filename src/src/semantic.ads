@@ -1,8 +1,6 @@
-with decls.d_names_table, decls.d_symbol_table, decls.general_defs, decls.d_tree,
-     decls.alternatives;
+with decls.d_names_table, decls.d_symbol_table, decls.general_defs, decls.d_tree;
      --decls.d_c3a, decls.d_pila_proc;
-use decls.d_names_table, decls.d_symbol_table, decls.general_defs, decls.d_tree,
-    decls.alternatives;
+use decls.d_names_table, decls.d_symbol_table, decls.general_defs, decls.d_tree;
      --decls.d_c3a, decls.d_pila_proc;
 package semantic is
 
@@ -10,6 +8,7 @@ package semantic is
    st: symbol_table;
 
    fn: func_id;
+
 --   ne: num_etiq;
 
    root: pnode;
@@ -18,14 +17,13 @@ package semantic is
 --   pproc: pila_proc;
 
    --   tp: taula_procediments;
-   altst: alternatives;
+   alt_id: Natural;
 
    error: boolean;
 
-   procedure prepare(nom: in String);
+   procedure prepare(fname: in String);
 --   procedure conclou_analisi;
 --   function imatge(int: in String) return String;
-
 
 
 end semantic;

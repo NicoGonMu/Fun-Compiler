@@ -1,6 +1,6 @@
-with decls.d_tree, decls.general_defs, decls.d_names_table;
+with decls.d_tree, decls.general_defs, decls.d_names_table, semantic.messages;
      --semantic.c_tipus, semantic.g_codi_int, decls.d_descripcio;
-use decls.d_tree, decls.general_defs, decls.d_names_table;
+use decls.d_tree, decls.general_defs, decls.d_names_table, semantic.messages;
      --semantic.c_tipus, semantic.g_codi_int, decls.d_descripcio;
 
 package semantic.c_tree is
@@ -24,20 +24,29 @@ package semantic.c_tree is
 
    procedure sr_prog  (p: out pnode; decls: in pnode; e: in pnode);
 
-   procedure sr_decls (p: out pnode; decls: in pnode; decl: in pnode);
+   procedure sr_decls (p: out pnode; decl: in pnode; decls: in pnode);
    procedure sr_decls (p: out pnode);
 
    procedure sr_typevar_decl (p: out pnode; decl: in pnode);
    procedure sr_type_decl    (p: out pnode; decl: in pnode);
+   procedure sr_data_decl    (p: out pnode; decl: in pnode);
    procedure sr_func_decl    (p: out pnode; decl: in pnode);
    procedure sr_eq_decl      (p: out pnode; decl: in pnode);
 
    procedure sr_typevar (p: out pnode; lid: in pnode);
 
+   procedure sr_data (p: out pnode; id: in pnode; params: in pnode; alts: in pnode);
+
+   procedure sr_typedef (p: out pnode; desc: in pnode);
+   procedure sr_typedef (p: out pnode);
+
+   procedure sr_desc (p: out pnode; desc_out: in pnode);
+   procedure sr_desc (p: out pnode; desc_in: in pnode; desc_out: in pnode);
+
    procedure sr_lid (p: out pnode; lid: in pnode; id: in pnode);
    procedure sr_lid (p: out pnode; id: in pnode);
 
-   procedure sr_type (p: out pnode; id: in pnode; alts: in pnode);
+   procedure sr_type (p: out pnode; id: in pnode; params: in pnode; alts: in pnode);
 
    procedure sr_alts (p: out pnode; fcall: in pnode);
    procedure sr_alts (p: out pnode; alts: in pnode; fcall: in pnode);
@@ -50,17 +59,22 @@ package semantic.c_tree is
    procedure sr_el (p: out pnode; e: in pnode);
    procedure sr_el (p: out pnode; el: in pnode; e: in pnode);
 
-   procedure sr_func (p: out pnode; id: in pnode;
-                      in_type: in pnode; out_type: in pnode);
+   procedure sr_func (p: out pnode; id: in pnode; desc: in pnode);
 
-   procedure sr_fparam (p: out pnode; param_list: in pnode);
-   procedure sr_fparam (p: out pnode);
+   procedure sr_tuple_type(p: out pnode; tuple_type: in pnode; c_tuple_type: in pnode);
+   procedure sr_tuple_type(p: out pnode; c_tuple_type: in pnode);
 
-   procedure sr_param_list (p: out pnode; fp: in pnode);
-   procedure sr_param_list (p: out pnode; param_list: in pnode; fp: in pnode);
+   procedure sr_c_tuple_type(p: out pnode; ctt_in: in pnode; ctt_out: in pnode);
+   procedure sr_c_tuple_type(p: out pnode; fcall: in pnode);
 
-   procedure sr_fp (p: out pnode; fcall: in pnode);
-   procedure sr_fp (p: out pnode; fcall_in: in pnode; fcall_out: in pnode);
+--     procedure sr_fparam (p: out pnode; param_list: in pnode);
+--     procedure sr_fparam (p: out pnode);
+--
+--     procedure sr_param_list (p: out pnode; fp: in pnode);
+--     procedure sr_param_list (p: out pnode; param_list: in pnode; fp: in pnode);
+--
+--     procedure sr_fp (p: out pnode; fcall: in pnode);
+--     procedure sr_fp (p: out pnode; fcall_in: in pnode; fcall_out: in pnode);
 
    procedure sr_equation (p: out pnode; id: in pnode; pattern: in pnode;
                           e: in pnode);
@@ -68,11 +82,8 @@ package semantic.c_tree is
    procedure sr_pattern (p: out pnode; lmodels: in pnode);
    procedure sr_pattern (p: out pnode);
 
-   procedure sr_lmodels (p: out pnode; lmodels: in pnode; model: in pnode);
-   procedure sr_lmodels (p: out pnode; model: in pnode);
-
-   procedure sr_model (p: out pnode; e: in pnode);
-   procedure sr_model (p: out pnode; model: in pnode; e: in pnode);
+   procedure sr_lmodels (p: out pnode; lmodels: in pnode; e: in pnode);
+   procedure sr_lmodels (p: out pnode; e: in pnode);
 
    procedure sr_e      (p: out pnode; e: in pnode);
    procedure sr_plus   (p: out pnode; e1: in pnode; e2: in pnode);
@@ -83,6 +94,7 @@ package semantic.c_tree is
    procedure sr_and    (p: out pnode; e1: in pnode; e2: in pnode);
    procedure sr_or     (p: out pnode; e1: in pnode; e2: in pnode);
    procedure sr_relop  (p: out pnode; sign: in pnode; e1: in pnode; e2: in pnode);
+   procedure sr_econc  (p: out pnode; e1: in pnode; e2: in pnode);
    procedure sr_not    (p: out pnode; e: in pnode);
    procedure sr_usub   (p: out pnode; e: in pnode);
    procedure sr_econd  (p: out pnode; cond: in pnode);

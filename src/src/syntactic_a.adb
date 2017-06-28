@@ -267,270 +267,273 @@ begin
                 case yy.rule_id is
 
 when  1 =>
---#line  37
+--#line  41
 sr_s(
 yy.value_stack(yy.tos));
 
 when  2 =>
---#line  41
+--#line  45
 sr_prog(
 yyval, 
 yy.value_stack(yy.tos-1), 
 yy.value_stack(yy.tos));
 
 when  3 =>
---#line  45
+--#line  49
 sr_decls(
 yyval, 
 yy.value_stack(yy.tos-1), 
 yy.value_stack(yy.tos));
 
 when  4 =>
---#line  46
+--#line  50
 sr_decls(
 yyval);
 
 when  5 =>
---#line  50
+--#line  54
 sr_typevar_decl(
 yyval, 
 yy.value_stack(yy.tos));
 
 when  6 =>
---#line  51
+--#line  55
 sr_type_decl(
 yyval, 
 yy.value_stack(yy.tos));
 
 when  7 =>
---#line  52
-sr_func_decl(
+--#line  56
+sr_data_decl(
 yyval, 
 yy.value_stack(yy.tos));
 
 when  8 =>
---#line  53
-sr_eq_decl(
+--#line  57
+sr_func_decl(
 yyval, 
 yy.value_stack(yy.tos));
 
 when  9 =>
 --#line  58
+sr_eq_decl(
+yyval, 
+yy.value_stack(yy.tos));
+
+when  10 =>
+--#line  63
 sr_typevar(
 yyval, 
 yy.value_stack(yy.tos-1));
 
-when  10 =>
---#line  62
+when  11 =>
+--#line  68
 sr_lid(
 yyval, 
 yy.value_stack(yy.tos-2), 
 yy.value_stack(yy.tos));
 
-when  11 =>
---#line  63
+when  12 =>
+--#line  69
 sr_lid(
 yyval, 
 yy.value_stack(yy.tos));
 
-when  12 =>
---#line  68
+when  13 =>
+--#line  74
 sr_type(
+yyval, 
+yy.value_stack(yy.tos-4), 
+yy.value_stack(yy.tos-3), 
+yy.value_stack(yy.tos-1));
+
+when  14 =>
+--#line  78
+sr_data(
+yyval, 
+yy.value_stack(yy.tos-4), 
+yy.value_stack(yy.tos-3), 
+yy.value_stack(yy.tos-1));
+
+when  15 =>
+--#line  82
+sr_alts(
+yyval, 
+yy.value_stack(yy.tos-2), 
+yy.value_stack(yy.tos));
+
+when  16 =>
+--#line  83
+sr_alts(
+yyval, 
+yy.value_stack(yy.tos));
+
+when  17 =>
+--#line  87
+sr_tuple_type(
+yyval, 
+yy.value_stack(yy.tos-2), 
+yy.value_stack(yy.tos));
+
+when  18 =>
+--#line  88
+sr_tuple_type(
+yyval, 
+yy.value_stack(yy.tos));
+
+when  19 =>
+--#line  92
+sr_c_tuple_type(
+yyval, 
+yy.value_stack(yy.tos));
+
+when  20 =>
+--#line  93
+sr_c_tuple_type(
 yyval, 
 yy.value_stack(yy.tos-3), 
 yy.value_stack(yy.tos-1));
 
-when  13 =>
---#line  72
-sr_alts(
-yyval, 
-yy.value_stack(yy.tos));
-
-when  14 =>
---#line  73
-sr_alts(
-yyval, 
-yy.value_stack(yy.tos-2), 
-yy.value_stack(yy.tos));
-
-when  15 =>
---#line  77
+when  21 =>
+--#line  97
 sr_fcall(
 yyval, 
 yy.value_stack(yy.tos-1), 
 yy.value_stack(yy.tos));
 
-when  16 =>
---#line  81
-sr_params(
-yyval, 
-yy.value_stack(yy.tos-1));
-
-when  17 =>
---#line  82
-sr_params(
-yyval);
-
-when  18 =>
---#line  86
-sr_el(
-yyval, 
-yy.value_stack(yy.tos));
-
-when  19 =>
---#line  87
-sr_el(
-yyval, 
-yy.value_stack(yy.tos-2), 
-yy.value_stack(yy.tos));
-
-when  20 =>
---#line  91
-sr_func(
-yyval, 
-yy.value_stack(yy.tos-5), 
-yy.value_stack(yy.tos-3), 
-yy.value_stack(yy.tos-1));
-
-when  21 =>
---#line  95
-sr_fparam(
-yyval, 
-yy.value_stack(yy.tos));
-
 when  22 =>
---#line  96
-sr_fparam(
-yyval);
+--#line  101
+sr_params(
+yyval, 
+yy.value_stack(yy.tos-1));
 
 when  23 =>
---#line  100
-sr_param_list(
-yyval, 
-yy.value_stack(yy.tos));
+--#line  102
+sr_params(
+yyval);
 
 when  24 =>
---#line  101
-sr_param_list(
+--#line  106
+sr_el(
 yyval, 
-yy.value_stack(yy.tos-2), 
 yy.value_stack(yy.tos));
 
 when  25 =>
---#line  105
-sr_fp(
+--#line  107
+sr_el(
 yyval, 
+yy.value_stack(yy.tos-2), 
 yy.value_stack(yy.tos));
 
 when  26 =>
---#line  106
-sr_fp(
+--#line  111
+sr_func(
 yyval, 
 yy.value_stack(yy.tos-3), 
 yy.value_stack(yy.tos-1));
 
 when  27 =>
---#line  110
+--#line  115
+sr_desc(
+yyval, 
+yy.value_stack(yy.tos));
+
+when  28 =>
+--#line  116
+sr_desc(
+yyval, 
+yy.value_stack(yy.tos-2), 
+yy.value_stack(yy.tos));
+
+when  29 =>
+--#line  120
 sr_equation(
 yyval, 
 yy.value_stack(yy.tos-4), 
 yy.value_stack(yy.tos-3), 
 yy.value_stack(yy.tos-1));
 
-when  28 =>
---#line  114
+when  30 =>
+--#line  124
 sr_pattern(
 yyval, 
 yy.value_stack(yy.tos-1));
 
-when  29 =>
---#line  115
+when  31 =>
+--#line  125
 sr_pattern(
 yyval);
 
-when  30 =>
---#line  119
+when  32 =>
+--#line  129
 sr_lmodels(
 yyval, 
 yy.value_stack(yy.tos-2), 
-yy.value_stack(yy.tos));
-
-when  31 =>
---#line  120
-sr_lmodels(
-yyval, 
-yy.value_stack(yy.tos));
-
-when  32 =>
---#line  124
-sr_model(
-yyval, 
 yy.value_stack(yy.tos));
 
 when  33 =>
---#line  125
-sr_model(
+--#line  130
+sr_lmodels(
 yyval, 
-yy.value_stack(yy.tos-2), 
 yy.value_stack(yy.tos));
 
 when  34 =>
---#line  129
+--#line  135
 sr_e(
 yyval, 
 yy.value_stack(yy.tos-1));
 
 when  35 =>
---#line  130
+--#line  136
 sr_plus(
 yyval, 
 yy.value_stack(yy.tos-2), 
 yy.value_stack(yy.tos));
 
 when  36 =>
---#line  131
+--#line  137
 sr_sub(
 yyval, 
 yy.value_stack(yy.tos-2), 
 yy.value_stack(yy.tos));
 
 when  37 =>
---#line  132
+--#line  138
 sr_prod(
 yyval, 
 yy.value_stack(yy.tos-2), 
 yy.value_stack(yy.tos));
 
 when  38 =>
---#line  133
+--#line  139
 sr_div(
 yyval, 
 yy.value_stack(yy.tos-2), 
 yy.value_stack(yy.tos));
 
 when  39 =>
---#line  134
+--#line  140
 sr_mod(
 yyval, 
 yy.value_stack(yy.tos-2), 
 yy.value_stack(yy.tos));
 
 when  40 =>
---#line  135
+--#line  141
 sr_and(
 yyval, 
 yy.value_stack(yy.tos-2), 
 yy.value_stack(yy.tos));
 
 when  41 =>
---#line  136
+--#line  142
 sr_or(
 yyval, 
 yy.value_stack(yy.tos-2), 
 yy.value_stack(yy.tos));
 
 when  42 =>
---#line  137
+--#line  143
 sr_relop(
 yyval, 
 yy.value_stack(yy.tos-2), 
@@ -538,93 +541,100 @@ yy.value_stack(yy.tos-1),
 yy.value_stack(yy.tos));
 
 when  43 =>
---#line  138
+--#line  144
+sr_econc(
+yyval, 
+yy.value_stack(yy.tos-2), 
+yy.value_stack(yy.tos));
+
+when  44 =>
+--#line  145
 sr_not(
 yyval, 
 yy.value_stack(yy.tos));
 
-when  44 =>
---#line  139
+when  45 =>
+--#line  146
 sr_usub(
 yyval, 
 yy.value_stack(yy.tos));
 
-when  45 =>
---#line  140
+when  46 =>
+--#line  147
 sr_econd(
 yyval, 
 yy.value_stack(yy.tos));
 
-when  46 =>
---#line  141
+when  47 =>
+--#line  148
 sr_elist(
 yyval, 
 yy.value_stack(yy.tos));
 
-when  47 =>
---#line  142
+when  48 =>
+--#line  149
 sr_tuple(
 yyval, 
 yy.value_stack(yy.tos));
 
-when  48 =>
---#line  143
+when  49 =>
+--#line  150
 sr_elit(
 yyval, 
 yy.value_stack(yy.tos));
 
-when  49 =>
---#line  144
+when  50 =>
+--#line  151
 sr_efcall(
 yyval, 
 yy.value_stack(yy.tos));
 
-when  50 =>
---#line  148
+when  51 =>
+--#line  155
 sr_cond(
 yyval, 
 yy.value_stack(yy.tos-4), 
 yy.value_stack(yy.tos-2));
 
-when  51 =>
---#line  152
+when  52 =>
+--#line  159
 sr_tuple(
 yyval, 
 yy.value_stack(yy.tos-1));
 
-when  52 =>
---#line  156
+when  53 =>
+--#line  163
 sr_list_e(
 yyval, 
 yy.value_stack(yy.tos-1));
 
-when  53 =>
---#line  160
+when  54 =>
+--#line  167
 sr_list(
 yyval, 
 yy.value_stack(yy.tos-2), 
 yy.value_stack(yy.tos));
 
-when  54 =>
---#line  161
+when  55 =>
+--#line  168
 sr_list(
 yyval, 
 yy.value_stack(yy.tos));
 
-when  55 =>
---#line  165
-sr_lit(
-yyval, 
-yy.value_stack(yy.tos));
-
 when  56 =>
---#line  166
+--#line  172
 sr_lit(
 yyval, 
 yy.value_stack(yy.tos));
 
 when  57 =>
---#line  167
+--#line  173
+sr_lit(
+yyval, 
+yy.value_stack(yy.tos));
+
+when  58 =>
+--#line  174
 sr_lit(
 yyval, 
 yy.value_stack(yy.tos));

@@ -7,16 +7,16 @@ package decls.d_tree is
    type oprel is (lt, gt, le, ge, eq, ne);
    type nodeType is (nd_literal, nd_ident, nd_null, nd_oprel,
                      nd_default, nd_root, nd_typevar, nd_lid,
-                     nd_type, nd_alts, nd_fcall, nd_params,
-                     nd_el, nd_func, nd_fparam, nd_param_list,
-                     nd_fp, nd_equation, nd_pattern, nd_lmodels,
-                     nd_model, nd_plus, nd_sub, nd_prod,
+                     nd_type, nd_data, nd_alts, nd_fcall, nd_params,
+                     nd_el, nd_func, tc_alts, nd_typedef,
+                     nd_desc, nd_equation, nd_pattern, nd_lmodels,
+                     nd_conc, nd_plus, nd_sub, nd_prod,
                      nd_div, nd_mod, nd_and, nd_or,
                      nd_relop, nd_not, nd_usub, nd_econd,
                      nd_elist, nd_etuple, nd_elit, nd_efcall,
                      nd_cond, nd_else, nd_tuple, nd_list_e,
                      nd_list, nd_lit, nd_decls, nd_typevar_decl,
-                     nd_type_decl, nd_func_decl, nd_eq_decl, tc_alts);
+                     nd_type_decl, nd_data_decl, nd_func_decl, nd_eq_decl, nd_tuple_type, nd_c_tuple_type);
 
    type node (nt: nodeType := nd_null) is
       record
@@ -30,6 +30,8 @@ package decls.d_tree is
                --ide_despl: despl;
             when nd_type_decl =>
                type_decl: pnode;
+            when nd_data_decl =>
+               data_decl: pnode;
             when nd_typevar_decl =>
                typevar_decl: pnode;
             when nd_eq_decl =>
@@ -48,12 +50,15 @@ package decls.d_tree is
                decl: pnode;
             when nd_typevar =>
                typevar_lid: pnode;
+            when nd_typedef =>
+               typedef_desc: pnode;
             when nd_lid =>
                lid_lid: pnode;
                lid_id: pnode;
             when nd_type =>
                type_id: pnode;
                type_alts: pnode;
+               type_params: pnode;
             when nd_alts =>
                alts_alts: pnode;
                alts_fcall: pnode;
@@ -65,19 +70,23 @@ package decls.d_tree is
             when nd_el =>
                el_el: pnode;
                el_e: pnode;
+            when nd_data =>
+               data_id: pnode;
+               data_params: pnode;
+               data_alts: pnode;
             when nd_func =>
                func_id: pnode;
-               func_in: pnode;
-               func_out: pnode;
-            when nd_fparam =>
-               fparam_param: pnode;
-            when nd_param_list =>
-               pl_param_list: pnode;
-               pl_fp: pnode;
-            when nd_fp =>
-               fp_fcall: pnode;
-               fp_fcall_in: pnode;
-               fp_fcall_out: pnode;
+               func_desc: pnode;
+            when nd_desc =>
+               desc_in: pnode;
+               desc_out: pnode;
+            when nd_tuple_type =>
+               tuple_type_tt: pnode;
+               tuple_type_ctt: pnode;
+            when nd_c_tuple_type =>
+               c_tuple_type_fcall: pnode;
+               c_tuple_type_in: pnode;
+               c_tuple_type_out: pnode;
             when nd_equation =>
                eq_id: pnode;
                eq_pattern: pnode;
@@ -87,9 +96,9 @@ package decls.d_tree is
             when nd_lmodels =>
                lmodels_lmodels: pnode;
                lmodels_model: pnode;
-            when nd_model =>
-               model_model: pnode;
-               model_e: pnode;
+--              when nd_model =>
+--                 model_model: pnode;
+--                 model_e: pnode;
             when nd_plus =>
                plus_e1: pnode;
                plus_e2: pnode;
@@ -115,6 +124,9 @@ package decls.d_tree is
                relop_e1: pnode;
                relop_e2: pnode;
                relop: pnode;
+            when nd_conc =>
+               conc_e1: pnode;
+               conc_e2: pnode;
             when nd_not =>
                not_e: pnode;
             when nd_usub =>

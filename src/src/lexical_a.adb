@@ -24,20 +24,20 @@ subtype short is integer range -32768..32767;
 
 -- returned upon end-of-file
 YY_END_TOK : constant integer := 0;
-YY_END_OF_BUFFER : constant := 43;
+YY_END_OF_BUFFER : constant := 45;
 subtype yy_state_type is integer;
 yy_current_state : yy_state_type;
 INITIAL : constant := 0;
-yy_accept : constant array(0..71) of short :=
+yy_accept : constant array(0..78) of short :=
     (   0,
-       35,   35,   43,   41,   39,   40,   32,   41,    5,   18,
-       41,   41,   19,   20,   15,   14,   24,   16,   17,   35,
-        1,   23,    8,   12,   10,   33,   21,   22,   33,   33,
-       33,   33,   31,   39,    0,   37,   30,    0,    3,   38,
-        4,   13,   35,    0,    7,    2,    9,   11,   33,    0,
-       33,   33,   33,   26,   33,   34,   38,    6,   35,    0,
-       33,   25,   33,   33,   35,    0,   29,   28,   27,   36,
-        0
+       37,   37,   45,   43,   41,   42,   34,   43,    5,   18,
+       43,   43,   19,   20,   15,   14,   24,   16,   17,   37,
+        1,   23,    8,   12,   10,   35,   21,   22,   35,   35,
+       35,   35,   33,   41,    0,   39,   32,    0,    3,    0,
+        4,   40,   13,   37,    0,    7,    2,    9,   11,   35,
+        0,   35,   35,   35,   26,   35,   35,   36,    6,   40,
+       37,    0,   35,   25,   35,   35,   35,   37,    0,   29,
+       28,   27,   30,   38,   35,   35,   31,    0
     ) ;
 
 yy_ec : constant array(ASCII.NUL..ASCII.DEL) of short :=
@@ -54,80 +54,89 @@ yy_ec : constant array(ASCII.NUL..ASCII.DEL) of short :=
        26,    8,   27,    8,   28,    8,   29,   25,   30,   31,
 
        32,   33,   25,   34,   35,   25,   25,   36,   25,   37,
-       25,   25,   25,   25,   38,   39,   25,   25,   25,   25,
-       25,   25,    8,   40,    8,    8,    1
+       25,   38,   25,   39,   40,   41,   25,   42,   25,   25,
+       43,   25,    8,   44,    8,    8,    1
     ) ;
 
-yy_meta : constant array(0..40) of short :=
+yy_meta : constant array(0..44) of short :=
     (   0,
         1,    1,    2,    3,    3,    3,    3,    3,    3,    3,
         3,    3,    3,    3,    3,    3,    3,    3,    4,    3,
         3,    3,    3,    3,    4,    3,    3,    4,    4,    4,
-        4,    4,    4,    4,    4,    4,    4,    4,    4,    3
+        4,    4,    4,    4,    4,    4,    4,    4,    4,    4,
+        4,    4,    4,    3
     ) ;
 
-yy_base : constant array(0..75) of short :=
+yy_base : constant array(0..82) of short :=
     (   0,
-        0,    0,  109,  110,   39,  110,  110,  102,  110,  110,
-       97,    0,  110,  110,  110,   91,  110,   25,   82,   25,
-       25,  110,   81,  110,   80,   74,  110,  110,   18,   23,
-       24,   26,  110,   54,   95,   94,  110,   88,  110,   81,
-      110,  110,   36,   78,  110,  110,  110,  110,   68,   67,
-       33,   35,   38,   66,   39,  110,    0,    0,   49,   74,
-       41,   64,   46,   45,   72,   69,   53,   52,   51,   47,
-      110,   80,   82,   58,   86
+        0,    0,  126,  127,   43,  127,  127,  119,  127,  127,
+      114,    0,  127,  127,  127,  108,  127,   29,   31,   29,
+       32,  127,   99,  127,   98,   92,  127,  127,   30,   28,
+       32,   33,  127,   64,  113,  112,  127,  106,  127,   99,
+      127,    0,  127,   44,   96,  127,  127,  127,  127,   86,
+       85,   41,   43,   46,   84,   47,   42,  127,  127,    0,
+       59,   92,   22,   80,   49,   55,   56,   82,   81,   70,
+       69,   68,   57,   67,   61,   63,   66,  127,  100,  102,
+       89,  106
     ) ;
 
-yy_def : constant array(0..75) of short :=
+yy_def : constant array(0..82) of short :=
     (   0,
-       71,    1,   71,   71,   71,   71,   71,   72,   71,   71,
-       71,   73,   71,   71,   71,   71,   71,   71,   71,   71,
-       71,   71,   71,   71,   71,   74,   71,   71,   74,   74,
-       74,   74,   71,   71,   72,   71,   71,   71,   71,   75,
-       71,   71,   71,   71,   71,   71,   71,   71,   74,   74,
-       74,   74,   74,   74,   74,   71,   75,   75,   71,   71,
-       74,   74,   74,   74,   71,   71,   74,   74,   74,   71,
-        0,   71,   71,   71,   71
+       78,    1,   78,   78,   78,   78,   78,   79,   78,   78,
+       78,   80,   78,   78,   78,   78,   78,   78,   78,   78,
+       78,   78,   78,   78,   78,   81,   78,   78,   81,   81,
+       81,   81,   78,   78,   79,   78,   78,   78,   78,   78,
+       78,   82,   78,   78,   78,   78,   78,   78,   78,   81,
+       81,   81,   81,   81,   81,   81,   81,   78,   78,   82,
+       78,   78,   81,   81,   81,   81,   81,   78,   78,   81,
+       81,   81,   81,   78,   81,   81,   81,    0,   78,   78,
+       78,   78
     ) ;
 
-yy_nxt : constant array(0..150) of short :=
+yy_nxt : constant array(0..171) of short :=
     (   0,
         4,    5,    6,    5,    7,    8,    9,    4,   10,   11,
        12,   13,   14,   15,   16,   17,   18,   19,   20,   21,
        22,   23,   24,   25,   26,   27,   28,    4,   26,   26,
-       29,   30,   26,   26,   31,   26,   26,   26,   32,   33,
-       34,   40,   34,   43,   45,   50,   51,   46,   41,   52,
-       50,   50,   44,   50,   59,   34,   54,   34,   53,   55,
-       50,   49,   50,   44,   62,   50,   50,   65,   50,   67,
-       64,   61,   50,   50,   44,   63,   44,   68,   50,   50,
-       50,   69,   35,   35,   38,   38,   57,   70,   57,   57,
-       65,   50,   66,   50,   71,   50,   60,   58,   56,   35,
+       29,   30,   26,   26,   31,   26,   26,   26,   26,   26,
+       32,   26,   26,   33,   34,   40,   34,   44,   42,   51,
+       70,   46,   41,   43,   47,   51,   45,   51,   52,   51,
+       51,   53,   61,   54,   55,   34,   56,   34,   51,   51,
+       51,   45,   64,   51,   51,   57,   51,   68,   66,   67,
+       71,   63,   51,   51,   51,   65,   45,   73,   51,   76,
+       51,   72,   50,   51,   45,   51,   51,   51,   75,   74,
 
-       36,   50,   48,   47,   42,   39,   37,   36,   71,    3,
-       71,   71,   71,   71,   71,   71,   71,   71,   71,   71,
-       71,   71,   71,   71,   71,   71,   71,   71,   71,   71,
-       71,   71,   71,   71,   71,   71,   71,   71,   71,   71,
-       71,   71,   71,   71,   71,   71,   71,   71,   71,   71
+       68,   77,   35,   35,   38,   38,   60,   51,   60,   60,
+       69,   51,   78,   51,   62,   59,   58,   35,   36,   51,
+       49,   48,   39,   37,   36,   78,    3,   78,   78,   78,
+       78,   78,   78,   78,   78,   78,   78,   78,   78,   78,
+       78,   78,   78,   78,   78,   78,   78,   78,   78,   78,
+       78,   78,   78,   78,   78,   78,   78,   78,   78,   78,
+       78,   78,   78,   78,   78,   78,   78,   78,   78,   78,
+       78
     ) ;
 
-yy_chk : constant array(0..150) of short :=
+yy_chk : constant array(0..171) of short :=
     (   0,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
-        5,   18,    5,   20,   21,   29,   29,   21,   18,   29,
-       30,   31,   20,   32,   43,   34,   31,   34,   30,   32,
-       51,   74,   52,   43,   52,   53,   55,   59,   61,   61,
-       55,   51,   64,   63,   70,   53,   59,   63,   69,   68,
-       67,   64,   72,   72,   73,   73,   75,   66,   75,   75,
-       65,   62,   60,   54,   50,   49,   44,   40,   38,   36,
+        1,    1,    1,    1,    5,   18,    5,   20,   19,   63,
+       63,   21,   18,   19,   21,   30,   20,   29,   29,   31,
+       32,   29,   44,   30,   31,   34,   32,   34,   52,   57,
+       53,   44,   53,   54,   56,   32,   65,   61,   56,   57,
+       65,   52,   66,   67,   73,   54,   61,   67,   75,   75,
+       76,   66,   81,   77,   74,   72,   71,   70,   73,   69,
 
-       35,   26,   25,   23,   19,   16,   11,    8,    3,   71,
-       71,   71,   71,   71,   71,   71,   71,   71,   71,   71,
-       71,   71,   71,   71,   71,   71,   71,   71,   71,   71,
-       71,   71,   71,   71,   71,   71,   71,   71,   71,   71,
-       71,   71,   71,   71,   71,   71,   71,   71,   71,   71
+       68,   76,   79,   79,   80,   80,   82,   64,   82,   82,
+       62,   55,   51,   50,   45,   40,   38,   36,   35,   26,
+       25,   23,   16,   11,    8,    3,   78,   78,   78,   78,
+       78,   78,   78,   78,   78,   78,   78,   78,   78,   78,
+       78,   78,   78,   78,   78,   78,   78,   78,   78,   78,
+       78,   78,   78,   78,   78,   78,   78,   78,   78,   78,
+       78,   78,   78,   78,   78,   78,   78,   78,   78,   78,
+       78
     ) ;
 
 
@@ -188,7 +197,7 @@ begin
 	end if;
 	while ( yy_chk(yy_base(yy_current_state) + yy_c) /= yy_current_state ) loop
 	    yy_current_state := yy_def(yy_current_state);
-	    if ( yy_current_state >= 72 ) then
+	    if ( yy_current_state >= 79 ) then
 		yy_c := yy_meta(yy_c);
 	    end if;
 	end loop;
@@ -273,13 +282,13 @@ begin -- of YYLex
 		end if;
 		while ( yy_chk(yy_base(yy_current_state) + yy_c) /= yy_current_state ) loop
 		    yy_current_state := yy_def(yy_current_state);
-		    if ( yy_current_state >= 72 ) then
+		    if ( yy_current_state >= 79 ) then
 			yy_c := yy_meta(yy_c);
 		    end if;
 		end loop;
 		yy_current_state := yy_nxt(yy_base(yy_current_state) + yy_c);
 	    yy_cp := yy_cp + 1;
-if ( yy_current_state = 71 ) then
+if ( yy_current_state = 78 ) then
     exit;
 end if;
 	end loop;
@@ -468,63 +477,73 @@ lr_atom(YYlval, pos);
 		return rw_data;
 
 when 30 => 
---# line 70 "fun.l"
+--# line 69 "fun.l"
 lr_atom(YYlval, pos);
-		return and_s;
+		return rw_type;
 
 when 31 => 
---# line 72 "fun.l"
+--# line 71 "fun.l"
 lr_atom(YYlval, pos);
-		return or_s;
+		return rw_typevar;
 
 when 32 => 
 --# line 74 "fun.l"
 lr_atom(YYlval, pos);
-		return not_s;
+		return and_s;
 
 when 33 => 
---# line 78 "fun.l"
-lr_ident(YYlval, pos, YYText);
-							return identifier;
+--# line 76 "fun.l"
+lr_atom(YYlval, pos);
+		return or_s;
 
 when 34 => 
---# line 80 "fun.l"
-lr_lit_chr(YYlval, pos, YYText);
-							return chr_lit;
+--# line 78 "fun.l"
+lr_atom(YYlval, pos);
+		return not_s;
 
 when 35 => 
 --# line 82 "fun.l"
-lr_lit_int(YYlval, pos, YYText);
-							return int_lit;
+lr_ident(YYlval, pos, YYText);
+							return identifier;
 
 when 36 => 
 --# line 84 "fun.l"
-lr_lit_int(YYlval, pos, YYText);
-							return int_lit;
+lr_lit_chr(YYlval, pos, YYText);
+							return chr_lit;
 
 when 37 => 
 --# line 86 "fun.l"
-lr_lit_str(YYlval, pos, YYText);
-							return str_lit; 
+lr_lit_int(YYlval, pos, YYText);
+							return int_lit;
 
 when 38 => 
 --# line 88 "fun.l"
-null; 
+lr_lit_int(YYlval, pos, YYText);
+							return int_lit;
 
 when 39 => 
---# line 89 "fun.l"
-null; 
+--# line 90 "fun.l"
+lr_lit_str(YYlval, pos, YYText);
+							return str_lit; 
 
 when 40 => 
---# line 90 "fun.l"
-null;
+--# line 92 "fun.l"
+null; 
 
 when 41 => 
---# line 91 "fun.l"
-return Error;
+--# line 93 "fun.l"
+null; 
 
 when 42 => 
---# line 93 "fun.l"
+--# line 94 "fun.l"
+null;
+
+when 43 => 
+--# line 95 "fun.l"
+return Error;
+
+when 44 => 
+--# line 97 "fun.l"
 ECHO;
 when YY_END_OF_BUFFER + INITIAL + 1 => 
     return End_Of_Input;
@@ -577,6 +596,6 @@ when YY_END_OF_BUFFER + INITIAL + 1 =>
             end case; -- case (yy_act)
         end loop; -- end of loop waiting for end of file
 end YYLex;
---# line 93 "fun.l"
+--# line 97 "fun.l"
 end lexical_a;
 

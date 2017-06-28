@@ -6,7 +6,9 @@ package decls.d_symbol_table is
 
    procedure empty(st: out symbol_table);
    procedure put(st: in out symbol_table; nid: in name_id; d: in description;
-                  e: out boolean);
+                 e: out boolean);
+   procedure putSub(st: in out symbol_table; nid: in name_id; d: in description;
+                 e: out boolean); --Put inf prof - 1
    function cons(st: in symbol_table; id: in name_id) return description;
 
    procedure enterbloc(st: in out symbol_table);

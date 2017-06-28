@@ -15,12 +15,16 @@
 %token rw_if
 %token rw_then
 %token rw_else
+%token rw_type
 %token rw_data
 %token rw_typevar
 %token identifier
 %token chr_lit
 %token int_lit
 %token str_lit
+
+%left arrow
+%left cart_prod
 
 %left and_s
 %left or_s
@@ -42,13 +46,14 @@ PROG:
   ;
 
 DECLS:
-     DECLS DECL {sr_decls($$, $1, $2);}
+     DECL DECLS {sr_decls($$, $1, $2);}
   |  		{sr_decls($$);}
   ;
 
 DECL:
      TYPEVAR_DECL {sr_typevar_decl($$, $1);}
   |  TYPE_DECL    {sr_type_decl($$, $1);}
+  |  DATA_DECL    {sr_data_decl($$, $1);}
   |  FUNC_DECL    {sr_func_decl($$, $1);}
   |  EQUATION     {sr_eq_decl($$, $1);}
   ;
@@ -58,6 +63,7 @@ TYPEVAR_DECL:
      rw_typevar LID semicolon {sr_typevar($$, $2);}
   ;
 
+
 LID:
      LID comma identifier {sr_lid($$, $1, $3);}
   |  identifier 	  {sr_lid($$, $1);}
@@ -65,12 +71,26 @@ LID:
 
 
 TYPE_DECL:
-     rw_data identifier colon ALTS semicolon {sr_type($$, $2, $4);}
+     rw_type identifier PARAMS colon TUPLE_TYPE semicolon {sr_type($$, $2, $3, $5);}
+  ;
+
+DATA_DECL:
+     rw_data identifier PARAMS colon ALTS semicolon {sr_data($$, $2, $3, $5);}
   ;
 
 ALTS:
-     FCALL                {sr_alts($$, $1);}
-  |  ALTS derivator FCALL {sr_alts($$, $1, $3);}
+    ALTS derivator FCALL {sr_alts($$, $1, $3);}
+  | FCALL                {sr_alts($$, $1);}
+  ;
+
+TUPLE_TYPE:
+    TUPLE_TYPE cart_prod C_TUPLE_TYPE {sr_tuple_type($$, $1, $3);}
+  | C_TUPLE_TYPE                      {sr_tuple_type($$, $1);}
+  ;
+
+C_TUPLE_TYPE:
+    FCALL                                   {sr_c_tuple_type($$, $1);}
+  | o_par TUPLE_TYPE arrow TUPLE_TYPE c_par {sr_c_tuple_type($$, $2, $4);}
   ;
 
 FCALL:
@@ -88,22 +108,12 @@ EL:
   ;
 
 FUNC_DECL:
-     rw_dec identifier colon FORM_PARAM arrow FORM_PARAM semicolon {sr_func($$, $2, $4, $6);}
+     rw_dec identifier colon DESC semicolon {sr_func($$, $2, $4);}
   ;
 
-FORM_PARAM:
-     FORM_PARAM_L	  {sr_fparam($$, $1);}
-  |  			  {sr_fparam($$);}
-  ;
-
-FORM_PARAM_L:
-     FP	       	       	       {sr_param_list($$, $1);}
-  |  FORM_PARAM_L cart_prod FP {sr_param_list($$, $1, $3);}
-  ;
-
-FP:
-     FCALL                         {sr_fp($$, $1);}
-  |  o_par FCALL arrow FCALL c_par {sr_fp($$, $2, $4);}
+DESC:
+    TUPLE_TYPE                  {sr_desc($$, $1);}
+  | TUPLE_TYPE arrow TUPLE_TYPE {sr_desc($$, $1, $3);}
   ;
 
 EQUATION:
@@ -116,14 +126,10 @@ PATTERN:
   ;
 
 LMODELS:
-     LMODELS comma MODEL {sr_lmodels($$, $1, $3);}
-  |  MODEL		 {sr_lmodels($$, $1);}
+     LMODELS comma E {sr_lmodels($$, $1, $3);}
+  |  E		     {sr_lmodels($$, $1);}
   ;
 
-MODEL:
-     E		  {sr_model($$, $1);}
-  |  MODEL conc E {sr_model($$, $1, $3);}
-  ;
 
 E:
      o_par E c_par           {sr_e($$, $2);}
@@ -135,6 +141,7 @@ E:
   |  E and_s E		     {sr_and($$, $1, $3);}
   |  E or_s E		     {sr_or($$, $1, $3);}
   |  E relop E		     {sr_relop($$, $1, $2, $3);}
+  |  E conc E		     {sr_econc($$, $1, $3);}
   |  not_s E		     {sr_not($$, $2);}
   |  sub E		     {sr_usub($$, $2);}
   |  COND		     {sr_econd($$, $1);}
