@@ -8,6 +8,11 @@ dec tuple_test2: char -> int # char;
 //dec tuple_test3: int # char;
 //---tuple_test3 := (3, c);
 
+typevar testtype;
+data datatest(a): nul ++ testcons(a);
+dec test4: testtype -> datatest(testtype);
+---test4(0) := nul;
+---test4(x) := testcons(x);
 
 //3.1 (p 51)
 typevar alpha, beta;

@@ -1,12 +1,12 @@
 with lexical_a, syntactic_a, fun_dfa, fun_io, fun_tokens,
-    Ada.Text_io, Ada.Command_Line, semantic, semantic.type_checking;
-    --decls, decls.d_c3a, decls.d_tnoms, decls.d_tsimbols
-     --semantic.c_arbre, semantic.g_codi_int,
-     --semantic.g_codi_ass, semantic.missatges;
+    Ada.Text_io, Ada.Command_Line, semantic, semantic.type_checking,
+    semantic.c_lc_tree;--decls, decls.d_c3a, decls.d_tnoms, decls.d_tsimbols
+     --semantic.c_arbre, semantic.g_codi_ass, semantic.missatges;
 use lexical_a, syntactic_a, fun_dfa, fun_io, fun_tokens,
-    Ada.Text_io, Ada.Command_Line, semantic, semantic.type_checking;
+    Ada.Text_io, Ada.Command_Line, semantic, semantic.type_checking,
+    semantic.c_lc_tree;
 --    decls, decls.d_c3a, decls.d_tnoms, decls.d_tsimbols;
---    semantic.c_arbre, semantic.g_codi_int,
+--    semantic.c_arbre,
 --    semantic.g_codi_ass, semantic.missatges;
 
 procedure Fun is
@@ -20,9 +20,9 @@ begin
    if not error then
       type_check;
    end if;
-   --if not error then
-   --   generacio_codi_int(Argument(1));
-   --end if;
+   if not error then
+      generate_lc_tree(Argument(1));
+   end if;
    -- if not error then
    --   generacio_codi_ass(Argument(1));
    --end if;
