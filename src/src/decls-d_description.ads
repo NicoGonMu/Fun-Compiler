@@ -1,5 +1,5 @@
-with decls.general_defs, decls.d_tree;
-use decls.general_defs, decls.d_tree;
+with decls.general_defs, decls.d_tree, decls.d_pm_tree;
+use decls.general_defs, decls.d_tree, decls.d_pm_tree;
 package decls.d_description is
 
    type type_descr (sbt: subj_type := sbt_null) is
@@ -40,6 +40,9 @@ package decls.d_description is
             when func_d =>
                fn_id: func_id;
                fn_type: pnode;
+               --Tree with the function lambda calculus tree:
+               fn_lc_tree: p_pm_node;
+               fn_eq_count: Natural;
          end case;
       end record;
 end decls.d_description;

@@ -50,7 +50,6 @@ package body semantic.type_checking is
       enterbloc(st);
       set_std_env(nt, st);
       tc_prog(root);
-      exitbloc(st);
    end type_check;
 
 
@@ -260,7 +259,7 @@ package body semantic.type_checking is
       end if;
 
       tid := getType(p);
-
+      Put_Line(tid.nt'Img);
       case tid.nt is
          when nd_tuple_type =>
             e := compareTrees(tid, d); -- Compare TTs
@@ -269,6 +268,8 @@ package body semantic.type_checking is
                raise tc_error;
             end if;
 
+         when nd_c_tuple_type =>
+            null;--if tid.
          when nd_fcall =>
             -- Compare TT with fcall (function, constructor, list)
             if tid.fcall_id = null then
@@ -536,7 +537,7 @@ package body semantic.type_checking is
       e: boolean;
    begin
       fn := fn + 1;
-      d := (func_d, fn, fdesc);
+      d := (func_d, fn, fdesc, null);
       put(st, fid.identifier_id, d, e);
       if e then em_nameAlreadyUsed(p.pos); raise tc_error; end if;
 
@@ -731,7 +732,7 @@ package body semantic.type_checking is
          --If constructor then raise error
          if (tid.nt = nd_null) then
             fn := fn + 1;
-            auxd := (func_d, fn, desc);
+            auxd := (func_d, fn, desc, null);
             Put_Line(consult(nt, p.efcall.fcall_id.identifier_id));
             put(st, p.efcall.fcall_id.identifier_id, auxd, e);
             if e then em_nameAlreadyUsed(p.pos); raise tc_error; end if;
@@ -1056,6 +1057,8 @@ package body semantic.type_checking is
             when nd_null =>
                em_undefinedName(p.pos);
 
+            when nd_typevar =>
+               null;
             when others =>
                em_CompilerError(p.pos); raise tc_error;
             end case;

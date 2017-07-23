@@ -20,6 +20,7 @@ package body semantic is
       semantic.messages.prepare_messages(fname);
    end prepare;
 
+
 --   procedure conclou_analisi is
 --   begin
 --      semantic.missatges.conclou_missatges;

@@ -8,6 +8,7 @@ b__fun.o
 /home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/obj/decls-general_defs.o
 /home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/obj/decls-d_lc_tree.o
 /home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/obj/decls-d_names_table.o
+/home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/obj/decls-d_pm_tree.o
 /home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/obj/decls-d_tree.o
 /home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/obj/decls-d_description.o
 /home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/obj/decls-d_symbol_table.o

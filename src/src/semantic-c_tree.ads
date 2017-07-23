@@ -1,6 +1,8 @@
-with decls.d_tree, decls.general_defs, decls.d_names_table, semantic.messages;
+with decls.d_tree, decls.general_defs, decls.d_names_table, semantic.messages,
+     decls.d_pm_tree;
      --semantic.c_tipus, semantic.g_codi_int, decls.d_descripcio;
-use decls.d_tree, decls.general_defs, decls.d_names_table, semantic.messages;
+use decls.d_tree, decls.general_defs, decls.d_names_table, semantic.messages,
+     decls.d_pm_tree;
      --semantic.c_tipus, semantic.g_codi_int, decls.d_descripcio;
 
 package semantic.c_tree is

@@ -29,18 +29,19 @@ package body ada_main is
    E034 : Short_Integer; pragma Import (Ada, E034, "system__traceback__symbolic_E");
    E093 : Short_Integer; pragma Import (Ada, E093, "ada__text_io_E");
    E132 : Short_Integer; pragma Import (Ada, E132, "decls__d_names_table_E");
+   E140 : Short_Integer; pragma Import (Ada, E140, "decls__d_pm_tree_E");
    E137 : Short_Integer; pragma Import (Ada, E137, "decls__d_symbol_table_E");
-   E152 : Short_Integer; pragma Import (Ada, E152, "decls__d_vtype_table_E");
+   E156 : Short_Integer; pragma Import (Ada, E156, "decls__d_vtype_table_E");
    E108 : Short_Integer; pragma Import (Ada, E108, "fun_dfa_E");
    E110 : Short_Integer; pragma Import (Ada, E110, "fun_io_E");
    E120 : Short_Integer; pragma Import (Ada, E120, "fun_tokens_E");
    E125 : Short_Integer; pragma Import (Ada, E125, "lexical_a_E");
    E127 : Short_Integer; pragma Import (Ada, E127, "semantic_E");
-   E146 : Short_Integer; pragma Import (Ada, E146, "semantic__c_lc_tree_E");
+   E148 : Short_Integer; pragma Import (Ada, E148, "semantic__c_lc_tree_E");
    E129 : Short_Integer; pragma Import (Ada, E129, "semantic__messages_E");
-   E140 : Short_Integer; pragma Import (Ada, E140, "semantic__c_tree_E");
-   E148 : Short_Integer; pragma Import (Ada, E148, "semantic__type_checking_E");
-   E154 : Short_Integer; pragma Import (Ada, E154, "syntactic_a_E");
+   E142 : Short_Integer; pragma Import (Ada, E142, "semantic__c_tree_E");
+   E150 : Short_Integer; pragma Import (Ada, E150, "semantic__type_checking_E");
+   E158 : Short_Integer; pragma Import (Ada, E158, "syntactic_a_E");
 
    Local_Priority_Specific_Dispatching : constant String := "";
    Local_Interrupt_States : constant String := "";
@@ -201,24 +202,25 @@ package body ada_main is
       E093 := E093 + 1;
       decls.d_names_table'elab_spec;
       E132 := E132 + 1;
+      E140 := E140 + 1;
       E137 := E137 + 1;
       decls.d_vtype_table'elab_spec;
-      E152 := E152 + 1;
+      E156 := E156 + 1;
       E108 := E108 + 1;
       fun_io'elab_spec;
       E110 := E110 + 1;
       Fun_Tokens'Elab_Spec;
       E120 := E120 + 1;
       semantic'elab_spec;
-      E146 := E146 + 1;
+      E148 := E148 + 1;
       semantic.messages'elab_spec;
       E129 := E129 + 1;
       E127 := E127 + 1;
-      E140 := E140 + 1;
+      E142 := E142 + 1;
       E125 := E125 + 1;
       semantic.type_checking'elab_spec;
-      E148 := E148 + 1;
-      E154 := E154 + 1;
+      E150 := E150 + 1;
+      E158 := E158 + 1;
    end adainit;
 
    procedure Ada_Main_Program;
@@ -258,6 +260,7 @@ package body ada_main is
    --   /home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/obj/decls-general_defs.o
    --   /home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/obj/decls-d_lc_tree.o
    --   /home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/obj/decls-d_names_table.o
+   --   /home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/obj/decls-d_pm_tree.o
    --   /home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/obj/decls-d_tree.o
    --   /home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/obj/decls-d_description.o
    --   /home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/obj/decls-d_symbol_table.o
