@@ -35,6 +35,8 @@ package semantic.messages is
    procedure em_vartypeNotExpected             (pos: in position);
 
    tc_error: exception;
+   lc_error: exception;
+   lc_lift_error: exception;
 
 
 private

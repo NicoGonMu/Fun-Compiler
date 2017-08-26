@@ -16,18 +16,18 @@ package decls.d_tree is
                      nd_elist, nd_etuple, nd_elit, nd_efcall,
                      nd_cond, nd_else, nd_tuple, nd_list_e,
                      nd_list, nd_lit, nd_decls, nd_typevar_decl,
-                     nd_type_decl, nd_data_decl, nd_func_decl, nd_eq_decl, nd_tuple_type, nd_c_tuple_type);
+                     nd_type_decl, nd_data_decl, nd_func_decl, nd_eq_decl,
+                     nd_tuple_type, nd_c_tuple_type);
 
    type node (nt: nodeType := nd_null) is
       record
-            pos: position;
+         pos: position;
          case nt is
             when nd_root =>
                defs: pnode;
                data: pnode;
             when nd_ident =>
                identifier_id: name_id;
-               --ide_despl: despl;
             when nd_type_decl =>
                type_decl: pnode;
             when nd_data_decl =>
@@ -96,9 +96,6 @@ package decls.d_tree is
             when nd_lmodels =>
                lmodels_lmodels: pnode;
                lmodels_model: pnode;
---              when nd_model =>
---                 model_model: pnode;
---                 model_e: pnode;
             when nd_plus =>
                plus_e1: pnode;
                plus_e2: pnode;

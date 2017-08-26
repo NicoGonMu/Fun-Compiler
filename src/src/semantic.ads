@@ -9,19 +9,23 @@ package semantic is
 
    fn: func_id;
 
---   ne: num_etiq;
-
    --Syntactic tree
    root: pnode;
 
    --Lambda calculus tree
    lc_root: lc_pnode;
 
+   --Lambda calculus lifted tree
+   lc_lift_root: lc_pnode;
 
---   prof: profunditat;
---   pproc: pila_proc;
 
-   --   tp: taula_procediments;
+   list_nid: name_id;
+   cons_nid: name_id;
+   nil_nid:  name_id;
+   int_nid:  name_id;
+   bool_nid: name_id;
+   char_nid: name_id;
+
    alt_id: Natural;
 
    error: boolean;

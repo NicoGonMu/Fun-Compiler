@@ -1,5 +1,5 @@
-with Ada.Text_IO;
-use Ada.Text_IO;
+with Ada.Text_IO, Ada.Strings.Unbounded, Ada.Strings.Bounded;
+use Ada.Text_IO, Ada.Strings.Unbounded, Ada.Strings.Bounded;
 
 package body semantic.type_checking is
 
@@ -58,7 +58,8 @@ package body semantic.type_checking is
       d: description;
       e: boolean;
    begin
-      put(nt, "list", list_nid); put(nt, "a", a_nid); put(nt, "nil", nil_nid); put(nt, "cons", cons_nid);
+      put(nt, "list", list_nid); put(nt, "a", a_nid);
+      put(nt, "nil", nil_nid);   put(nt, "cons", cons_nid);
       d := (type_d, list_tree(a_nid), 0); put(st, list_nid, d, e);
       put(nt, "bool", bool_nid); d := (type_d, null, bool_nid); put(st, bool_nid, d, e);
       put(nt, "char", char_nid); d := (type_d, null, char_nid); put(st, char_nid, d, e);
@@ -141,7 +142,6 @@ package body semantic.type_checking is
       defs: pnode renames p.defs;
    begin
       tc_defs(defs);
-      Put_Line("Definitions analyzed");
       tc_eq_e(data, null);
    end tc_prog;
 
@@ -206,6 +206,8 @@ package body semantic.type_checking is
       -- Check if id is from declared function
       d := cons(st, id.identifier_id);
       if d.dt /= func_d then em_functionNameExpected(p.pos); raise tc_error; end if;
+      d.fn_eq_count := d.fn_eq_count + 1;
+      update(st, id.identifier_id, d);
 
       enterbloc(st);
       empty(vtt);
@@ -269,7 +271,7 @@ package body semantic.type_checking is
             end if;
 
          when nd_c_tuple_type =>
-            null;--if tid.
+            null;
          when nd_fcall =>
             -- Compare TT with fcall (function, constructor, list)
             if tid.fcall_id = null then
@@ -288,19 +290,22 @@ package body semantic.type_checking is
                   compare_e(getType(p.conc_e2), d.tuple_type_ctt.c_tuple_type_fcall.fcall_params);
                elsif p.efcall.fcall_id.identifier_id = cons_nid then
                   --First cons element
-                  if (p.efcall.fcall_params = null or else p.efcall.fcall_params.params_el.el_e = null) then
+                  if (p.efcall.fcall_params = null or else
+                      p.efcall.fcall_params.params_el.el_e = null) then
                      em_paramsExpected(p.pos);
                      raise tc_error;
                   end if;
-                  Put_Line(consult(nt, p.efcall.fcall_params.params_el.el_e.efcall.fcall_id.identifier_id));
-                  compare_e(getType(p.efcall.fcall_params.params_el.el_e), d.tuple_type_ctt.c_tuple_type_fcall.fcall_params);
+                  compare_e(getType(p.efcall.fcall_params.params_el.el_e),
+                            d.tuple_type_ctt.c_tuple_type_fcall.fcall_params);
 
                   --Last cons element
-                  if (p.efcall.fcall_params.params_el.el_el = null or else p.efcall.fcall_params.params_el.el_el.el_e = null) then
+                  if (p.efcall.fcall_params.params_el.el_el = null or else
+                      p.efcall.fcall_params.params_el.el_el.el_e = null) then
                      em_paramsExpected(p.pos);
                      raise tc_error;
                   end if;
-                  compare_e(getType(p.efcall.fcall_params.params_el.el_el.el_e), d.tuple_type_ctt.c_tuple_type_fcall.fcall_params);
+                  compare_e(getType(p.efcall.fcall_params.params_el.el_el.el_e),
+                            d.tuple_type_ctt.c_tuple_type_fcall.fcall_params);
 
                elsif p.efcall.fcall_id.identifier_id /= nil_nid then
                   compare_e(tid.fcall_params, d.tuple_type_ctt.c_tuple_type_fcall.fcall_params);
@@ -310,12 +315,16 @@ package body semantic.type_checking is
                -- Constructor
                return;
                --Check if constructor belongs to expected type
-               if (tid.fcall_id.identifier_id /= d.tuple_type_ctt.c_tuple_type_fcall.fcall_id.identifier_id) then
-                  em_incorrectType(p.pos, consult(nt, d.tuple_type_ctt.c_tuple_type_fcall.fcall_id.identifier_id));
+               if (tid.fcall_id.identifier_id /=
+                     d.tuple_type_ctt.c_tuple_type_fcall.fcall_id.identifier_id) then
+                  em_incorrectType(p.pos,
+                             consult(nt, d.tuple_type_ctt.c_tuple_type_fcall.fcall_id.identifier_id));
                end if;
 
                --Check constructor params
-               compareParams_e(p.efcall.fcall_params, d.tuple_type_ctt.c_tuple_type_fcall, tid.fcall_params);
+               compareParams_e(p.efcall.fcall_params,
+                               d.tuple_type_ctt.c_tuple_type_fcall,
+                               tid.fcall_params);
             end if;
 
          when nd_ident =>
@@ -341,8 +350,8 @@ package body semantic.type_checking is
                   raise tc_error;
                end if;
                if (d.tuple_type_ctt.c_tuple_type_fcall.fcall_id.identifier_id /= desc.vtype) then
-                  em_incorrectType(p.pos, consult(nt, d.tuple_type_ctt.c_tuple_type_fcall.identifier_id));
-                  raise tc_error;
+                  em_incorrectType(p.pos,
+                                   consult(nt, d.tuple_type_ctt.c_tuple_type_fcall.identifier_id));
                end if;
             end if;
 
@@ -451,7 +460,8 @@ package body semantic.type_checking is
                when null_d =>
                   d := (constructor_d, data_nid, alt_id, p);
                   putSub(st, id, d, e);
-                  Put_Line("Put alt " & alt_id'Img & " of type " & consult(nt, data_nid) & ": " & consult(nt, id));
+                  Put_Line("Put alt " & alt_id'Img & " of type " &
+                           consult(nt, data_nid) & ": " & consult(nt, id));
                   alt_id := alt_id + 1;
                when others =>
                   em_constructorExpected(p.pos); raise tc_error;
@@ -537,7 +547,7 @@ package body semantic.type_checking is
       e: boolean;
    begin
       fn := fn + 1;
-      d := (func_d, fn, fdesc, null);
+      d := (func_d, fn, fdesc, null, 0);
       put(st, fid.identifier_id, d, e);
       if e then em_nameAlreadyUsed(p.pos); raise tc_error; end if;
 
@@ -615,6 +625,7 @@ package body semantic.type_checking is
       pfcall, cttparams: pnode;
       d, auxd: description;
       e: boolean;
+      msg: Unbounded_String;
    begin
       case p.nt is
          when nd_plus | nd_sub | nd_prod | nd_div | nd_mod | nd_usub =>
@@ -627,17 +638,19 @@ package body semantic.type_checking is
       tid := getType(p);
 
       --If ctt is fcall, then compare 2 types or store vartype
-      if (desc.c_tuple_type_fcall /= null) then
+      if desc.c_tuple_type_fcall /= null then
          d := cons(st, desc.c_tuple_type_fcall.fcall_id.identifier_id);
          if d.dt = vartype_d then
             -- If vartype, try to insert it on T
-            if (tid.nt = nd_fcall) then
+            if tid.nt = nd_fcall then
                put(vtt, desc.c_tuple_type_fcall.fcall_id.identifier_id, tid.fcall_id, e);
                if e then em_typeNotInferable(p.pos); raise tc_error; end if;
-            elsif (tid.nt = nd_efcall) then
+
+            elsif tid.nt = nd_efcall then
                put(vtt, desc.c_tuple_type_fcall.fcall_id.identifier_id, tid.efcall.fcall_id, e);
                if e then em_typeNotInferable(p.pos); raise tc_error; end if;
-            elsif (tid.nt = nd_null) then
+
+            elsif tid.nt = nd_null then
                put(vtt, desc.c_tuple_type_fcall.fcall_id.identifier_id, p.efcall.fcall_id, e);
                if e then em_typeNotInferable(p.pos); raise tc_error; end if;
                --New variable
@@ -645,9 +658,11 @@ package body semantic.type_checking is
                auxd := (var_d, vpos, desc.c_tuple_type_fcall.fcall_id.identifier_id);
                Put_Line(consult(nt, p.efcall.fcall_id.identifier_id));
                put(st, p.efcall.fcall_id.identifier_id, auxd, e);
+
             elsif tid.nt = nd_ident then
                put(vtt, desc.c_tuple_type_fcall.fcall_id.identifier_id, p, e);
                if e then em_typeNotInferable(p.pos); raise tc_error; end if;
+
             else
                em_CompilerError(p.pos); raise tc_error;
             end if;
@@ -659,8 +674,8 @@ package body semantic.type_checking is
                when nd_ident =>
                   -- When identifier, check if they are equal
                   if (tid.identifier_id /= desc.c_tuple_type_fcall.fcall_id.identifier_id) then
-                     em_incorrectType(p.pos, consult(nt, desc.c_tuple_type_fcall.fcall_id.identifier_id));
-                     raise tc_error;
+                     em_incorrectType(p.pos,
+                                      consult(nt, desc.c_tuple_type_fcall.fcall_id.identifier_id));
                   end if;
 
                when nd_null =>
@@ -677,7 +692,8 @@ package body semantic.type_checking is
                   --If conc, type must be list
                   if (p.nt = nd_conc) then
                      if (desc.c_tuple_type_fcall.fcall_id.identifier_id /= list_nid) then
-                        em_incorrectType(p.pos, consult(nt, desc.c_tuple_type_fcall.fcall_id.identifier_id));
+                        em_incorrectType(p.pos,
+                                         consult(nt, desc.c_tuple_type_fcall.fcall_id.identifier_id));
                         raise tc_error;
                      end if;
 
@@ -712,7 +728,8 @@ package body semantic.type_checking is
                         em_functionCallsNotExpected(p.pos); raise tc_error;
                      else
                         if (d.cons_type /= desc.c_tuple_type_fcall.fcall_id.identifier_id) then
-                           em_incorrectType(p.pos, consult(nt, desc.c_tuple_type_fcall.fcall_id.identifier_id));
+                           em_incorrectType(p.pos,
+                                         consult(nt, desc.c_tuple_type_fcall.fcall_id.identifier_id));
                            raise tc_error;
                         end if;
                      end if;
@@ -732,7 +749,7 @@ package body semantic.type_checking is
          --If constructor then raise error
          if (tid.nt = nd_null) then
             fn := fn + 1;
-            auxd := (func_d, fn, desc, null);
+            auxd := (func_d, fn, desc, null, 0);
             Put_Line(consult(nt, p.efcall.fcall_id.identifier_id));
             put(st, p.efcall.fcall_id.identifier_id, auxd, e);
             if e then em_nameAlreadyUsed(p.pos); raise tc_error; end if;
@@ -781,7 +798,8 @@ package body semantic.type_checking is
             --If ctt is FCALL, compare between FCALLs
             if (pctt.c_tuple_type_fcall /= null) then
                if (dctt.c_tuple_type_fcall = null or else
-                     (dctt.c_tuple_type_fcall.fcall_id.identifier_id /= pctt.c_tuple_type_fcall.fcall_id.identifier_id)) then
+                     (dctt.c_tuple_type_fcall.fcall_id.identifier_id /=
+                      pctt.c_tuple_type_fcall.fcall_id.identifier_id)) then
                   return true;
                end if;
 
@@ -838,7 +856,8 @@ package body semantic.type_checking is
                tparams := cons(st, d.fcall_id.identifier_id).type_tree.type_params;
                if(tparams /= null) then tparams := tparams.params_el; end if;
                while (tparams /= null) loop
-                  if (tparams.el_e.efcall.fcall_id.identifier_id = cparams.el_e.efcall.fcall_id.identifier_id) then
+                  if (tparams.el_e.efcall.fcall_id.identifier_id =
+                      cparams.el_e.efcall.fcall_id.identifier_id) then
                      exit;
                   end if;
                   tparams := tparams.el_el;
@@ -852,12 +871,14 @@ package body semantic.type_checking is
                      --If literal or type, try to add in T
                      put(vtt, dparams.el_e.identifier_id, ptype, e);
                      if e then em_typeNotInferable(p.pos); raise tc_error; end if;
+
                   when nd_fcall =>
                      if (pparams.el_e.fcall_id.identifier_id /= dparams.el_e.identifier_id) then
                         em_incorrectType(p.pos, consult(nt, dparams.el_e.identifier_id));
                         raise tc_error;
                      end if;
                      compareTrees_lmodel(pparams.el_e, ptype.fcall_params);
+
                   when nd_null =>
                      -- New variable of type dparam
                      vpos := vpos + 1;
@@ -865,8 +886,10 @@ package body semantic.type_checking is
                      Put_Line(consult(nt, pparams.el_e.efcall.fcall_id.identifier_id));
                      put(st, pparams.el_e.efcall.fcall_id.identifier_id, desc, e);
                      if e then em_nameAlreadyUsed(p.pos); raise tc_error; end if;
+
                   when nd_typevar =>
                      em_variableNotExpected(p.pos); raise tc_error;
+
                   when others =>
                      em_CompilerError(p.pos); raise tc_error;
                end case;
@@ -910,7 +933,8 @@ package body semantic.type_checking is
                tparams := cons(st, d.fcall_id.identifier_id).type_tree.type_params;
                if(tparams /= null) then tparams := tparams.params_el; end if;
                while (tparams /= null) loop
-                  if (tparams.el_e.efcall.fcall_id.identifier_id = cparams.el_e.efcall.fcall_id.identifier_id) then
+                  if (tparams.el_e.efcall.fcall_id.identifier_id =
+                      cparams.el_e.efcall.fcall_id.identifier_id) then
                      exit;
                   end if;
                   tparams := tparams.el_el;
@@ -923,12 +947,14 @@ package body semantic.type_checking is
                      --If literal or type, try to add in T
                      put(vtt, dparams.el_e.identifier_id, ptype, e);
                      if e then em_typeNotInferable(p.pos); raise tc_error; end if;
+
                   when nd_fcall =>
                      if (pparams.el_e.fcall_id.identifier_id /= dparams.el_e.identifier_id) then
                         em_incorrectType(p.pos, consult(nt, dparams.el_e.identifier_id));
                         raise tc_error;
                      end if;
                      tc_eq_e(pparams.el_e, ptype.fcall_params);
+
                   when nd_null =>
                      em_nameAlreadyUsed(p.pos);
 
@@ -977,7 +1003,7 @@ package body semantic.type_checking is
 
          case p.nt is
             when nd_ident =>
-               if (p.identifier_id /= dit.el_e.efcall.fcall_id.identifier_id) then
+               if p.identifier_id /= dit.el_e.efcall.fcall_id.identifier_id then
                   em_incorrectType(p.pos, consult(nt, dit.el_e.efcall.fcall_id.identifier_id));
                end if;
             when nd_tuple_type =>
@@ -986,14 +1012,17 @@ package body semantic.type_checking is
                   if pit.tuple_type_ctt.c_tuple_type_fcall /= null then
                      ptype := pit.tuple_type_ctt.c_tuple_type_fcall.fcall_params.params_el;
                   end if;
-                  if (ptype.el_e.efcall.fcall_id.identifier_id /= dit.el_e.efcall.fcall_id.identifier_id) then
+
+                  if ptype.el_e.efcall.fcall_id.identifier_id /=
+                        dit.el_e.efcall.fcall_id.identifier_id then
                      em_incorrectType(pit.pos, consult(nt, dit.el_e.efcall.fcall_id.identifier_id));
                   end if;
 
                   pit := pit.tuple_type_tt;
                   dit := dit.el_el;
                end loop;
-               if (dit /= null or pit /= null) then
+
+               if dit /= null or pit /= null then
                   em_incorrectType(p.pos, "");
                   raise tc_error;
                end if;
@@ -1019,7 +1048,8 @@ package body semantic.type_checking is
                   e := compareTrees(p.c_tuple_type_out, pit);
                   if e then em_incorrectType(p.pos, ""); raise tc_error; end if;
                elsif pit.nt = nd_typevar then
-                  if(pit.typevar_lid.identifier_id /= p.c_tuple_type_out.tuple_type_ctt.c_tuple_type_fcall.fcall_id.identifier_id) then
+                  if(pit.typevar_lid.identifier_id /=
+                     p.c_tuple_type_out.tuple_type_ctt.c_tuple_type_fcall.fcall_id.identifier_id) then
                      em_incorrectType(p.pos, consult(nt, pit.typevar_lid.identifier_id));
                      raise tc_error;
                   end if;
@@ -1030,14 +1060,19 @@ package body semantic.type_checking is
                while dit /= null and pit /= null loop
                   ptype := getType(pit.el_e);
                   if ptype.nt = nd_typevar then
-                     Put_Line(consult(nt, ptype.typevar_lid.identifier_id) & " vs " & consult(nt, dit.el_e.efcall.fcall_id.identifier_id));
-                     if (ptype.typevar_lid.identifier_id /= dit.el_e.efcall.fcall_id.identifier_id) then
+                     Put_Line(consult(nt, ptype.typevar_lid.identifier_id) & " vs " &
+                                consult(nt, dit.el_e.efcall.fcall_id.identifier_id));
+
+                     if (ptype.typevar_lid.identifier_id /=
+                         dit.el_e.efcall.fcall_id.identifier_id) then
                         em_incorrectType(p.pos, consult(nt, dit.el_e.efcall.fcall_id.identifier_id));
                      end if;
+
                   elsif ptype.nt = nd_fcall then
                      if (ptype.fcall_id.identifier_id /= dit.el_e.efcall.fcall_id.identifier_id) then
                         em_incorrectType(p.pos, consult(nt, dit.el_e.efcall.fcall_id.identifier_id));
                      end if;
+
                   else
                      em_incorrectType(p.pos, "");
                      raise tc_error;
@@ -1046,6 +1081,7 @@ package body semantic.type_checking is
                   pit := pit.el_el;
                   dit := dit.el_el;
                end loop;
+
                if (dit /= null or pit /= null) then
                   em_incorrectType(p.pos, "");
                   raise tc_error;
@@ -1059,8 +1095,10 @@ package body semantic.type_checking is
 
             when nd_typevar =>
                null;
+
             when others =>
                em_CompilerError(p.pos); raise tc_error;
+
             end case;
       else
          em_CompilerError(p.pos); raise tc_error;
@@ -1078,9 +1116,11 @@ package body semantic.type_checking is
          when nd_plus | nd_sub | nd_prod | nd_div | nd_mod | nd_usub =>
             ret := new node(nd_ident);
             ret.identifier_id := int_nid;
+
          when nd_oprel | nd_and | nd_or | nd_not =>
             ret := new node(nd_ident);
             ret.identifier_id := bool_nid;
+
          when nd_lit =>
             ret := new node(nd_ident);
             case p.lit_lit.sbt is
@@ -1092,14 +1132,17 @@ package body semantic.type_checking is
                   ret.identifier_id := char_nid;
                when others => em_CompilerError(p.pos); raise tc_error;
             end case;
+
          when nd_elit =>
             return getType(p.elit);
+
          when nd_efcall =>
             d := cons(st, p.efcall.fcall_id.identifier_id);
             case d.dt is
                when null_d =>
                   -- Pattern matching new variable
                   ret := new node(nd_null);
+
                when vartype_d | var_d =>
                   -- No information necessary (will have to operate with T)
                   ret := new node(nd_typevar);
@@ -1118,6 +1161,7 @@ package body semantic.type_checking is
                   ret.type_id.pos := p.pos;
                   ret.type_id.identifier_id := d.type_id;
                   ret.type_decl := d.type_tree;
+
                when constructor_d =>
                   -- Return constructor information
                   ret := new node(nd_fcall);
@@ -1125,8 +1169,10 @@ package body semantic.type_checking is
                   ret.fcall_id.pos := p.pos;
                   ret.fcall_id.identifier_id := d.cons_type;
                   ret.fcall_params := d.cons_tree;
+
                when func_d =>
                   ret := d.fn_type;
+
             end case;
          when nd_list =>
             ctt := p;
@@ -1141,21 +1187,27 @@ package body semantic.type_checking is
                   tt.tuple_type_ctt.c_tuple_type_fcall := new node(nd_fcall);
                   tt.tuple_type_ctt.c_tuple_type_fcall.pos := elem.pos;
                   tt.tuple_type_ctt.c_tuple_type_fcall.fcall_id := elem;
+
                elsif elem.nt = nd_fcall then
                   tt.tuple_type_ctt.c_tuple_type_fcall := elem;
+
                elsif elem.nt = nd_typevar then
                   d := cons(st, ctt.list_e.efcall.fcall_id.identifier_id);
                   if d.dt = null_d then
                      em_undefinedName(p.pos); raise tc_error;
+
                   elsif d.dt = var_d then
                      tt.tuple_type_ctt.c_tuple_type_fcall := new node(nd_fcall);
                      tt.tuple_type_ctt.c_tuple_type_fcall.pos := elem.pos;
                      tt.tuple_type_ctt.c_tuple_type_fcall.fcall_id := new node(nd_ident);
                      tt.tuple_type_ctt.c_tuple_type_fcall.fcall_id.pos := elem.pos;
                      tt.tuple_type_ctt.c_tuple_type_fcall.fcall_id.identifier_id := d.vtype;
+
                   elsif d.dt = vartype_d then
+
                      em_vartypeNotExpected(p.pos); raise tc_error;
                   end if;
+
                elsif elem.nt = nd_null then
                   em_undefinedName(p.pos);
                   raise tc_error;
@@ -1171,6 +1223,7 @@ package body semantic.type_checking is
 
                ctt := ctt.list_list;
             end loop;
+
             ret := ret.tuple_type_tt;
 
          when nd_elist =>
@@ -1179,14 +1232,17 @@ package body semantic.type_checking is
             ret.fcall_id.pos := p.pos;
             ret.fcall_id.identifier_id := list_nid;
             ret.fcall_params := getType(p.list_e_list.list_e); --Obtain first element's type
+
          when nd_conc =>
             ret := new node(nd_fcall);
             ret.fcall_id := new node(nd_ident);
             ret.fcall_id.pos := p.pos;
             ret.fcall_id.identifier_id := list_nid;
             ret.fcall_params := getType(p.conc_e1);
+
          when nd_tuple =>
             return getType(p.tuple_list);
+
          when others =>
             em_CompilerError(p.pos); raise tc_error;
       end case;

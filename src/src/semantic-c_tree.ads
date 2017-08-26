@@ -1,9 +1,9 @@
 with decls.d_tree, decls.general_defs, decls.d_names_table, semantic.messages,
      decls.d_pm_tree;
-     --semantic.c_tipus, semantic.g_codi_int, decls.d_descripcio;
+     --semantic.g_codi_int;
 use decls.d_tree, decls.general_defs, decls.d_names_table, semantic.messages,
      decls.d_pm_tree;
-     --semantic.c_tipus, semantic.g_codi_int, decls.d_descripcio;
+     --semantic.g_codi_int;
 
 package semantic.c_tree is
 
@@ -68,15 +68,6 @@ package semantic.c_tree is
 
    procedure sr_c_tuple_type(p: out pnode; ctt_in: in pnode; ctt_out: in pnode);
    procedure sr_c_tuple_type(p: out pnode; fcall: in pnode);
-
---     procedure sr_fparam (p: out pnode; param_list: in pnode);
---     procedure sr_fparam (p: out pnode);
---
---     procedure sr_param_list (p: out pnode; fp: in pnode);
---     procedure sr_param_list (p: out pnode; param_list: in pnode; fp: in pnode);
---
---     procedure sr_fp (p: out pnode; fcall: in pnode);
---     procedure sr_fp (p: out pnode; fcall_in: in pnode; fcall_out: in pnode);
 
    procedure sr_equation (p: out pnode; id: in pnode; pattern: in pnode;
                           e: in pnode);

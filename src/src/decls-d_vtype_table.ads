@@ -1,8 +1,7 @@
-with Ada.Containers, decls.general_defs, decls.d_tree;
-use Ada.Containers, decls.general_defs, decls.d_tree;
+with decls.general_defs, decls.d_tree;
+use decls.general_defs, decls.d_tree;
 
 package decls.d_vtype_table is
-   --pragma pure;
    type vtype_table is limited private;
    type vartype_array is private;
    type index is private;

@@ -43,8 +43,7 @@ package decls.general_defs is
    type alt_id is new integer range 0..max_id;
 
 
-   --type tuple_type is array name_id of name_id;
-
+   --Symbol table profundity
    subtype profundity is integer range -1..2;
 
 

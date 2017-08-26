@@ -25,7 +25,6 @@ package decls.d_description is
             when null_d =>
                null;
             when vartype_d =>
-               --tpos: natural;
                null;
             when type_d =>
                type_tree: pnode;

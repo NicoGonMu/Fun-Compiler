@@ -66,6 +66,12 @@ package body decls.d_symbol_table is
       return dt(id).desc;
    end cons;
 
+   procedure update(st: in out symbol_table; id: in name_id; d: in description) is
+      dt: disp_table renames st.dt;
+   begin
+      dt(id).desc := d;
+   end update;
+
    procedure enterbloc(st: in out symbol_table) is
       ie: natural;
       pt: prof_table renames st.pt;

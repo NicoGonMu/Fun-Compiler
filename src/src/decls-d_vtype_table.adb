@@ -1,6 +1,3 @@
-with Ada.Strings.Hash;
-use Ada.Strings;
-
 package body decls.d_vtype_table is
 
    procedure empty (vtt: out vtype_table) is

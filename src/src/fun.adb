@@ -1,13 +1,9 @@
 with lexical_a, syntactic_a, fun_dfa, fun_io, fun_tokens,
     Ada.Text_io, Ada.Command_Line, semantic, semantic.type_checking,
-    semantic.c_lc_tree;--decls, decls.d_c3a, decls.d_tnoms, decls.d_tsimbols
-     --semantic.c_arbre, semantic.g_codi_ass, semantic.missatges;
+    semantic.c_lc_tree, semantic.lambda_lifting; --decls, decls.d_c3a, semantic.g_codi_ass;
 use lexical_a, syntactic_a, fun_dfa, fun_io, fun_tokens,
     Ada.Text_io, Ada.Command_Line, semantic, semantic.type_checking,
-    semantic.c_lc_tree;
---    decls, decls.d_c3a, decls.d_tnoms, decls.d_tsimbols;
---    semantic.c_arbre,
---    semantic.g_codi_ass, semantic.missatges;
+    semantic.c_lc_tree, semantic.lambda_lifting; --decls, decls.d_c3a, semantic.g_codi_ass;
 
 procedure Fun is
    error: boolean renames semantic.error;
@@ -23,6 +19,12 @@ begin
    if not error then
       generate_lc_tree(Argument(1));
    end if;
+   if not error then
+      lambda_lift;
+   end if;
+   -- if not error then
+   --   FPM(Argument(1));
+   --end if;
    -- if not error then
    --   generacio_codi_ass(Argument(1));
    --end if;

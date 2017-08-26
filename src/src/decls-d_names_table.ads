@@ -2,7 +2,6 @@ with Ada.Containers, decls.general_defs;
 use Ada.Containers, decls.general_defs;
 
 package decls.d_names_table is
-   --pragma pure;
    type names_table is limited private;
 
    procedure empty   (nt: out names_table);

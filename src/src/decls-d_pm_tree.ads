@@ -17,15 +17,17 @@ package decls.d_pm_tree is
    --Type derivations
    type pm_derivations is array (Natural range <>) of p_pm_node;
 
-   type pm_node_type is (pm_leaf, pm_inner);
+   type pm_node_type is (pm_null, pm_leaf, pm_inner);
 
    --Type pm_tree
    type pm_node(nt: pm_node_type; p: Natural; d: Natural) is
       record
          case nt is
+            when pm_null =>
+               null;
             when pm_inner =>
-               pos:    pm_position(0..p);
-               derivs: pm_derivations(0..d);
+               pos:    pm_position(1..p);
+               derivs: pm_derivations(1..d);
             when pm_leaf =>
                eq_number: Integer;
          end case;

@@ -6,7 +6,15 @@ package decls.d_lc_tree is
    type lc_pnode is access lc_node;
    type oprel is (lt, gt, le, ge, eq, ne);
    type lc_nodeType is (nd_null, nd_lambda, nd_ident, nd_apply, nd_const);
-   type lc_cons_id is (c_null, c_case, c_tuple, c_cond, c_T, c_Y, c_index, c_val);
+
+   --Possible nodes on the Lambda Calculus tree: CASE, TUPLE, COND, INDEX, T,
+   -- Y, value and built-in functions (arithmetic and relational operators)
+   type lc_cons_id is (c_null, c_case, c_tuple, c_cond, c_index,     --Lambda notation
+                       c_T, c_Y,                                     --Combinators
+                       c_val, c_ident,                                --Values
+                       c_plus, c_sub, c_prod, c_div, c_mod, c_usub,  --Arithm ops
+                       c_and, c_or, c_not,                           --Relation ops
+                       c_eq, c_neq, c_gt, c_lt, c_ge, c_le);         --Comparators
 
    type lc_node (nt: lc_nodeType := nd_null) is
       record
@@ -25,7 +33,6 @@ package decls.d_lc_tree is
             when nd_const =>
                cons_id: lc_cons_id;
                cons_val: integer;
-
          end case;
       end record;
 
