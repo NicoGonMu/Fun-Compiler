@@ -18,11 +18,12 @@ b__fun.o
 /home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/obj/fun_io.o
 /home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/obj/fun_shift_reduce.o
 /home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/obj/fun_tokens.o
-/home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/obj/semantic-c_lc_tree.o
 /home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/obj/semantic-messages.o
 /home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/obj/semantic.o
+/home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/obj/semantic-c_lc_tree.o
 /home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/obj/semantic-c_tree.o
 /home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/obj/lexical_a.o
+/home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/obj/semantic-lambda_lifting.o
 /home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/obj/semantic-type_checking.o
 /home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/obj/syntactic_a.o
 /home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/obj/fun.o

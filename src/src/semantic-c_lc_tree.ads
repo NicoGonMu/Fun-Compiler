@@ -10,5 +10,7 @@ package semantic.c_lc_tree is
    type function_list is array(func_id range 1..fn) of name_id;
    flist: function_list;
 
+   definition_count: integer;
+
 
 end semantic.c_lc_tree;

@@ -3,7 +3,7 @@ use Ada.Text_IO;
 package body semantic.c_lc_tree is
 
    procedure lc_prog(p: in pnode; lc: out lc_pnode);
-   procedure lc_defs(p: in pnode; lc: out lc_pnode);
+   procedure lc_defs(p: in pnode; lc: in out lc_pnode);
 
    procedure lc_func_decl  (p: in pnode);
 
@@ -19,6 +19,7 @@ package body semantic.c_lc_tree is
    function e_to_lc_tree(p: in pnode) return lc_pnode;
    function fcall_to_lc_tree(p: in pnode) return lc_pnode;
    function list_to_lc_tree(p: in pnode; lc: in lc_pnode; i: out integer) return lc_pnode;
+   function pm_to_lc_tree(p: in p_pm_node) return lc_pnode;
 
    function cons_pattern_tree(p: in pnode; i: in out Natural; pos: in pm_position; eq: in Natural)
                               return p_pm_node;
@@ -36,7 +37,11 @@ package body semantic.c_lc_tree is
    procedure lc_prog(p: in pnode; lc: out lc_pnode) is
       data: pnode renames p.data;
       defs: pnode renames p.defs;
+      def_lc_tree: lc_pnode;
+      d: description;
    begin
+      definition_count := 0;
+
       lc := new lc_node(nd_apply);
       lc.appl_func := new lc_node(nd_lambda);
       lc.appl_func.lambda_id := new lc_node(nd_const);
@@ -46,22 +51,75 @@ package body semantic.c_lc_tree is
       lc.appl_func.lambda_decl.lambda_id.cons_id := c_T;
       lc.appl_func.lambda_decl.lambda_decl := new lc_node(nd_lambda);
 
-      lc_defs(defs, lc.appl_func.lambda_decl.lambda_decl);
-      --TODO add functions
+      --Definitions lambda tree
+      def_lc_tree := new lc_node(nd_apply);
+
+      --First node: CASE-n DEF1 DEF2 ... DEFn
+      def_lc_tree.appl_func := new lc_node(nd_const);
+      def_lc_tree.appl_func.cons_id := c_case;
+
+      --Construct definitions
+      lc_defs(defs, def_lc_tree);
+
+      --Add them to lc tree
+      lc.appl_func.lambda_decl.lambda_decl := def_lc_tree;
+
+      --Add function definitions
+      for i in flist'Range loop
+         definition_count := definition_count + 1;
+
+         -- New application where appl_func = definitions_tree, applied to new definition
+         def_lc_tree := new lc_node(nd_apply);
+         def_lc_tree.appl_func := lc.appl_func.lambda_decl.lambda_decl;
+         def_lc_tree.appl_arg := new lc_node(nd_apply);
+         def_lc_tree.appl_arg.appl_func := new lc_node(nd_const);
+         def_lc_tree.appl_arg.appl_func.cons_id := c_val;
+         def_lc_tree.appl_arg.appl_func.cons_val := definition_count;
+
+         --Get function matching tree
+         d := cons(st, flist(i));
+         def_lc_tree.appl_arg.appl_arg := pm_to_lc_tree(d.fn_lc_tree);
+
+         lc.appl_func.lambda_decl.lambda_decl := def_lc_tree;
+      end loop;
+
+      --Traverse tree to set n
+      while def_lc_tree.nt /= nd_const loop
+         def_lc_tree := def_lc_tree.appl_func;
+      end loop;
+      def_lc_tree.cons_val := definition_count;
+
       Put_Line("Defs converted to lambda calculus");
       lc_data(data, lc.appl_arg);
    end lc_prog;
 
-   procedure lc_defs(p: in pnode; lc: out lc_pnode) is
+   procedure lc_defs(p: in pnode; lc: in out lc_pnode) is
       decls: pnode renames p.decls;
       decl:  pnode renames p.decl;
+      aux_lc: lc_pnode;
    begin
+
       case decl.nt is
-         when nd_data_decl => lc_data_decl(decl.data_decl, lc);
-         when nd_func_decl => lc_func_decl(decl.func_decl);
+         --On data_decl, create node and add it to tree
+         when nd_data_decl =>
+            definition_count := definition_count + 1;
+            aux_lc := new lc_node(nd_apply);
+            aux_lc.appl_func := lc;
+            aux_lc.appl_arg := new lc_node(nd_apply);
+            aux_lc.appl_arg.appl_func := new lc_node(nd_const);
+            aux_lc.appl_arg.appl_func.cons_id := c_val;
+            aux_lc.appl_arg.appl_func.cons_val := definition_count;
+            lc_data_decl(decl.data_decl, aux_lc.appl_arg.appl_arg);
+            lc := aux_lc;
+
+         --On function declaration, only save name_id on flist
+         when nd_func_decl =>
+            lc_func_decl(decl.func_decl);
+
+         --On eq_decl, create node and add it do function description
          when nd_eq_decl =>
             lc_eq_decl(decl.eq_decl);
-            lc := lc.lambda_decl;
+
          when others => null;
       end case;
 
@@ -98,6 +156,7 @@ package body semantic.c_lc_tree is
 
       --Set TUPLE-n size
       lc.appl_func.cons_val := alt_id;
+
    end lc_data_decl;
 
    procedure lc_alts(p: in pnode; lc: out lc_pnode) is
@@ -304,6 +363,8 @@ package body semantic.c_lc_tree is
 
 
    -------------------AUXILIAR FUNCTIONS-------------------
+
+   --M(T1 & <p1, [t10, t11, ..., t1n-1]>, T2 & <p2, [t20, t21, ..., t2n-1]>)
    procedure merge_pattern_trees(base: in out p_pm_node; new_tree: in p_pm_node) is
       bderivs: pm_derivations renames base.derivs;
       nderivs: pm_derivations renames new_tree.derivs;
@@ -312,19 +373,32 @@ package body semantic.c_lc_tree is
       itb := base;
       itn := new_tree;
       while itb.nt /= pm_leaf loop
-         if itb.pos > itn.pos then
-            null; --TODO
 
+         --if p1 > p2 => <p2, [M(T1, t20), M(T1, t21), ..., M(T1, tsn-1)]>
+         if itb.pos > itn.pos then
+            for i in nderivs'Range loop
+               if nderivs(i) = null and bderivs(i) /= null then
+                  nderivs(i) := bderivs(i);
+               end if;
+            end loop;
+            bderivs := nderivs;
+
+         --if p1 = p2 => <p1, [M(t10, t20), M(t11, t21), ..., M(t1n-1, t2n-1)]>
          elsif itb.pos = itn.pos then
-            --If equal, then merge pointers
             for i in bderivs'Range loop
                if bderivs(i) = null and nderivs(i) /= null then
                   bderivs(i) := nderivs(i);
                end if;
             end loop;
 
-         else -- itb.position < itn.position
-            null; --TODO
+         --if p1 < p2 => <p1, [M(t10, T2), M(t11, T2), ..., M(t1n-1, T2)]>
+         else
+            for i in bderivs'Range loop
+               if bderivs(i) = null and nderivs(i) /= null then
+                  bderivs(i) := nderivs(i);
+               end if;
+            end loop;
+
          end if;
 
       end loop;
@@ -524,6 +598,15 @@ package body semantic.c_lc_tree is
 
       return elc;
    end list_to_lc_tree;
+
+
+   function pm_to_lc_tree(p: in p_pm_node) return lc_pnode is
+      ret: lc_pnode;
+   begin
+      --TODO
+      return ret;
+   end pm_to_lc_tree;
+
 
    function getType(p: in pnode; isConstructor: out boolean) return pnode is
       d: description;
