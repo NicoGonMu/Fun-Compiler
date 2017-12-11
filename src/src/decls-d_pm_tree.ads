@@ -7,6 +7,7 @@ package decls.d_pm_tree is
 
    --Type position
    type pm_position is array (Natural range <>) of Integer;
+   type pm_pos_ref is access pm_position;
 
    --Override "=", ">", "<"
    function "=" (a: in pm_position; b: in pm_position) return Boolean;
@@ -16,6 +17,7 @@ package decls.d_pm_tree is
 
    --Type derivations
    type pm_derivations is array (Natural range <>) of p_pm_node;
+   type pm_derivs_ref is access pm_derivations;
 
    type pm_node_type is (pm_null, pm_leaf, pm_inner);
 

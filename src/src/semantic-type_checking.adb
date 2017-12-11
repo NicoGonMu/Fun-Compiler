@@ -60,10 +60,10 @@ package body semantic.type_checking is
    begin
       put(nt, "list", list_nid); put(nt, "a", a_nid);
       put(nt, "nil", nil_nid);   put(nt, "cons", cons_nid);
-      d := (type_d, list_tree(a_nid), 0); put(st, list_nid, d, e);
-      put(nt, "bool", bool_nid); d := (type_d, null, bool_nid); put(st, bool_nid, d, e);
-      put(nt, "char", char_nid); d := (type_d, null, char_nid); put(st, char_nid, d, e);
-      put(nt, "int", int_nid);  d := (type_d, null, int_nid); put(st, int_nid, d, e);
+      d := (type_d, list_tree(a_nid), 0, 0, null); put(st, list_nid, d, e);
+      put(nt, "bool", bool_nid); d := (type_d, null, bool_nid, 0, null); put(st, bool_nid, d, e);
+      put(nt, "char", char_nid); d := (type_d, null, char_nid, 0, null); put(st, char_nid, d, e);
+      put(nt, "int", int_nid);  d := (type_d, null, int_nid, 0, null); put(st, int_nid, d, e);
    end set_std_env;
 
    function list_tree(a_nid: in name_id) return pnode is
@@ -178,6 +178,8 @@ package body semantic.type_checking is
       id:     pnode renames p.data_id;
       params: pnode renames p.data_params;
       alts:   pnode renames p.data_alts;
+      d:      description;
+      e:      Boolean;
    begin
       -- Identifier
       tc_id(id, nd_data_decl);
@@ -194,6 +196,11 @@ package body semantic.type_checking is
       alt_id := 0;
       tc_alts(alts);
 
+      --Update alternatives number (needed for lambda tree construction)
+      d := cons(st, id.identifier_id);
+      d.type_alts := alt_id;
+      put(st, id.identifier_id, d, e);
+
       exitbloc(st);
    end tc_data_decl;
 
@@ -206,7 +213,7 @@ package body semantic.type_checking is
       -- Check if id is from declared function
       d := cons(st, id.identifier_id);
       if d.dt /= func_d then em_functionNameExpected(p.pos); raise tc_error; end if;
-      d.fn_eq_count := d.fn_eq_count + 1;
+      d.fn_eq_total := d.fn_eq_total + 1;
       update(st, id.identifier_id, d);
 
       enterbloc(st);
@@ -384,7 +391,7 @@ package body semantic.type_checking is
       d: description;
       e: boolean;
    begin
-      d := (type_d, p, nid);
+      d := (type_d, p, nid, 0, null);
       put(st, nid, d, e);
       if e then em_typeAlreadyExists(tid.pos); raise tc_error; end if;
 
@@ -473,7 +480,7 @@ package body semantic.type_checking is
             end if;
 
 
-            ----------FROM PARAMS----------
+         ----------FROM PARAMS----------
          when nd_params =>
             if d.dt = null_d then
                em_undefinedName(p.pos); raise tc_error;
@@ -486,7 +493,7 @@ package body semantic.type_checking is
             end if;
 
 
-            -------FROM C_TUPLE_TYPE-------
+         -------FROM C_TUPLE_TYPE-------
          when nd_c_tuple_type =>
             if d.dt = null_d then
                em_undefinedName(p.pos); raise tc_error;
@@ -499,13 +506,13 @@ package body semantic.type_checking is
             end if;
 
 
-            ---------FROM DATA DECL--------
-            --This case will happen when looking for data_decl params
+         ---------FROM DATA DECL--------
+         --This case will happen when looking for data_decl params
          when nd_data_decl =>
             case d.dt is
                -- If vartype or not defined, insert in st prof 1
                when vartype_d | null_d =>
-                  d := (dt => vartype_d);
+                  d := (vartype_d, null);
                   put(st, id, d, e);
                   -- Else error
                when others =>
@@ -516,7 +523,7 @@ package body semantic.type_checking is
                tc_params(params, pt);
             end if;
 
-            ----------FROM OTHERS----------
+         ----------FROM OTHERS----------
          when others =>
             em_CompilerError(p.pos);            --If others -> Compiler error
             raise tc_error;
@@ -547,7 +554,7 @@ package body semantic.type_checking is
       e: boolean;
    begin
       fn := fn + 1;
-      d := (func_d, fn, fdesc, null, 0);
+      d := (func_d, fn, fdesc, null, null, 0, 0);
       put(st, fid.identifier_id, d, e);
       if e then em_nameAlreadyUsed(p.pos); raise tc_error; end if;
 
@@ -598,11 +605,11 @@ package body semantic.type_checking is
    begin
       case nt is
          when nd_lid =>
-            d := (dt => vartype_d);
+            d := (vartype_d, null);
             put(st, id, d, e);
             if e then em_nameAlreadyUsed(p.pos); raise tc_error; end if;
          when nd_data_decl =>
-            d := (type_d, type_p, id);
+            d := (type_d, type_p, id, 0, null);
             put(st, id, d, e);
             if e then em_nameAlreadyUsed(p.pos); raise tc_error; end if;
          when nd_alts =>
@@ -655,7 +662,7 @@ package body semantic.type_checking is
                if e then em_typeNotInferable(p.pos); raise tc_error; end if;
                --New variable
                vpos := vpos + 1;
-               auxd := (var_d, vpos, desc.c_tuple_type_fcall.fcall_id.identifier_id);
+               auxd := (var_d, vpos, desc.c_tuple_type_fcall.fcall_id.identifier_id, null);
                Put_Line(consult(nt, p.efcall.fcall_id.identifier_id));
                put(st, p.efcall.fcall_id.identifier_id, auxd, e);
 
@@ -681,7 +688,7 @@ package body semantic.type_checking is
                when nd_null =>
                   --New variable
                   vpos := vpos + 1;
-                  auxd := (var_d, vpos, desc.c_tuple_type_fcall.fcall_id.identifier_id);
+                  auxd := (var_d, vpos, desc.c_tuple_type_fcall.fcall_id.identifier_id, null);
                   Put_Line(consult(nt, p.efcall.fcall_id.identifier_id));
                   put(st, p.efcall.fcall_id.identifier_id, auxd, e);
 
@@ -744,12 +751,12 @@ package body semantic.type_checking is
          end if;
 
 
-         --Else, if component is a function, compare descriptions
+      --Else, if component is a function, compare descriptions
       elsif (desc.c_tuple_type_out /= null) then
          --If constructor then raise error
          if (tid.nt = nd_null) then
             fn := fn + 1;
-            auxd := (func_d, fn, desc, null, 0);
+            auxd := (func_d, fn, desc, null, null, 0, 0);
             Put_Line(consult(nt, p.efcall.fcall_id.identifier_id));
             put(st, p.efcall.fcall_id.identifier_id, auxd, e);
             if e then em_nameAlreadyUsed(p.pos); raise tc_error; end if;
@@ -847,7 +854,7 @@ package body semantic.type_checking is
             when vartype_d | type_d =>
                -- New variable of that type
                vpos := vpos + 1;
-               desc := (var_d, vpos, cparams.el_e.efcall.fcall_id.identifier_id);
+               desc := (var_d, vpos, cparams.el_e.efcall.fcall_id.identifier_id, null);
                Put_Line(consult(nt, pparams.el_e.efcall.fcall_id.identifier_id));
                put(st, pparams.el_e.efcall.fcall_id.identifier_id, desc, e);
                if e then em_nameAlreadyUsed(p.pos); raise tc_error; end if;
@@ -882,7 +889,7 @@ package body semantic.type_checking is
                   when nd_null =>
                      -- New variable of type dparam
                      vpos := vpos + 1;
-                     desc := (var_d, vpos, dparams.el_e.efcall.fcall_id.identifier_id);
+                     desc := (var_d, vpos, dparams.el_e.efcall.fcall_id.identifier_id, null);
                      Put_Line(consult(nt, pparams.el_e.efcall.fcall_id.identifier_id));
                      put(st, pparams.el_e.efcall.fcall_id.identifier_id, desc, e);
                      if e then em_nameAlreadyUsed(p.pos); raise tc_error; end if;

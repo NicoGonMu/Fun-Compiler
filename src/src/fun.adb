@@ -26,7 +26,7 @@ begin
    end if;
    Put_Line("Lamda-lift done.");
    if not error then
-      generate_FPM;
+      generate_FPM(Argument(1));
    end if;
    Put_Line("FPM code generated.");
    -- if not error then
@@ -35,5 +35,6 @@ begin
    --m_finalitzat(error);
    Put_Line("Successfully compiled");
 exception
-      when Syntax_error => null;
+
+   when Syntax_error => null;
 end Fun;

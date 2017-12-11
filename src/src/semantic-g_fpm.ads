@@ -1,16 +1,15 @@
-with Text_IO, decls.d_c3a, decls.general_defs;
-use Text_IO, decls.d_c3a, decls.general_defs;
+with Text_IO, decls.general_defs, decls.d_tree, decls.d_c3a;
+use Text_IO, decls.general_defs, decls.d_tree, decls.d_c3a;
 
 package semantic.g_FPM is
 
-      procedure generate_FPM;
+   procedure generate_FPM(name: in String);
 
 private
 
    use gci_file;
 
-   sf: gci_file.File_Type;
-   tf: Text_io.File_Type;
-
+   sf: Text_IO.File_Type;
+   tf: gci_file.File_Type;
 
 end semantic.g_FPM;

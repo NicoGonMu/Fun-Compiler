@@ -38,7 +38,7 @@ package body semantic.lambda_lifting is
                ret.lambda_decl := lift(e.lambda_decl);
                ret := lift(ret);
 
-            -- lift(x.E) = alpha v1 ... vn    if E is in applicative form with FV(x.E) = {v1 ... vn}
+            -- lift(x.E) = alpha v1 ... vn x   if E is in applicative form with FV(x.E) = {v1 ... vn}
             else
                -- 1. Get FV(e) => FV(E) - {x}
                FV(e);

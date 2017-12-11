@@ -103,8 +103,8 @@ PARAMS:
   ;
 
 EL:
-     E		{sr_el($$, $1);}
-  |  EL comma E {sr_el($$, $1, $3);}
+     EL comma E {sr_el($$, $1, $3);}
+  |  E		{sr_el($$, $1);}
   ;
 
 FUNC_DECL:

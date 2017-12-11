@@ -6,6 +6,7 @@ b__fun.o
 [BOUND OBJECT FILES]
 /home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/obj/decls.o
 /home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/obj/decls-general_defs.o
+/home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/obj/decls-d_c3a.o
 /home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/obj/decls-d_lc_tree.o
 /home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/obj/decls-d_names_table.o
 /home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/obj/decls-d_pm_tree.o
@@ -18,6 +19,7 @@ b__fun.o
 /home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/obj/fun_io.o
 /home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/obj/fun_shift_reduce.o
 /home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/obj/fun_tokens.o
+/home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/obj/semantic-g_fpm.o
 /home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/obj/semantic-messages.o
 /home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/obj/semantic.o
 /home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/obj/semantic-c_lc_tree.o

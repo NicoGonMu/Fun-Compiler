@@ -7,10 +7,14 @@ package semantic.c_lc_tree is
    procedure generate_lc_tree (fname: in string);
 
    --Array of function ids
-   type function_list is array(func_id range 1..fn) of name_id;
+   type function_list is array(func_id) of name_id;
    flist: function_list;
 
    definition_count: integer;
+
+
+   --Variable to know the function being analyzed
+   current_fn: func_id;
 
 
 end semantic.c_lc_tree;

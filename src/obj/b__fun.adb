@@ -23,30 +23,32 @@ package body ada_main is
    E098 : Short_Integer; pragma Import (Ada, E098, "system__file_io_E");
    E101 : Short_Integer; pragma Import (Ada, E101, "system__finalization_root_E");
    E099 : Short_Integer; pragma Import (Ada, E099, "ada__finalization_E");
-   E170 : Short_Integer; pragma Import (Ada, E170, "system__storage_pools_E");
-   E166 : Short_Integer; pragma Import (Ada, E166, "system__finalization_masters_E");
-   E164 : Short_Integer; pragma Import (Ada, E164, "system__storage_pools__subpools_E");
+   E176 : Short_Integer; pragma Import (Ada, E176, "system__storage_pools_E");
+   E172 : Short_Integer; pragma Import (Ada, E172, "system__finalization_masters_E");
+   E170 : Short_Integer; pragma Import (Ada, E170, "system__storage_pools__subpools_E");
    E063 : Short_Integer; pragma Import (Ada, E063, "system__object_reader_E");
    E044 : Short_Integer; pragma Import (Ada, E044, "system__dwarf_lines_E");
    E009 : Short_Integer; pragma Import (Ada, E009, "system__secondary_stack_E");
-   E162 : Short_Integer; pragma Import (Ada, E162, "ada__strings__unbounded_E");
+   E168 : Short_Integer; pragma Import (Ada, E168, "ada__strings__unbounded_E");
+   E154 : Short_Integer; pragma Import (Ada, E154, "system__sequential_io_E");
    E034 : Short_Integer; pragma Import (Ada, E034, "system__traceback__symbolic_E");
    E093 : Short_Integer; pragma Import (Ada, E093, "ada__text_io_E");
    E132 : Short_Integer; pragma Import (Ada, E132, "decls__d_names_table_E");
    E140 : Short_Integer; pragma Import (Ada, E140, "decls__d_pm_tree_E");
    E137 : Short_Integer; pragma Import (Ada, E137, "decls__d_symbol_table_E");
-   E182 : Short_Integer; pragma Import (Ada, E182, "decls__d_vtype_table_E");
+   E188 : Short_Integer; pragma Import (Ada, E188, "decls__d_vtype_table_E");
    E108 : Short_Integer; pragma Import (Ada, E108, "fun_dfa_E");
    E110 : Short_Integer; pragma Import (Ada, E110, "fun_io_E");
    E120 : Short_Integer; pragma Import (Ada, E120, "fun_tokens_E");
    E125 : Short_Integer; pragma Import (Ada, E125, "lexical_a_E");
    E127 : Short_Integer; pragma Import (Ada, E127, "semantic_E");
+   E150 : Short_Integer; pragma Import (Ada, E150, "semantic__g_fpm_E");
    E129 : Short_Integer; pragma Import (Ada, E129, "semantic__messages_E");
    E148 : Short_Integer; pragma Import (Ada, E148, "semantic__c_lc_tree_E");
    E142 : Short_Integer; pragma Import (Ada, E142, "semantic__c_tree_E");
-   E150 : Short_Integer; pragma Import (Ada, E150, "semantic__lambda_lifting_E");
-   E152 : Short_Integer; pragma Import (Ada, E152, "semantic__type_checking_E");
-   E184 : Short_Integer; pragma Import (Ada, E184, "syntactic_a_E");
+   E156 : Short_Integer; pragma Import (Ada, E156, "semantic__lambda_lifting_E");
+   E158 : Short_Integer; pragma Import (Ada, E158, "semantic__type_checking_E");
+   E190 : Short_Integer; pragma Import (Ada, E190, "syntactic_a_E");
 
    Local_Priority_Specific_Dispatching : constant String := "";
    Local_Interrupt_States : constant String := "";
@@ -62,33 +64,40 @@ package body ada_main is
       begin
          F1;
       end;
-      E162 := E162 - 1;
+      E154 := E154 - 1;
       declare
          procedure F2;
-         pragma Import (Ada, F2, "ada__strings__unbounded__finalize_spec");
+         pragma Import (Ada, F2, "system__sequential_io__finalize_spec");
       begin
          F2;
       end;
+      E168 := E168 - 1;
       declare
          procedure F3;
-         pragma Import (Ada, F3, "system__file_io__finalize_body");
+         pragma Import (Ada, F3, "ada__strings__unbounded__finalize_spec");
       begin
-         E098 := E098 - 1;
          F3;
       end;
-      E166 := E166 - 1;
-      E164 := E164 - 1;
       declare
          procedure F4;
-         pragma Import (Ada, F4, "system__storage_pools__subpools__finalize_spec");
+         pragma Import (Ada, F4, "system__file_io__finalize_body");
       begin
+         E098 := E098 - 1;
          F4;
       end;
+      E172 := E172 - 1;
+      E170 := E170 - 1;
       declare
          procedure F5;
-         pragma Import (Ada, F5, "system__finalization_masters__finalize_spec");
+         pragma Import (Ada, F5, "system__storage_pools__subpools__finalize_spec");
       begin
          F5;
+      end;
+      declare
+         procedure F6;
+         pragma Import (Ada, F6, "system__finalization_masters__finalize_spec");
+      begin
+         F6;
       end;
       declare
          procedure Reraise_Library_Exception_If_Any;
@@ -206,14 +215,14 @@ package body ada_main is
       Ada.Finalization'Elab_Spec;
       E099 := E099 + 1;
       System.Storage_Pools'Elab_Spec;
-      E170 := E170 + 1;
+      E176 := E176 + 1;
       System.Finalization_Masters'Elab_Spec;
       System.Storage_Pools.Subpools'Elab_Spec;
       System.Object_Reader'Elab_Spec;
       System.Dwarf_Lines'Elab_Spec;
-      E164 := E164 + 1;
+      E170 := E170 + 1;
       System.Finalization_Masters'Elab_Body;
-      E166 := E166 + 1;
+      E172 := E172 + 1;
       System.File_Io'Elab_Body;
       E098 := E098 + 1;
       E039 := E039 + 1;
@@ -229,7 +238,9 @@ package body ada_main is
       E044 := E044 + 1;
       E063 := E063 + 1;
       Ada.Strings.Unbounded'Elab_Spec;
-      E162 := E162 + 1;
+      E168 := E168 + 1;
+      System.Sequential_Io'Elab_Spec;
+      E154 := E154 + 1;
       System.Traceback.Symbolic'Elab_Body;
       E034 := E034 + 1;
       Ada.Text_Io'Elab_Spec;
@@ -240,24 +251,24 @@ package body ada_main is
       E140 := E140 + 1;
       E137 := E137 + 1;
       decls.d_vtype_table'elab_spec;
-      E182 := E182 + 1;
+      E188 := E188 + 1;
       E108 := E108 + 1;
       fun_io'elab_spec;
       E110 := E110 + 1;
       Fun_Tokens'Elab_Spec;
       E120 := E120 + 1;
       semantic'elab_spec;
+      E150 := E150 + 1;
       semantic.messages'elab_spec;
       E129 := E129 + 1;
       E127 := E127 + 1;
-      semantic.c_lc_tree'elab_spec;
       E148 := E148 + 1;
       E142 := E142 + 1;
       E125 := E125 + 1;
-      E150 := E150 + 1;
+      E156 := E156 + 1;
       semantic.type_checking'elab_spec;
-      E152 := E152 + 1;
-      E184 := E184 + 1;
+      E158 := E158 + 1;
+      E190 := E190 + 1;
    end adainit;
 
    procedure Ada_Main_Program;
@@ -295,6 +306,7 @@ package body ada_main is
 --  BEGIN Object file/option list
    --   /home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/obj/decls.o
    --   /home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/obj/decls-general_defs.o
+   --   /home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/obj/decls-d_c3a.o
    --   /home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/obj/decls-d_lc_tree.o
    --   /home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/obj/decls-d_names_table.o
    --   /home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/obj/decls-d_pm_tree.o
@@ -307,6 +319,7 @@ package body ada_main is
    --   /home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/obj/fun_io.o
    --   /home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/obj/fun_shift_reduce.o
    --   /home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/obj/fun_tokens.o
+   --   /home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/obj/semantic-g_fpm.o
    --   /home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/obj/semantic-messages.o
    --   /home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/obj/semantic.o
    --   /home/nico/Documentos/Nico/UIB/TFG/Fun-Compiler/src/obj/semantic-c_lc_tree.o

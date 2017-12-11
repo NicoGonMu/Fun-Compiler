@@ -13,7 +13,7 @@ package decls.d_lc_tree is
                        c_T, c_Y,                                     --Combinators
                        c_val, c_ident,                               --Values
                        c_plus, c_sub, c_prod, c_div, c_mod, c_usub,  --Arithm ops
-                       c_and, c_or, c_not,                           --Relation ops
+                       c_an, c_or, c_not,                            --Relation ops
                        c_eq, c_neq, c_gt, c_lt, c_ge, c_le);         --Comparators
 
    type lc_node (nt: lc_nodeType := nd_null) is
