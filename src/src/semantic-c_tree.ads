@@ -86,7 +86,7 @@ package semantic.c_tree is
    procedure sr_mod    (p: out pnode; e1: in pnode; e2: in pnode);
    procedure sr_and    (p: out pnode; e1: in pnode; e2: in pnode);
    procedure sr_or     (p: out pnode; e1: in pnode; e2: in pnode);
-   procedure sr_relop  (p: out pnode; sign: in pnode; e1: in pnode; e2: in pnode);
+   procedure sr_relop  (p: out pnode; e1: in pnode; sign: in pnode; e2: in pnode);
    procedure sr_econc  (p: out pnode; e1: in pnode; e2: in pnode);
    procedure sr_not    (p: out pnode; e: in pnode);
    procedure sr_usub   (p: out pnode; e: in pnode);
@@ -96,10 +96,7 @@ package semantic.c_tree is
    procedure sr_elit   (p: out pnode; lit: in pnode);
    procedure sr_efcall (p: out pnode; fcall: in pnode);
 
-   procedure sr_cond (p: out pnode; e: in pnode; els: in pnode);
-
-   procedure sr_else (p: out pnode; e: in pnode);
-   procedure sr_else (p: out pnode; e1: in pnode; e2: in pnode);
+   procedure sr_cond (p: out pnode; cond: in pnode; e: in pnode; els: in pnode);
 
    procedure sr_tuple (p: out pnode; list: in pnode);
 

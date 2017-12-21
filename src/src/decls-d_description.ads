@@ -20,13 +20,13 @@ package decls.d_description is
    type description_type is (null_d, type_d, vartype_d, var_d, constructor_d, func_d);
 
 
-   -- Array indexed by equation number
+   -- Array of positions indexed by equation number
    type equation_bind is array(Natural range <>) of pm_pos_ref;
    type eq_bind_ref is access equation_bind;
-   -- Record containing an array indexed by equation number
+   -- Record containing an array of positions indexed by equation number
    type binding is record element: eq_bind_ref; end record;
    type bind_ref is access binding;
-   -- Array indexed by function containing records containing array indexed by equation number
+   -- Array indexed by function containing records containing array of positions indexed by equation number
    type binding_list is array(func_id range <>) of bind_ref;
    type binding_list_ref is access binding_list;
 

@@ -412,7 +412,7 @@ package body semantic.c_tree is
       p.pos := e1.pos;
    end sr_or;
 
-   procedure sr_relop  (p: out pnode; sign: in pnode; e1: in pnode; e2: in pnode) is
+   procedure sr_relop  (p: out pnode; e1: in pnode; sign: in pnode; e2: in pnode) is
    begin
       p := new node(nd_relop);
       p.relop_e1 := e1;
@@ -478,31 +478,15 @@ package body semantic.c_tree is
       p.pos := fcall.pos;
    end sr_efcall;
 
-   procedure sr_cond (p: out pnode; e: in pnode; els: in pnode) is
+   procedure sr_cond (p: out pnode; cond: in pnode; e: in pnode; els: in pnode) is
    begin
       p := new node(nd_cond);
-      p.cond_e   := e;
-      p.cond_els := els;
+      p.cond_cond := cond;
+      p.cond_e    := e;
+      p.cond_els  := els;
       p.pos := e.pos;
    end sr_cond;
 
-   procedure sr_else (p: out pnode; e: in pnode) is
-   begin
-      p := new node(nd_else);
-      p.else_e  := e;
-      p.else_e1 := null;
-      p.else_e2 := null;
-      p.pos := e.pos;
-   end sr_else;
-
-   procedure sr_else (p: out pnode; e1: in pnode; e2: in pnode) is
-   begin
-      p := new node(nd_else);
-      p.else_e  := null;
-      p.else_e1 := e1;
-      p.else_e2 := e2;
-      p.pos := e1.pos;
-   end sr_else;
 
    procedure sr_tuple (p: out pnode; list: in pnode) is
    begin
@@ -514,7 +498,7 @@ package body semantic.c_tree is
    procedure sr_list_e (p: out pnode; list: in pnode) is
    begin
       p := new node(nd_list_e);
-      p.list_e := list;
+      p.list_e_list := list;
    end sr_list_e;
 
    procedure sr_list (p: out pnode; list: in pnode; e: in pnode) is

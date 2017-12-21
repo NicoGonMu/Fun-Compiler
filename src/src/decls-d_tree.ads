@@ -14,10 +14,10 @@ package decls.d_tree is
                      nd_div, nd_mod, nd_and, nd_or,
                      nd_relop, nd_not, nd_usub, nd_econd,
                      nd_elist, nd_etuple, nd_elit, nd_efcall,
-                     nd_cond, nd_else, nd_tuple, nd_list_e,
-                     nd_list, nd_lit, nd_decls, nd_typevar_decl,
-                     nd_type_decl, nd_data_decl, nd_func_decl, nd_eq_decl,
-                     nd_tuple_type, nd_c_tuple_type);
+                     nd_cond, nd_tuple, nd_list_e, nd_list,
+                     nd_lit, nd_decls, nd_typevar_decl, nd_type_decl,
+                     nd_data_decl, nd_func_decl, nd_eq_decl, nd_tuple_type,
+                     nd_c_tuple_type);
 
    type node (nt: nodeType := nd_null) is
       record
@@ -139,12 +139,9 @@ package decls.d_tree is
             when nd_efcall =>
                efcall: pnode;
             when nd_cond =>
+               cond_cond: pnode;
                cond_e: pnode;
                cond_els: pnode;
-            when nd_else =>
-               else_e: pnode;
-               else_e1: pnode;
-               else_e2: pnode;
             when nd_tuple =>
                tuple_list: pnode;
             when nd_list_e =>

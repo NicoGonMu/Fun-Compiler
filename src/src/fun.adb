@@ -13,22 +13,31 @@ begin
    prepare(Argument(1));
    yyparse;
    close;
-   if not error then
-      type_check;
+
+   type_check;
+   if error then
+      return;
    end if;
    Put_Line("Type checking passed.");
-   if not error then
-      generate_lc_tree(Argument(1));
+
+   generate_lc_tree(Argument(1));
+   if error then
+      return;
    end if;
    Put_Line("Lambda tree generated.");
-   if not error then
-      lambda_lift;
+
+   lambda_lift;
+   if error then
+      return;
    end if;
    Put_Line("Lamda-lift done.");
-   if not error then
-      generate_FPM(Argument(1));
+
+   generate_FPM(Argument(1));
+   if error then
+      return;
    end if;
    Put_Line("FPM code generated.");
+
    -- if not error then
    --   generacio_codi_ass(Argument(1));
    --end if;

@@ -60,7 +60,7 @@ package body semantic.type_checking is
    begin
       put(nt, "list", list_nid); put(nt, "a", a_nid);
       put(nt, "nil", nil_nid);   put(nt, "cons", cons_nid);
-      d := (type_d, list_tree(a_nid), 0, 0, null); put(st, list_nid, d, e);
+      d := (type_d, list_tree(a_nid), 0, 3, null); put(st, list_nid, d, e);
       put(nt, "bool", bool_nid); d := (type_d, null, bool_nid, 0, null); put(st, bool_nid, d, e);
       put(nt, "char", char_nid); d := (type_d, null, char_nid, 0, null); put(st, char_nid, d, e);
       put(nt, "int", int_nid);  d := (type_d, null, int_nid, 0, null); put(st, int_nid, d, e);
@@ -267,6 +267,24 @@ package body semantic.type_checking is
          return; --TODO tc data
       end if;
 
+      -- If conditional, check condition, "then", and "else" Expressions
+      if p.nt = nd_econd then
+         Put_Line("Conditional found");
+
+         if p.econd.cond_e = null or p.econd.cond_els = null then
+            em_malformedConditional(p.pos);
+         else
+            -- Condition must be a boolean expression
+            tid := getType(p.econd.cond_cond);
+
+            -- "then" and "else" expressions must exist and have the same type as d
+            tc_eq_e(p.econd.cond_e, d);
+            tc_eq_e(p.econd.cond_els, d);
+         end if;
+
+         return;
+      end if;
+
       tid := getType(p);
       Put_Line(tid.nt'Img);
       case tid.nt is
@@ -274,7 +292,6 @@ package body semantic.type_checking is
             e := compareTrees(tid, d); -- Compare TTs
             if e then
                em_incorrectType(p.pos, "");
-               raise tc_error;
             end if;
 
          when nd_c_tuple_type =>
@@ -1124,7 +1141,7 @@ package body semantic.type_checking is
             ret := new node(nd_ident);
             ret.identifier_id := int_nid;
 
-         when nd_oprel | nd_and | nd_or | nd_not =>
+         when nd_relop | nd_and | nd_or | nd_not =>
             ret := new node(nd_ident);
             ret.identifier_id := bool_nid;
 
@@ -1238,7 +1255,7 @@ package body semantic.type_checking is
             ret.fcall_id := new node(nd_ident);
             ret.fcall_id.pos := p.pos;
             ret.fcall_id.identifier_id := list_nid;
-            ret.fcall_params := getType(p.list_e_list.list_e); --Obtain first element's type
+            ret.fcall_params := getType(p.elist_list.list_e_list.list_e); --Obtain first element's type
 
          when nd_conc =>
             ret := new node(nd_fcall);

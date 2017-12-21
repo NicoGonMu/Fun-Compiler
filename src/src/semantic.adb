@@ -13,10 +13,6 @@ package body semantic is
 
       alt_id := 0;
 
-
---      np := 0;
---      ne := 0;
---      prof := 0;
       semantic.messages.prepare_messages(fname);
    end prepare;
 

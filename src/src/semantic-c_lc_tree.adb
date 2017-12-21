@@ -1,7 +1,10 @@
-with Ada.Text_IO;
-use Ada.Text_IO;
+with Ada.Text_IO, Ada.Strings.Unbounded;
+use Ada.Text_IO, Ada.Strings.Unbounded;
 package body semantic.c_lc_tree is
    procedure prepare_flist;
+   procedure write_lc_tree;
+   procedure write_lambda(lc: in lc_pnode);
+   procedure write_lc_node(lc: in lc_pnode);
 
    procedure lc_prog(p: in pnode; lc: out lc_pnode);
    procedure lc_defs(p: in pnode);
@@ -27,17 +30,19 @@ package body semantic.c_lc_tree is
    --Function that translates a PM_POSITION
    function P_translate(a: in lc_pnode; p: in pm_position) return lc_pnode;
 
-   function build_pattern_tree(p: in pnode; i: in out Natural; pos: in pm_position; eq: in Natural)
-                               return p_pm_node;
-   function add_params_pattern_tree(p: in pnode; i: in out Natural; pos: in pm_position; eq: in Natural)
-                              return p_pm_node;
+   procedure build_pattern_tree(p: in pnode; pos: in out pm_position; eq: in Natural; eq_total: in Natural; tree: in out p_pm_node);
+
+   procedure bind_variable(var_id: in name_id; pos: pm_position; eq: Integer; eq_total: Integer);
    function getType(p: in pnode; isConstructor: out boolean) return pnode;
-   procedure merge_pattern_trees(base: in out p_pm_node; new_tree: in p_pm_node);
+   function merge_pattern_trees(base: in p_pm_node; new_tree: in p_pm_node) return p_pm_node;
 
    procedure generate_lc_tree (fname: in string) is
    begin
       prepare_flist;
+      Create(tf, Out_File, fname&"_lc_tree.txt");
       lc_prog(root, lc_root);
+      write_lc_tree;
+      close(tf);
       exitbloc(st);
    end generate_lc_tree;
 
@@ -48,6 +53,57 @@ package body semantic.c_lc_tree is
       end loop;
    end prepare_flist;
 
+   procedure write_lc_tree is
+   begin
+      write_lc_node(lc_root);
+   end write_lc_tree;
+
+   procedure write_lambda(lc: in lc_pnode) is
+   begin
+      if lc.appl_func /= null and then lc.appl_func.nt = nd_apply then
+         write_lambda(lc.appl_func);
+      elsif lc.appl_func = null then
+         Put(tf, "NIL ");
+      else
+         write_lc_node(lc.appl_func);
+      end if;
+
+      -- Write appl_arg
+      if lc.appl_arg = null then
+         Put(tf, "NIL ");
+      else
+         write_lc_node(lc.appl_arg);
+      end if;
+
+   end write_lambda;
+
+   procedure write_lc_node(lc: in lc_pnode) is
+   begin
+      case lc.nt is
+         when nd_apply =>
+            write_lambda(lc);
+         when nd_ident =>
+            Put(tf, "identof(" & consult(nt, lc.ident_id) & ") ");
+         when nd_lambda =>
+            Put(tf, "lmbd");
+            write_lc_node(lc.lambda_id);
+            Put(tf, ". ");
+            write_lc_node(lc.lambda_decl);
+         when nd_const =>
+            case lc.cons_id is
+               when c_case | c_tuple | c_index | c_val =>
+                  Put(tf, lc.cons_id'Img & " " & lc.cons_val'Img & " ");
+               when others =>
+                  Put(tf, lc.cons_id'Img & " ");
+            end case;
+
+         when nd_null =>
+            Put(tf, "NULL_NODE ");
+
+      end case;
+
+   end write_lc_node;
+
    -------------------------------------------------------------------
 
    procedure lc_prog(p: in pnode; lc: out lc_pnode) is
@@ -55,6 +111,7 @@ package body semantic.c_lc_tree is
       defs: pnode renames p.defs;
       def_lc_tree: lc_pnode;
       d: description;
+      text_lc_tree: Unbounded_String;
    begin
       definition_count := 0;
 
@@ -81,50 +138,57 @@ package body semantic.c_lc_tree is
       lc_defs(defs);
 
       --Add function definitions
-      for i in flist'Range loop
-         definition_count := definition_count + 1;
+      for i in 1..fn loop
 
-         -- New application where appl_func = definitions_tree, applied to new definition
-         def_lc_tree := new lc_node(nd_apply);
-         def_lc_tree.appl_func := lc.appl_func.lambda_decl.lambda_decl;
+         -- If function has not appeared, continue
+         if flist(i) = 0 then
 
-         -- a.CASE-n (code from mathing tree) (error) (eq1) (eq2) ... (eqn)
-         d := cons(st, flist(i));
-         -- CASE
-         def_lc_tree.appl_arg := new lc_node(nd_apply);
-         def_lc_tree.appl_arg.appl_func := new lc_node(nd_const);
-         def_lc_tree.appl_arg.appl_func.cons_id := c_case;
-         def_lc_tree.appl_arg.appl_func.cons_val := d.fn_eq_total;
+            def_lc_tree := new lc_node(nd_apply);
+            def_lc_tree.appl_func := lc.appl_func.lambda_decl.lambda_decl;
+            def_lc_tree.appl_arg := new lc_node(nd_null);
+            lc.appl_func.lambda_decl.lambda_decl := def_lc_tree;
 
-         --Get code from matching tree
-         def_lc_tree.appl_arg.appl_arg := E(null, d.fn_pm_tree); --TODO check "a" parameter
-         lc.appl_func.lambda_decl.lambda_decl := def_lc_tree;
+         else
 
-         --Merge (CASE-n (code from mathing tree)) with ((error))
-         def_lc_tree := new lc_node(nd_apply);
-         def_lc_tree.appl_func := new lc_node(nd_apply);
-         def_lc_tree.appl_func.appl_func := lc.appl_func.lambda_decl.lambda_decl;
-         def_lc_tree.appl_func.appl_arg := new lc_node(nd_const);
-         def_lc_tree.appl_func.appl_arg.cons_id := c_null; -- (error)
-         lc.appl_func.lambda_decl.lambda_decl := def_lc_tree;
+            definition_count := definition_count + 1;
 
-         --Merge (CASE-n (code from mathing tree) (error)) with ((def1) (def2) ... (defn))
-         def_lc_tree := d.fn_lc_tree;
-         while def_lc_tree.appl_func /= null loop
-            def_lc_tree := def_lc_tree.appl_func;
-         end loop;
-         def_lc_tree.appl_func := lc.appl_func.lambda_decl.lambda_decl;
-         lc.appl_func.lambda_decl.lambda_decl := def_lc_tree.appl_func;
+            -- New application where appl_func = definitions_tree, applied to new definition
+            def_lc_tree := new lc_node(nd_apply);
+            def_lc_tree.appl_func := lc.appl_func.lambda_decl.lambda_decl;
 
+            -- a.CASE-n (code from mathing tree) (error) (eq1) (eq2) ... (eqn)
+            d := cons(st, flist(i));
+            -- CASE
+            def_lc_tree.appl_arg := new lc_node(nd_apply);
+            def_lc_tree.appl_arg.appl_func := new lc_node(nd_const);
+            def_lc_tree.appl_arg.appl_func.cons_id := c_case;
+            def_lc_tree.appl_arg.appl_func.cons_val := d.fn_eq_total + 1;
+
+            --Get code from matching tree
+            def_lc_tree.appl_arg.appl_arg := E(null, d.fn_pm_tree); --TODO check "a" parameter
+            lc.appl_func.lambda_decl.lambda_decl := def_lc_tree;
+
+            --Merge (CASE-n (code from mathing tree)) with ((error))
+            def_lc_tree := new lc_node(nd_apply);
+            def_lc_tree.appl_func := lc.appl_func.lambda_decl.lambda_decl;
+            def_lc_tree.appl_arg := new lc_node(nd_const);
+            def_lc_tree.appl_arg.cons_id := c_null; -- (error)
+            lc.appl_func.lambda_decl.lambda_decl := def_lc_tree;
+
+            --Merge (CASE-n (code from mathing tree) (error)) with ((def1) (def2) ... (defn))
+            def_lc_tree := new lc_node(nd_apply);
+            def_lc_tree.appl_func := lc.appl_func.lambda_decl.lambda_decl;
+            def_lc_tree.appl_arg := d.fn_lc_tree;
+            lc.appl_func.lambda_decl.lambda_decl := def_lc_tree;
+         end if;
       end loop;
 
       --Traverse tree to set n (from TUPLE-n)
       while def_lc_tree.nt /= nd_const loop
          def_lc_tree := def_lc_tree.appl_func;
       end loop;
-      def_lc_tree.cons_val := definition_count;
+      def_lc_tree.cons_val := Integer(fn);
 
-      Put_Line("Defs converted to lambda calculus");
       lc_data(data, lc.appl_arg);
    end lc_prog;
 
@@ -135,16 +199,16 @@ package body semantic.c_lc_tree is
 
       case decl.nt is
          --On data_decl, create node and add it to its description
-         when nd_data_decl =>
-            Put_Line("Decl");
-            lc_data_decl(decl.data_decl);
+      when nd_data_decl =>
+         Put_Line("Decl");
+         lc_data_decl(decl.data_decl);
 
          --On function declaration, only save name_id on flist
          when nd_func_decl =>
             Put_Line("Fun");
             lc_func_decl(decl.func_decl);
 
-         --On eq_decl, create node and add it do function description
+            --On eq_decl, create node and add it do function description
          when nd_eq_decl =>
             Put_Line("Eq");
             lc_eq_decl(decl.eq_decl);
@@ -162,9 +226,12 @@ package body semantic.c_lc_tree is
    procedure lc_func_decl  (p: in pnode) is
       d: description;
    begin
-      --Register function in list
+      --Register function in list if it has equations
       d := cons(st, p.func_id.identifier_id);
-      flist(d.fn_id) := p.func_id.identifier_id;
+
+      if d.fn_eq_total > 0 then
+         flist(d.fn_id) := p.func_id.identifier_id;
+      end if;
    end lc_func_decl;
 
 
@@ -268,7 +335,7 @@ package body semantic.c_lc_tree is
       patterns: pnode renames p.eq_pattern;
       eq_e: pnode renames p.eq_e;
       d: description;
-      pt, npt: p_pm_node;
+      pt, new_tree: p_pm_node;
       elc: lc_pnode;
       dummy_positions: pm_position(1..2);
    begin
@@ -282,28 +349,28 @@ package body semantic.c_lc_tree is
       d.fn_eq_count := d.fn_eq_count + 1;
 
       -- 3. Construct equation's pattern tree
-      if patterns = null then
-         --If no args, only 1 pattern
-         npt := new pm_node(pm_leaf, 0, 0);
-         npt.eq_number := d.fn_eq_count;
-      else
-         --For each E, create pm_node
-         if patterns /= null then
-            -- Set dummy positions as [0,1] for correct looping
-            dummy_positions(1) := 0;
-            dummy_positions(2) := 1;
-            npt := build_pattern_tree(patterns.pat_lmodels, dummy_positions, d.fn_eq_count);
-         end if;
+      new_tree := new pm_node(pm_leaf, 0, 0);
+      new_tree.eq_number := d.fn_eq_count;
+      --For each E, create pm_node
+      if patterns /= null then
+         -- Set dummy positions as [0,1] for correct looping
+         dummy_positions(1) := 0;
+         dummy_positions(2) := 1;
+         -- Function returning pointer to deepest tree node, and full tree as parameter.
+         build_pattern_tree(patterns.pat_lmodels, dummy_positions, d.fn_eq_count, d.fn_eq_total, new_tree);
       end if;
 
       -- 4. Merge pattern tree with function lc pattern tree
-      merge_pattern_trees(pt, npt);
-      d.fn_pm_tree := pt;
+      d.fn_pm_tree := merge_pattern_trees(pt, new_tree);
 
       -- 5. Construct E lc tree
       elc := new lc_node(nd_apply);
-      elc.appl_func := d.fn_lc_tree;
-      elc.appl_arg := e_to_lc_tree(eq_e, d.fn_eq_count);
+      if d.fn_lc_tree = null then
+         elc := e_to_lc_tree(eq_e, d.fn_eq_count);
+      else
+         elc.appl_func := d.fn_lc_tree;
+         elc.appl_arg := e_to_lc_tree(eq_e, d.fn_eq_count);
+      end if;
 
       -- 6. Add E lc tree to function lc tree
       d.fn_lc_tree := elc;
@@ -313,21 +380,65 @@ package body semantic.c_lc_tree is
    end lc_eq_decl;
 
 
-   function build_pattern_tree(p: in pnode; i: in out Natural; pos: in out pm_position; eq: in Natural)
-                              return p_pm_node is
+   procedure build_pattern_tree(p:  in pnode;             --Node with the pattern description
+                                pos: in out pm_position;  --Increasing positon (from [0,1] to [n1, n2..., nm, 1])
+                                eq: in Natural;           --Number of equation being treated
+                                eq_total: in Natural;     --Total of equations of the function (needed by binding)
+                                tree: in out p_pm_node)   --Parameter where binding tree will be placed
+   is
       d: description;
       pt: pnode;
-      ret, pts: p_pm_node;
+      e, temp_e: pnode;
+      ret: p_pm_node;
+      temp_pos: pm_pos_ref;
       derivations_count, position_count: integer;
-      cons_num, dummy_i: natural;
+      cons_num: natural;
       isConstructor: boolean;
    begin
-      if p.lmodels_lmodels /= null then
-         pts := build_pattern_tree(p.lmodels_lmodels, pos, eq);
+      -- We will be analyzing models or params of a model
+      if p.nt = nd_lmodels then
+         if p.lmodels_lmodels /= null then
+            build_pattern_tree(p.lmodels_lmodels, pos, eq, eq_total, tree);
+         end if;
+         e := p.lmodels_model;
+      elsif p.nt = nd_el then
+         if p.el_el /= null then
+            build_pattern_tree(p.el_el, pos, eq, eq_total, tree);
+         end if;
+         e := p.el_e;
+      else
+         Put_Line(p.nt'Img);
+         raise lc_error;
       end if;
 
+      -- Increment actual position
+      -- Old position [ p1, p2, ..., pn, 1 ] => New position [ p1, p2, ..., p(n-1)+1, pn ]
+      pos(pos'Last - 1) := pos(pos'Last - 1) + 1;
+
       cons_num := natural'Last;
-      pt := getType(p.lmodels_model, isConstructor);
+      pt := getType(e, isConstructor);
+
+      if e.nt = nd_elist then
+         temp_e := new node(nd_fcall);
+         temp_e.fcall_id := new node(nd_ident);
+         temp_e.fcall_id.identifier_id := cons_nid;
+         temp_e.fcall_params := new node(nd_params);
+         temp_e.fcall_params.params_el := new node(nd_params);
+         temp_e.fcall_params.params_el.el_e := e.elist_list.list_e;
+         e := temp_e;
+
+      elsif e.nt = nd_conc then
+         temp_e := new node(nd_efcall);
+         temp_e.efcall := new node(nd_fcall);
+         temp_e.efcall.fcall_id := new node(nd_ident);
+         temp_e.efcall.fcall_id.identifier_id := cons_nid;
+         temp_e.efcall.fcall_params := new node(nd_params);
+         temp_e.efcall.fcall_params.params_el := new node(nd_el);
+         temp_e.efcall.fcall_params.params_el.el_e := e.conc_e1;
+         temp_e.efcall.fcall_params.params_el.el_el := new node(nd_el);
+         temp_e.efcall.fcall_params.params_el.el_el.el_e := e.conc_e2;
+         e := temp_e;
+      end if;
 
       -- If it's a constructor, build inner node
       if isConstructor then
@@ -335,140 +446,59 @@ package body semantic.c_lc_tree is
 
          --Calculate pts length (number of derivations)
          d := cons(st, pt.fcall_id.identifier_id);
+         Put_Line(consult(nt, pt.fcall_id.identifier_id));
          derivations_count := d.type_alts;
 
          --Extract constructor number
-         d := cons(st, p.lmodels_model.efcall.fcall_id.identifier_id);
-         cons_num := d.cons_id;
+         d := cons(st, e.efcall.fcall_id.identifier_id);
+         cons_num := d.cons_id + 1;
 
-         -- Declare inner node of calculated lengths
+         -- Declare inner node with calculated lengths
          ret := new pm_node(pm_inner, position_count, derivations_count);
 
-         --Fill positions
+         -- Fill positions
+         -- Old position [ p1, p2, ..., pn ] => New position [ p1, p2, ..., pn + 1, 1 ]
          for j in pos'Range loop
             ret.pos(j) := pos(j);
          end loop;
-
-         ret.pos(pos'Last - 1) := ret.pos(pos'Last - 1) + 1;
-
          ret.pos(pos'Last) := 1;
 
-         --Iterate for constructor params and fill ret.pos
-         --(For each effective parameter that is a constructor,
-         -- add it recursively to the tree)
-         if p.efcall.fcall_params /= null and then p.efcall.fcall_params.params_el /= null then
-            dummy_i := 0;
-            ret := add_params_pattern_tree(p.efcall.fcall_params.params_el, dummy_i, ret.pos, eq);
-         end if;
-
-      end if;
-
-      --Save position on Symbol Table for Binding
-      if (p.lmodels_model.nt = nd_efcall) then
-         d := cons(st, p.lmodels_model.efcall.fcall_id.identifier_id);
-         Put_Line(consult(nt, p.lmodels_model.efcall.fcall_id.identifier_id));
-         if d.dt = null_d then
-            -- Dummy description for posterior treatment
-            d := (var_d, 0, null_id, null);
-         end if;
-
-         if d.dt = var_d then
-            --Bind variable
-            -- If no binds registered, create new array
-            if d.vbinds = null then
-               d.vbinds := new binding_list(0..fn);
-               for i in 0..fn loop d.vbinds(i) := new binding; end loop;
-            end if;
-
-            -- If no binds registered on that function, create new array
-            if d.vbinds(current_fn).element = null then
-               d.vbinds(current_fn).element := new equation_bind(0..eq);
-               for i in 0..eq loop d.vbinds(current_fn).element(i) := new pm_position(0..1); end loop;
-            end if;
-
-            --Register position
-            for i in ret.pos'Range loop
-               d.vbinds(current_fn).element(eq).all := ret.pos;
-            end loop;
-
-            -- Save new binded variable
-            update(st, p.lmodels_model.efcall.fcall_id.identifier_id, d);
-
-         -- If vartype, same process using vtbinds
-         elsif d.dt = vartype_d then
-            --Bind variable
-            -- If no binds registered, create new array
-            if d.vtbinds = null then
-               d.vtbinds := new binding_list(0..fn);
-               for i in 0..fn loop d.vtbinds(i) := new binding; end loop;
-            end if;
-
-            -- If no binds registered on that function, create new array
-            if d.vtbinds(current_fn).element = null then
-               d.vtbinds(current_fn).element := new equation_bind(0..eq);
-               for i in 0..eq loop d.vtbinds(current_fn).element(i) := new pm_position(0..1); end loop;
-            end if;
-
-            --Register position
-            for i in ret.pos'Range loop
-               d.vtbinds(current_fn).element(eq).all := ret.pos;
-            end loop;
-
-            -- Save new binded variable
-            update(st, p.lmodels_model.efcall.fcall_id.identifier_id, d);
-         end if;
-      end if;
-
-      --Fill pts
-      for j in ret.derivs'Range loop
-         if j = cons_num then
-            --Create node (if p.lmodels_model = null then deriv = leaf node, else deriv = pts)
-            if p.lmodels_model = null then
-               ret.derivs(j) := new pm_node(pm_leaf, 0, 0);
-               ret.derivs(j).eq_number := eq;
-            else
-               ret.derivs(j) := pts;
-            end if;
-         else
+         -- Fill derivations
+         for j in ret.derivs'Range loop
             ret.derivs(j) := null;
+         end loop;
+
+         --Iterate for constructor params
+         --(For each effective parameter that is a constructor,
+         --   add it recursively to the tree, and
+         -- for reach effective parameter that is a variable,
+         --   bind it)
+         if e.efcall.fcall_params /= null and then e.efcall.fcall_params.params_el /= null then
+            -- Define new position (1 more depth level)
+            temp_pos := new pm_position(1..pos'Length + 1);
+            for i in pos'Range loop temp_pos(i) := pos(i); end loop;
+            temp_pos(pos'Length) := 1;
+            temp_pos(temp_pos'Length) := 1;
+
+            -- Loop through params
+            build_pattern_tree(e.efcall.fcall_params.params_el, temp_pos.all, eq, eq_total, tree);
          end if;
 
-      end loop;
+         ret.derivs(cons_num) := tree;
+         tree := ret;
 
-      return ret;
+         --Save position on Symbol Table for Binding
+         if (e.nt = nd_efcall) then
+            bind_variable(e.efcall.fcall_id.identifier_id, ret.pos, eq, eq_total);
+         end if;
+      else
+         --Save position on Symbol Table for Binding
+         if (e.nt = nd_efcall) then
+            bind_variable(e.efcall.fcall_id.identifier_id, pos, eq, eq_total);
+         end if;
+      end if;
+
    end build_pattern_tree;
-
-   function add_params_pattern_tree(p: in pnode; i: in out Natural; pos: in pm_position; eq: in Natural)
-                                    return p_pm_node is
-      ret, pts: p_pm_node;
-      d: description;
-      isConstructor: Boolean;
-   begin
-      -- Iterate through each param looking for constructors and variables
-      if p.el_el /= null then
-         pts := add_params_pattern_tree(p.el_el, i, pos, eq);
-      end if;
-
-      -- If it's not an efcall node, it is not interesting for the tree
-      if p.el_e.nt /= nd_efcall then
-         return pts;
-      end if;
-
-      -- Get efcall type
-      pt := getType(p.el_e.efcall, isConstructor);
-
-      if isConstructor then
-
-      end if;
-
-      if pt.nt = null_d then
-         -- Dummy description for posterior treatment
-         d := (var_d, 0, null_id, null);
-      end if;
-
-
-
-   end add_params_pattern_tree;
 
    procedure lc_data(p: in pnode; lc: out lc_pnode) is
    begin
@@ -495,55 +525,44 @@ package body semantic.c_lc_tree is
    -------------------AUXILIAR FUNCTIONS-------------------
 
    --M(T1 & <p1, [t10, t11, ..., t1n-1]>, T2 & <p2, [t20, t21, ..., t2n-1]>)
-   procedure merge_pattern_trees(base: in out p_pm_node; new_tree: in p_pm_node) is
-      bderivs: pm_derivs_ref;
-      nderivs: pm_derivs_ref;
-      itb, itn: p_pm_node;   --Iterators for base and new trees
+   function merge_pattern_trees(base: in p_pm_node; new_tree: in p_pm_node) return p_pm_node is
+      ret: p_pm_node;
    begin
-      --If base is null, new_tree will be now the base
+      --If either T1 or T2 is empty then return the other
+      --NOTE: This should cover leaf nodes fusion
       if base = null then
-         base := new_tree;
-         return;
+         return new_tree;
+      elsif new_tree = null then
+         return base;
       end if;
 
-      if new_tree.nt /= pm_inner then raise lc_error; end if;
 
-      --If base is
-      bderivs := new pm_derivations(base.derivs'Range);
-      bderivs.all := base.derivs;
-      nderivs := new pm_derivations(new_tree.derivs'Range);
-      nderivs.all := new_tree.derivs;
-      itb := base;
-      itn := new_tree;
-      while itb.nt /= pm_leaf loop
-         --if p1 > p2 => <p2, [M(T1, t20), M(T1, t21), ..., M(T1, tsn-1)]>
-         if itb.pos > itn.pos then
-            for i in nderivs'Range loop
-               if nderivs(i) = null and bderivs(i) /= null then
-                  nderivs(i) := bderivs(i);
-               end if;
-            end loop;
-            bderivs := nderivs;
+      --if p1 = p2 => <p1, [M(t10, t20), M(t11, t21), ..., M(t1n-1, t2n-1)]>
+      if base.pos = new_tree.pos then
+         ret := new pm_node(pm_inner, base.pos'Length, base.derivs'Length);
+         ret.pos := base.pos;
+         for i in ret.derivs'Range loop
+            ret.derivs(i) := merge_pattern_trees(base.derivs(i), new_tree.derivs(i));
+         end loop;
 
-         --if p1 = p2 => <p1, [M(t10, t20), M(t11, t21), ..., M(t1n-1, t2n-1)]>
-         elsif itb.pos = itn.pos then
-            for i in bderivs'Range loop
-               if bderivs(i) = null and nderivs(i) /= null then
-                  bderivs(i) := nderivs(i);
-               end if;
-            end loop;
+      --if p1 < p2 => <p1, [M(t10, T2), M(t11, T2), ..., M(t1n-1, T2)]>
+      elsif base.pos < new_tree.pos then
+         ret := new pm_node(pm_inner, base.pos'Length, base.derivs'Length);
+         ret.pos := base.pos;
+         for i in ret.derivs'Range loop
+            ret.derivs(i) := merge_pattern_trees(base.derivs(i), new_tree);
+         end loop;
 
-         --if p1 < p2 => <p1, [M(t10, T2), M(t11, T2), ..., M(t1n-1, T2)]>
-         else
-            for i in bderivs'Range loop
-               if bderivs(i) = null and nderivs(i) /= null then
-                  bderivs(i) := nderivs(i);
-               end if;
-            end loop;
+      --if p1 > p2 => <p2, [M(T1, t20), M(T1, t21), ..., M(T1, t2n-1)]>
+      else
+         ret := new pm_node(pm_inner, new_tree.pos'Length, new_tree.derivs'Length);
+         ret.pos := new_tree.pos;
+         for i in new_tree.derivs'Range loop
+            ret.derivs(i) := merge_pattern_trees(base, new_tree.derivs(i));
+         end loop;
+      end if;
 
-         end if;
-
-      end loop;
+      return ret;
 
    end merge_pattern_trees;
 
@@ -565,6 +584,18 @@ package body semantic.c_lc_tree is
          -- T[[ E1 E2 ]] = T[[ E1 ]] T[[ E2 ]]
          when nd_efcall =>
             ret := fcall_to_lc_tree(p.efcall, eqn);
+
+         -- T[[ E1 E2 ]] = T[[ E1 ]] T[[ E2 ]]
+         when nd_conc =>
+            it := new node(nd_fcall);
+            it.fcall_id := new node(nd_ident);
+            it.fcall_id.identifier_id := cons_nid;
+            it.fcall_params := new node(nd_params);
+            it.fcall_params.params_el := new node(nd_el);
+            it.fcall_params.params_el.el_e := p.conc_e1;
+            it.fcall_params.params_el.el_el := new node(nd_el);
+            it.fcall_params.params_el.el_el.el_e := p.conc_e2;
+            ret := fcall_to_lc_tree(it, eqn);
 
          -- T[[ + E1 E2 ]] = plus T[[ E1 ]] T[[ E2 ]]
          when nd_plus =>
@@ -623,7 +654,7 @@ package body semantic.c_lc_tree is
             ret := new lc_node(nd_apply);
             ret.appl_arg := e_to_lc_tree(p.relop_e2, eqn);
             ret.appl_func := new lc_node(nd_apply);
-            ret.appl_func.appl_arg := e_to_lc_tree(p.relop_e2, eqn);
+            ret.appl_func.appl_arg := e_to_lc_tree(p.relop_e1, eqn);
             ret.appl_func.appl_func := new lc_node(nd_const);
 
             case p.relop.op_type is
@@ -644,19 +675,18 @@ package body semantic.c_lc_tree is
          -- T[[ if E1 then E2 else E3 ]] = COND T[[ E1 ]] T[[ E2 ]] T[[ E3 ]]
          when nd_econd =>
             ret := new lc_node(nd_apply);
-            if p.econd.cond_els.else_e = null then
-               ret.appl_arg := e_to_lc_tree(p.econd.cond_els.else_e2, eqn);
-               ret.appl_func := new lc_node(nd_apply);
-               ret.appl_func.appl_arg := e_to_lc_tree(p.econd.cond_els.else_e1, eqn);
-               ret.appl_func.appl_func := new lc_node(nd_const);
-               ret.appl_func.appl_func.cons_id := c_cond;
+            -- T[[ E3 ]]
+            ret.appl_arg := e_to_lc_tree(p.econd.cond_els, eqn);
+            ret.appl_func := new lc_node(nd_apply);
+            -- T[[ E2 ]]
+            ret.appl_func.appl_arg := e_to_lc_tree(p.econd.cond_e, eqn);
+            ret.appl_func.appl_func := new lc_node(nd_apply);
+            -- T[[ E1 ]]
+            ret.appl_func.appl_func.appl_arg := e_to_lc_tree(p.econd.cond_cond, eqn);
+            ret.appl_func.appl_func.appl_func := new lc_node(nd_const);
+            -- COND
+            ret.appl_func.appl_func.appl_func.cons_id := c_cond;
 
-            -- T[[ if E1 then E2 ]] = COND T[[ E1 ]] T[[ E2 ]]
-            else
-               ret.appl_arg := e_to_lc_tree(p.econd.cond_els.else_e, eqn);
-               ret.appl_func := new lc_node(nd_apply);
-               ret.appl_func.cons_id := c_cond;
-            end if;
 
 
          -- T[[ (E1, E2,..., En) ]] = TUPLE-n T[[ E1 ]] T[[ E2 ]] ... T[[ En ]]
@@ -674,12 +704,31 @@ package body semantic.c_lc_tree is
 
          -- T[[ [E1, ..., En] ]] = TUPLE-3 1 T[[ E1 ]] ... TUPLE-2 1 T[[ En ]]
          -- [E1, ..., En] is a list, so we must traduce it to the constructor "cons(a, list(a))"
-         when nd_elist | nd_list =>
+         when nd_elist =>
 
-            it := p;
-            if p.nt = nd_elist then
-               it := it.elist_list;
+            it := p.elist_list.list_e_list;
+            ret_it := new lc_node(nd_apply);
+
+            --TUPLE-(n+1) 1
+            ret := new lc_node(nd_apply);
+            ret.appl_func := new lc_node(nd_const);
+            ret.appl_func.cons_id := c_tuple;
+            if it.list_list = null then
+               ret.appl_func.cons_val := 2;
+            else
+               ret.appl_func.cons_val := 3;
             end if;
+            ret.appl_arg := new lc_node(nd_const);
+            ret.appl_arg.cons_id := c_val;
+            ret.appl_arg.cons_val := 1;
+
+            -- T[[ E ]]
+            ret_it := new lc_node(nd_apply);
+            ret_it.appl_func := ret;
+            ret_it.appl_arg := e_to_lc_tree(it.list_e, eqn);
+
+            ret := ret_it;
+            it := it.list_list;
 
             while it /= null loop
 
@@ -787,10 +836,10 @@ package body semantic.c_lc_tree is
 
          --Set the correct n value of TUPLE-n
          aux_ret := ret;
-         while ret.nt /= nd_apply loop
-            aux_ret := ret.appl_func;
+         while aux_ret.nt = nd_apply loop
+            aux_ret := aux_ret.appl_func;
          end loop;
-         aux_ret.appl_func.cons_val := i;
+         aux_ret.cons_val := i;
 
 
       -- T[[ x ]] = POS(X)      x is var
@@ -879,11 +928,13 @@ package body semantic.c_lc_tree is
                ret := auxlc;
 
                for i in p.derivs'Range loop
-                  auxlc := new lc_node(nd_apply);
-                  auxlc.appl_func := ret;
-                  auxlc.appl_arg := E(a, p.derivs(i));
+                  if p.derivs(i) /= null then
+                     auxlc := new lc_node(nd_apply);
+                     auxlc.appl_func := ret;
+                     auxlc.appl_arg := E(a, p.derivs(i));
 
-                  ret := auxlc;
+                     ret := auxlc;
+                  end if;
                end loop;
 
             end if;
@@ -908,13 +959,14 @@ package body semantic.c_lc_tree is
       ret:   lc_pnode;
       auxlc: lc_pnode;
    begin
-      ret := null;
+      ret := new lc_node(nd_const);
+      ret.cons_id := c_index;
+      ret.cons_val := p(p'First);
 
       --Iterate for each position adding application arguments
-      for i in 0..p'Length - 1 loop
+      for i in p'First + 1..p'Last loop
          auxlc := new lc_node(nd_apply);
          auxlc.appl_func := ret;
-         auxlc.appl_arg := new lc_node(nd_apply);
          auxlc.appl_arg := new lc_node(nd_const);
          auxlc.appl_arg.cons_id := c_index;
          auxlc.appl_arg.cons_val := p(i);
@@ -931,6 +983,63 @@ package body semantic.c_lc_tree is
    end P_translate;
 
 
+   procedure bind_variable(var_id: in name_id; pos: pm_position; eq: Integer; eq_total: Integer) is
+      d: description;
+   begin
+      d := cons(st, var_id);
+      Put_Line(consult(nt, var_id));
+      if d.dt = null_d then
+         -- Dummy description for posterior treatment
+         d := (var_d, 0, null_id, null);
+      end if;
+
+      if d.dt = var_d then
+         --Bind variable
+         -- If no binds registered, create new array
+         if d.vbinds = null then
+            d.vbinds := new binding_list(0..fn);
+            for i in 0..fn loop d.vbinds(i) := new binding; end loop;
+         end if;
+
+         -- If no binds registered on that function, create new array
+         if d.vbinds(current_fn).element = null then
+            d.vbinds(current_fn).element := new equation_bind(0..eq_total);
+            for i in 0..eq_total loop d.vbinds(current_fn).element(i) := new pm_position(0..-1); end loop;
+         end if;
+
+         --Register position
+         d.vbinds(current_fn).element(eq) := new pm_position(pos'Range);
+         for i in d.vbinds(current_fn).element(eq)'Range loop
+            d.vbinds(current_fn).element(eq)(i) := pos(i);
+         end loop;
+
+      -- If vartype, same process using vtbinds
+      elsif d.dt = vartype_d then
+         --Bind variable
+         -- If no binds registered, create new array
+         if d.vtbinds = null then
+            d.vtbinds := new binding_list(0..fn);
+            for i in 0..fn loop d.vtbinds(i) := new binding; end loop;
+         end if;
+
+         -- If no binds registered on that function, create new array
+         if d.vtbinds(current_fn).element = null then
+            d.vtbinds(current_fn).element := new equation_bind(0..eq_total);
+            for i in 0..eq_total loop d.vtbinds(current_fn).element(i) := new pm_position(0..1); end loop;
+         end if;
+
+         --Register position
+         d.vtbinds(current_fn).element(eq) := new pm_position(pos'Range);
+         for i in d.vtbinds(current_fn).element(eq)'Range loop
+            d.vtbinds(current_fn).element(eq)(i) := pos(i);
+         end loop;
+
+      end if;
+
+      -- Save new binded variable
+      update(st, var_id, d);
+
+   end bind_variable;
 
    function getType(p: in pnode; isConstructor: out boolean) return pnode is
       d: description;
@@ -943,7 +1052,7 @@ package body semantic.c_lc_tree is
          when nd_plus | nd_sub | nd_prod | nd_div | nd_mod | nd_usub =>
             ret := new node(nd_ident);
             ret.identifier_id := int_nid;
-         when nd_oprel | nd_and | nd_or | nd_not =>
+         when nd_relop | nd_and | nd_or | nd_not =>
             ret := new node(nd_ident);
             ret.identifier_id := bool_nid;
          when nd_lit =>
@@ -1037,6 +1146,8 @@ package body semantic.c_lc_tree is
             ret.fcall_id.pos := p.pos;
             ret.fcall_id.identifier_id := list_nid;
             ret.fcall_params := getType(p.list_e_list.list_e, isConstructor); --Obtain first element's type
+            isConstructor := True;
+
          when nd_conc =>
             ret := new node(nd_fcall);
             ret.fcall_id := new node(nd_ident);

@@ -1,7 +1,7 @@
 with decls.general_defs, decls.d_lc_tree, decls.d_pm_tree, decls.d_description,
-     semantic.messages;
+     semantic.messages, Ada.Text_IO;
 use decls.general_defs, decls.d_lc_tree, decls.d_pm_tree, decls.d_description,
-    semantic.messages;
+    semantic.messages, Ada.Text_IO;
 
 package semantic.c_lc_tree is
    procedure generate_lc_tree (fname: in string);
@@ -11,6 +11,9 @@ package semantic.c_lc_tree is
    flist: function_list;
 
    definition_count: integer;
+
+   -- Text file
+   tf: File_Type;
 
 
    --Variable to know the function being analyzed

@@ -416,13 +416,13 @@ when  24 =>
 --#line  106
 sr_el(
 yyval, 
+yy.value_stack(yy.tos-2), 
 yy.value_stack(yy.tos));
 
 when  25 =>
 --#line  107
 sr_el(
 yyval, 
-yy.value_stack(yy.tos-2), 
 yy.value_stack(yy.tos));
 
 when  26 =>
@@ -594,7 +594,8 @@ when  51 =>
 sr_cond(
 yyval, 
 yy.value_stack(yy.tos-4), 
-yy.value_stack(yy.tos-2));
+yy.value_stack(yy.tos-2), 
+yy.value_stack(yy.tos));
 
 when  52 =>
 --#line  159

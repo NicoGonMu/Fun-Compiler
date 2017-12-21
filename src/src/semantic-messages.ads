@@ -33,6 +33,7 @@ package semantic.messages is
    procedure em_noListExpected                 (pos: in position);
    procedure em_variableNotExpected            (pos: in position);
    procedure em_vartypeNotExpected             (pos: in position);
+   procedure em_malformedConditional           (pos: in position);
 
    tc_error: exception;
    lc_error: exception;
