@@ -96,12 +96,9 @@ package body semantic.c_lc_tree is
                when others =>
                   Put(tf, lc.cons_id'Img & " ");
             end case;
-
          when nd_null =>
-            Put(tf, "NULL_NODE ");
-
+            Put(tf, "ND_NULL ");
       end case;
-
    end write_lc_node;
 
    -------------------------------------------------------------------

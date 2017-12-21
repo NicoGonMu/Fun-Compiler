@@ -269,8 +269,6 @@ package body semantic.type_checking is
 
       -- If conditional, check condition, "then", and "else" Expressions
       if p.nt = nd_econd then
-         Put_Line("Conditional found");
-
          if p.econd.cond_e = null or p.econd.cond_els = null then
             em_malformedConditional(p.pos);
          else
@@ -286,7 +284,6 @@ package body semantic.type_checking is
       end if;
 
       tid := getType(p);
-      Put_Line(tid.nt'Img);
       case tid.nt is
          when nd_tuple_type =>
             e := compareTrees(tid, d); -- Compare TTs
@@ -484,8 +481,6 @@ package body semantic.type_checking is
                when null_d =>
                   d := (constructor_d, data_nid, alt_id, p);
                   putSub(st, id, d, e);
-                  Put_Line("Put alt " & alt_id'Img & " of type " &
-                           consult(nt, data_nid) & ": " & consult(nt, id));
                   alt_id := alt_id + 1;
                when others =>
                   em_constructorExpected(p.pos); raise tc_error;
