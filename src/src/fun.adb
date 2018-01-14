@@ -26,7 +26,7 @@ begin
    end if;
    Put_Line("Lambda tree generated.");
 
-   lambda_lift;
+   lambda_lift(Argument(1));
    if error then
       return;
    end if;

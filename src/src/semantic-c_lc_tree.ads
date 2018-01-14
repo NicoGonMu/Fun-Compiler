@@ -12,6 +12,9 @@ package semantic.c_lc_tree is
 
    definition_count: integer;
 
+   -- When analyzing the body of an equation, we may need its equation number
+   eqn: Natural;
+
    -- Text file
    tf: File_Type;
 

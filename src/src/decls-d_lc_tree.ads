@@ -10,15 +10,16 @@ package decls.d_lc_tree is
    --Possible nodes on the Lambda Calculus tree: CASE, TUPLE, COND, INDEX, T,
    -- Y, value and built-in functions (arithmetic and relational operators)
    type lc_cons_id is (c_null, c_case, c_tuple, c_cond, c_index,     --Lambda notation
-                       c_T, c_Y,                                     --Combinators
+                       c_T, c_Y, c_a,                                --Combinators
                        c_val, c_ident,                               --Values
                        c_plus, c_sub, c_prod, c_div, c_mod, c_usub,  --Arithm ops
                        c_an, c_or, c_not,                            --Relation ops
-                       c_eq, c_neq, c_gt, c_lt, c_ge, c_le);         --Comparators
+                       c_eq, c_neq, c_gt, c_lt, c_ge, c_le,          --Comparators
+                       c_error);                                     --Error node (wrong pattern matching)
 
    type lc_node (nt: lc_nodeType := nd_null) is
       record
-            pos: position;
+         pos: position;
          case nt is
             when nd_null =>
                null;

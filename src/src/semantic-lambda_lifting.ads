@@ -1,5 +1,5 @@
-with decls.general_defs, decls.d_description, decls.d_lc_tree, semantic.messages;
-use decls.general_defs, decls.d_description, decls.d_lc_tree, semantic.messages;
+with decls.general_defs, decls.d_description, decls.d_lc_tree, semantic.messages, Ada.Text_IO;
+use decls.general_defs, decls.d_description, decls.d_lc_tree, semantic.messages, Ada.Text_IO;
 
 package semantic.lambda_lifting is
 
@@ -7,7 +7,10 @@ package semantic.lambda_lifting is
    type p_FV_list is access FV_list;
    free_vars: p_FV_list;
 
-   procedure lambda_lift;
+   procedure lambda_lift(fname: in string);
+
+   -- Text file
+   tf: File_Type;
 
 
 end semantic.lambda_lifting;

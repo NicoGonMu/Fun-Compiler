@@ -380,6 +380,7 @@ package body semantic.type_checking is
             em_undefinedName(p.pos); raise tc_error;
 
          when others =>
+            Put_Line(tid.nt'Img);
             em_CompilerError(p.pos); raise tc_error;
       end case;
 

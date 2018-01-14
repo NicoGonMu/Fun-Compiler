@@ -4,14 +4,67 @@ package body semantic.lambda_lifting is
    function is_applicative(e: in lc_pnode) return boolean;
    procedure FV(e: in lc_pnode);
 
+   procedure write_lc_tree;
+   procedure write_lambda(lc: in lc_pnode);
+   procedure write_lc_node(lc: in lc_pnode);
 
-   procedure lambda_lift is
+
+   procedure lambda_lift(fname: in string) is
    begin
+      Create(tf, Out_File, fname&"_lifted_lc_tree.txt");
       lc_lift_root := lift(lc_root);
+      write_lc_tree;
+      close(tf);
    end lambda_lift;
 
 
+   procedure write_lc_tree is
+   begin
+      write_lc_node(lc_root);
+   end write_lc_tree;
 
+   procedure write_lambda(lc: in lc_pnode) is
+   begin
+      if lc.appl_func /= null and then lc.appl_func.nt = nd_apply then
+         write_lambda(lc.appl_func);
+      elsif lc.appl_func = null then
+         Put(tf, "NIL ");
+      else
+         write_lc_node(lc.appl_func);
+      end if;
+
+      -- Write appl_arg
+      if lc.appl_arg = null then
+         Put(tf, "NIL ");
+      else
+         write_lc_node(lc.appl_arg);
+      end if;
+
+   end write_lambda;
+
+   procedure write_lc_node(lc: in lc_pnode) is
+   begin
+      case lc.nt is
+         when nd_apply =>
+            write_lambda(lc);
+         when nd_ident =>
+            Put(tf, "identof(" & consult(nt, lc.ident_id) & ") ");
+         when nd_lambda =>
+            Put(tf, "lmbd");
+            write_lc_node(lc.lambda_id);
+            Put(tf, ". ");
+            write_lc_node(lc.lambda_decl);
+         when nd_const =>
+            case lc.cons_id is
+               when c_case | c_tuple | c_index | c_val =>
+                  Put(tf, lc.cons_id'Img & " " & lc.cons_val'Img & " ");
+               when others =>
+                  Put(tf, lc.cons_id'Img & " ");
+            end case;
+         when nd_null =>
+            Put(tf, "ND_NULL ");
+      end case;
+   end write_lc_node;
 
    function lift(e: in lc_pnode) return lc_pnode is
       ret: lc_pnode;
@@ -48,7 +101,8 @@ package body semantic.lambda_lifting is
 
          -- Error
          when nd_null =>
-            raise lc_error;
+            --raise lc_error;
+            null;
       end case;
 
       return ret;
@@ -57,6 +111,10 @@ package body semantic.lambda_lifting is
 
    function is_applicative(e: in lc_pnode) return boolean is
    begin
+      if e = null then
+         return true;
+      end if;
+
       case e.nt is
          -- A(n) = true
          -- A(c) = true
@@ -65,6 +123,12 @@ package body semantic.lambda_lifting is
 
          -- A(E1 E2) = A(E1) and A(E2)
          when nd_apply =>
+            if e.appl_func = null then
+               return is_applicative(e.appl_arg);
+            end if;
+            if e.appl_arg = null then
+               return is_applicative(e.appl_func);
+            end if;
             return is_applicative(e.appl_func) and is_applicative(e.appl_arg);
 
          -- A(x.E) = false
@@ -80,6 +144,10 @@ package body semantic.lambda_lifting is
       aux_FV: p_FV_list; --Used on element addition
       found: Boolean;    --Used in lambda expresions
    begin
+      if e = null then
+         return;
+      end if;
+
       case e.nt is
          -- FV(n) = {n}    if n is var
          when nd_ident  =>
@@ -111,6 +179,11 @@ package body semantic.lambda_lifting is
          when nd_lambda =>
             FV(e.lambda_decl); -- FV(E)
 
+            -- If no free variables, return
+            if free_vars = null then
+               return;
+            end if;
+
             aux_FV := new FV_list(1..free_vars'Length - 1);
             found := false;
             -- For each var, if it is {x}, do not place on aux_FV
@@ -128,7 +201,6 @@ package body semantic.lambda_lifting is
                end if;
             end loop;
 
-            free_vars := new FV_list(aux_FV'Range);
             free_vars := aux_FV;
          when nd_null =>
             raise lc_lift_error;

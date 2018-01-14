@@ -36,7 +36,7 @@ package body semantic.g_FPM is
    -- D[[ (n e) ]] k = LABEL FUN_n; <compiled exp, e>; DROP 1, n; RET;
    procedure generate_definitions(lc: in lc_pnode) is
    begin
-      while (lc.nt /= nd_apply) loop
+      while lc.nt /= nd_apply loop
          null;
       end loop;
 
@@ -53,7 +53,7 @@ package body semantic.g_FPM is
    begin
       --Traverse tree until not application found
       it := lc;
-      while it.nt /= nd_apply loop
+      while it.nt = nd_apply loop
          it := it.appl_func;
       end loop;
 
