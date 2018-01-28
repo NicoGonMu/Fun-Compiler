@@ -208,6 +208,7 @@ package body semantic.type_checking is
       id:       pnode renames p.eq_id;
       pattern:  pnode renames p.eq_pattern;
       e_pnode:  pnode renames p.eq_e;
+      pre_fn:   func_id; --fn counter backup
       d: description;
    begin
       -- Check if id is from declared function
@@ -217,6 +218,7 @@ package body semantic.type_checking is
       update(st, id.identifier_id, d);
 
       enterbloc(st);
+      pre_fn := fn;
       empty(vtt);
       vpos := 0;
 
@@ -230,6 +232,7 @@ package body semantic.type_checking is
       tc_eq_e(e_pnode, d.fn_type.desc_out);
 
       exitbloc(st);
+      fn := pre_fn;
    end tc_eq_decl;
 
 

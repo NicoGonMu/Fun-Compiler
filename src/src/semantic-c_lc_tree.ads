@@ -18,6 +18,8 @@ package semantic.c_lc_tree is
    -- Text file
    tf: File_Type;
 
+   --Alternative ID counter
+   alt_id: Natural;
 
    --Variable to know the function being analyzed
    current_fn: func_id;

@@ -14,6 +14,7 @@ package body semantic.c_tree is
    begin
       p := new node(nd_ident);
       put(nt, s, id);
+      if id > last_nid then last_nid := id; end if;
       p.identifier_id := id;
       p.pos := pos;
    end lr_ident;

@@ -11,8 +11,6 @@ package body semantic is
 
       fn := 0;
 
-      alt_id := 0;
-
       semantic.messages.prepare_messages(fname);
    end prepare;
 

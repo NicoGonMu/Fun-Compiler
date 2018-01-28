@@ -107,6 +107,7 @@ package body semantic.c_lc_tree is
       data: pnode renames p.data;
       defs: pnode renames p.defs;
       def_lc_tree: lc_pnode;
+      aux_lc_tree: lc_pnode; -- Aux pointer for tree construction
       d: description;
       text_lc_tree: Unbounded_String;
    begin
@@ -134,49 +135,53 @@ package body semantic.c_lc_tree is
 
          -- If function has not appeared, continue
          if flist(i) = 0 then
-
             def_lc_tree := new lc_node(nd_apply);
             def_lc_tree.appl_func := lc.appl_func.lambda_decl.lambda_decl;
-            def_lc_tree.appl_arg := new lc_node(nd_null);
+            def_lc_tree.appl_arg := new lc_node(nd_const);
+            def_lc_tree.appl_arg.cons_id := c_error;
             lc.appl_func.lambda_decl.lambda_decl := def_lc_tree;
 
          else
-
             definition_count := definition_count + 1;
+
+            -- Build function tree: CASE-n (code from mathing tree) (error) (eq1) (eq2) ... (eqn)
+            d := cons(st, flist(i));
+            def_lc_tree := new lc_node(nd_apply);
+
+            -- CASE-n
+            def_lc_tree.appl_func := new lc_node(nd_const);
+            def_lc_tree.appl_func.cons_id := c_case;
+            def_lc_tree.appl_func.cons_val := d.fn_eq_total + 1;
+
+            -- Get code from pattern tree
+            def_lc_tree.appl_arg := E(new lc_node'(nd_const, (0, 0), c_A, 0), d.fn_pm_tree);
+            aux_lc_tree := def_lc_tree; -- Save tree
+
+            --Merge (CASE-n (code from mathing tree)) with ((error))
+            def_lc_tree := new lc_node(nd_apply);
+            def_lc_tree.appl_func := aux_lc_tree;
+            def_lc_tree.appl_arg := new lc_node(nd_const);
+            def_lc_tree.appl_arg.cons_id := c_error; -- (error)
+            aux_lc_tree := def_lc_tree; -- Save tree
+
+            --Merge (CASE-n (code from mathing tree) (error)) with ((def1) (def2) ... (defn))
+            def_lc_tree := new lc_node(nd_apply);
+            def_lc_tree.appl_func := aux_lc_tree;
+            def_lc_tree.appl_arg := d.fn_lc_tree;
+
+            -- Create lambda.a node
+            aux_lc_tree := new lc_node(nd_lambda);
+            aux_lc_tree.lambda_id := new lc_node(nd_const);
+            aux_lc_tree.lambda_id.cons_id := c_a;
+            aux_lc_tree.lambda_decl := def_lc_tree;
 
             -- New application where appl_func = definitions_tree, applied to new definition
             def_lc_tree := new lc_node(nd_apply);
             def_lc_tree.appl_func := lc.appl_func.lambda_decl.lambda_decl;
+            def_lc_tree.appl_arg := aux_lc_tree;
 
-            -- lambda a. Fun def
-            def_lc_tree.appl_arg := new lc_node(nd_lambda);
-            def_lc_tree.appl_arg.lambda_id := new lc_node(nd_const);
-            def_lc_tree.appl_arg.lambda_id.cons_id := c_a;
-
-            -- a.CASE-n (code from mathing tree) (error) (eq1) (eq2) ... (eqn)
-            d := cons(st, flist(i));
-            -- CASE
-            def_lc_tree.appl_arg.lambda_decl := new lc_node(nd_apply);
-            def_lc_tree.appl_arg.lambda_decl.appl_func := new lc_node(nd_const);
-            def_lc_tree.appl_arg.lambda_decl.appl_func.cons_id := c_case;
-            def_lc_tree.appl_arg.lambda_decl.appl_func.cons_val := d.fn_eq_total + 1;
-
-            --Get code from matching tree
-            def_lc_tree.appl_arg.lambda_decl.appl_arg := E(new lc_node'(nd_const, (0, 0), c_A, 0), d.fn_pm_tree); --TODO check "a" parameter
             lc.appl_func.lambda_decl.lambda_decl := def_lc_tree;
 
-            --Merge (CASE-n (code from mathing tree)) with ((error))
-            def_lc_tree := new lc_node(nd_apply);
-            def_lc_tree.appl_func := lc.appl_func.lambda_decl.lambda_decl;
-            def_lc_tree.appl_arg := new lc_node(nd_const);
-            def_lc_tree.appl_arg.cons_id := c_error; -- (error)
-            lc.appl_func.lambda_decl.lambda_decl := def_lc_tree;
-
-            --Merge (CASE-n (code from mathing tree) (error)) with ((def1) (def2) ... (defn))
-            def_lc_tree := new lc_node(nd_apply);
-            def_lc_tree.appl_func := lc.appl_func.lambda_decl.lambda_decl;
-            def_lc_tree.appl_arg := d.fn_lc_tree;
-            lc.appl_func.lambda_decl.lambda_decl := def_lc_tree;
          end if;
       end loop;
 
@@ -439,12 +444,12 @@ package body semantic.c_lc_tree is
 
       -- If it's a constructor, build inner node
       if isConstructor then
-         position_count := pos'Length;
+         position_count := pos'Length + 1;
 
          --Calculate pts length (number of derivations)
          d := cons(st, pt.fcall_id.identifier_id);
          Put_Line(consult(nt, pt.fcall_id.identifier_id));
-         derivations_count := d.type_alts;
+         derivations_count := d.type_alts - 1;
 
          --Extract constructor number
          d := cons(st, e.efcall.fcall_id.identifier_id);
@@ -454,13 +459,13 @@ package body semantic.c_lc_tree is
          ret := new pm_node(pm_inner, position_count, derivations_count);
 
          -- Fill positions
-         -- Old position [ p1, p2, ..., pn ] => New position [ p1, p2, ..., pn + 1, 1 ]
-         for j in pos'Range loop
-            ret.pos(j) := pos(j);
+         -- Old position [ p1, p2, ..., pn ] => New position [ 1, p1, p2, ..., pn ]
+         for j in pos'First..pos'Last loop
+            ret.pos(j+1) := pos(j);
          end loop;
-         --ret.pos(pos'First) := 1;
+         ret.pos(pos'First) := 1;
 
-         -- Fill derivations
+         -- Initialize derivations
          for j in ret.derivs'Range loop
             ret.derivs(j) := null;
          end loop;
@@ -471,14 +476,13 @@ package body semantic.c_lc_tree is
          -- for reach effective parameter that is a variable,
          --   bind it)
          if e.efcall.fcall_params /= null and then e.efcall.fcall_params.params_el /= null then
-            -- Define new position (1 more depth level)
-            temp_pos := new pm_position(1..pos'Length + 1);
+            -- Copy positions in a new pointer
+            temp_pos := new pm_position(pos'First..pos'Last + 1);
             for i in pos'Range loop temp_pos(i+1) := pos(i); end loop;
-            temp_pos(1) := 1;
+            temp_pos(pos'First) := 1;
 
             -- Loop through params
             build_pattern_tree(e.efcall.fcall_params.params_el, temp_pos.all, eq, eq_total, tree);
-
          end if;
 
          ret.derivs(cons_num) := tree;

@@ -11,6 +11,9 @@ package semantic.type_checking is
 
    vpos: integer;
 
+   --Alternative ID counter
+   alt_id: Integer;
+
 private
 
      type var_table is array (name_id range <>) of pnode;

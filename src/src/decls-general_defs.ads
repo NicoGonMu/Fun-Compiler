@@ -38,14 +38,8 @@ package decls.general_defs is
    type subj_type is (sbt_bool, sbt_chr, sbt_int, sbt_tuple,
                       sbt_list, sbt_null);
 
-
-   -- Alternatives table
-   type alt_id is new integer range 0..max_id;
-
-
    --Symbol table profundity
    subtype profundity is integer range -1..2;
-
 
    --Function identifier
    type func_id is new integer range 0..max_func;

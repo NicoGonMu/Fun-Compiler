@@ -2,7 +2,7 @@ package body semantic.lambda_lifting is
 
    function lift(e: in lc_pnode) return lc_pnode;
    function is_applicative(e: in lc_pnode) return boolean;
-   procedure FV(e: in lc_pnode);
+   procedure FV(e: in lc_pnode; fvset: in out fv_set);
 
    procedure write_lc_tree;
    procedure write_lambda(lc: in lc_pnode);
@@ -12,6 +12,7 @@ package body semantic.lambda_lifting is
    procedure lambda_lift(fname: in string) is
    begin
       Create(tf, Out_File, fname&"_lifted_lc_tree.txt");
+      init(fvft, Natural(fn) + alpha);
       lc_lift_root := lift(lc_root);
       write_lc_tree;
       close(tf);
@@ -20,7 +21,12 @@ package body semantic.lambda_lifting is
 
    procedure write_lc_tree is
    begin
-      write_lc_node(lc_root);
+      write_lc_node(lc_lift_root);
+      Put_Line(tf, "");
+      Put_Line(tf, "Functions table:");
+      for i in fvft'Range loop
+         Put_Line(tf, to_string(fvft, i));
+      end loop;
    end write_lc_tree;
 
    procedure write_lambda(lc: in lc_pnode) is
@@ -68,8 +74,13 @@ package body semantic.lambda_lifting is
 
    function lift(e: in lc_pnode) return lc_pnode is
       ret: lc_pnode;
+      aux_lcn: lc_pnode;
+      free_vars: p_fv_set;
+      count: Natural;
    begin
       case e.nt is
+         -- Error
+         when nd_null => raise lc_error;
 
          -- lift(x) = x    as it is in applicative form
          -- lift(c) = c    as it is in applicative form
@@ -84,6 +95,7 @@ package body semantic.lambda_lifting is
 
          -- lift(x.E)
          when nd_lambda =>
+            Put_Line("New Lmbd");
             -- lift(x.E) = lift(x.lift(E))    if E is not in applicative form
             if not is_applicative(e.lambda_decl) then
                ret := new lc_node(nd_lambda);
@@ -94,15 +106,51 @@ package body semantic.lambda_lifting is
             -- lift(x.E) = alpha v1 ... vn x   if E is in applicative form with FV(x.E) = {v1 ... vn}
             else
                -- 1. Get FV(e) => FV(E) - {x}
-               FV(e);
-               -- 2. Obtain alpha so that alpha v1 ... vn x = E TODO
-               null;
-            end if;
+               init(free_vars, last_nid);
+               FV(e.lambda_decl, free_vars.all);
 
-         -- Error
-         when nd_null =>
-            --raise lc_error;
-            null;
+               -- 2. Calculate alpha
+               alpha := alpha + 1;
+
+               -- 3. Store alhpa so that alpha v1 ... vn x = E
+               count := 0;
+               for i in free_vars'Range loop if free_vars(i) then count := count + 1; end if; end loop;
+               put(fvft, alpha, count, e);
+
+               -- 4. Create new lc_node => alpha applied to vars applied to x
+               -- Build parameters tree
+               for i in free_vars'Range loop
+                  if free_vars(i) then
+                     --If first parameter, build first node
+                     if ret = null then
+                        ret := new lc_node(nd_const);
+                        ret.cons_id := c_val;
+                        ret.cons_val := Integer(i);
+
+                     -- Else, build new node and add it to tree
+                     else
+                        aux_lcn := new lc_node(nd_apply);
+                        aux_lcn.appl_func := ret;
+                        aux_lcn.appl_arg := new lc_node(nd_const);
+                        aux_lcn.appl_arg.cons_id := c_val;
+                        aux_lcn.appl_arg.cons_val := Integer(i);
+                        ret := aux_lcn;
+                     end if;
+                  end if;
+               end loop;
+
+               -- Build alpha applied to (v1, v2, ..., vn)
+               aux_lcn := new lc_node(nd_apply);
+               aux_lcn.appl_func := new lc_node(nd_const);
+               aux_lcn.appl_func.cons_id := c_val;
+               aux_lcn.appl_func.cons_val := alpha;
+               aux_lcn.appl_arg := ret;
+
+               -- Apply alpha(v1, v2,..., vn) to x
+               ret := new lc_node(nd_apply);
+               ret.appl_func := aux_lcn;
+               ret.appl_arg := e.lambda_id;
+            end if;
       end case;
 
       return ret;
@@ -114,35 +162,25 @@ package body semantic.lambda_lifting is
       if e = null then
          return true;
       end if;
-
       case e.nt is
-         -- A(n) = true
+         when nd_null => raise lc_lift_error;
          -- A(c) = true
-         when nd_ident | nd_const =>
-            return true;
-
+         when nd_const => return true;
+         -- A(n) = true
+         when nd_ident => return true;
+         -- A(x.E) = false
+         when nd_lambda => return false;
          -- A(E1 E2) = A(E1) and A(E2)
          when nd_apply =>
-            if e.appl_func = null then
-               return is_applicative(e.appl_arg);
-            end if;
-            if e.appl_arg = null then
-               return is_applicative(e.appl_func);
-            end if;
-            return is_applicative(e.appl_func) and is_applicative(e.appl_arg);
-
-         -- A(x.E) = false
-         when nd_lambda | nd_null =>
-            return false;
-
+            if    e.appl_func = null then return is_applicative(e.appl_arg);
+            elsif e.appl_arg  = null then return is_applicative(e.appl_func);
+            else return is_applicative(e.appl_func) and is_applicative(e.appl_arg); end if;
       end case;
    end is_applicative;
 
 
-   procedure FV(e: in lc_pnode) is
+   procedure FV(e: in lc_pnode; fvset: in out fv_set) is
       d: description;
-      aux_FV: p_FV_list; --Used on element addition
-      found: Boolean;    --Used in lambda expresions
    begin
       if e = null then
          return;
@@ -153,17 +191,8 @@ package body semantic.lambda_lifting is
          when nd_ident  =>
             d := cons(st, e.ident_id);
             if d.dt = var_d then
-               aux_FV := new FV_list(1..free_vars'Length + 1);
-               --Search n
-               for i in free_vars'Range loop
-                  if free_vars(i) = e.ident_id then return; end if;
-                  aux_FV(i) := free_vars(i);
-               end loop;
-
-               --n not found -> Add n
-               aux_FV(aux_FV'Last) := e.ident_id;
-               free_vars := new FV_list(aux_FV'Range);
-               free_vars := aux_FV;
+               put(fvset, e.ident_id);
+               Put_Line(e.ident_id'Img);
             end if;
 
          -- FV(c) = null  if c is const
@@ -172,36 +201,14 @@ package body semantic.lambda_lifting is
 
          -- FV(E1 E2) = FV(E1) U FV(E2)
          when nd_apply =>
-            FV(e.appl_func);
-            FV(e.appl_arg);
+            FV(e.appl_func, fvset);
+            FV(e.appl_arg, fvset);
 
          -- FV(x.E) = FV(E) - {x}
          when nd_lambda =>
-            FV(e.lambda_decl); -- FV(E)
+            FV(e.lambda_decl, fvset);            -- FV(E)
+            remove(fvset, e.lambda_id.ident_id); -- Remove {x}
 
-            -- If no free variables, return
-            if free_vars = null then
-               return;
-            end if;
-
-            aux_FV := new FV_list(1..free_vars'Length - 1);
-            found := false;
-            -- For each var, if it is {x}, do not place on aux_FV
-            for i in free_vars'Range loop
-               --If {x} already found, add element
-               if found then
-                  aux_FV(i - 1) := free_vars(i);
-               else
-                  --If {x} not found see if it is, and if not, add element
-                  if free_vars(i) = e.lambda_id.ident_id then
-                     found := true;
-                  else
-                     aux_FV(i) := free_vars(i);
-                  end if;
-               end if;
-            end loop;
-
-            free_vars := aux_FV;
          when nd_null =>
             raise lc_lift_error;
       end case;

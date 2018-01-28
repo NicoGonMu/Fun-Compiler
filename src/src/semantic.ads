@@ -1,13 +1,18 @@
 with decls.d_names_table, decls.d_symbol_table, decls.general_defs, decls.d_tree,
-     decls.d_lc_tree; --decls.d_c3a, decls.d_pila_proc;
+     decls.d_lc_tree, decls.d_fv_function_table; --decls.d_c3a, decls.d_pila_proc;
 use decls.d_names_table, decls.d_symbol_table, decls.general_defs, decls.d_tree,
-    decls.d_lc_tree; --decls.d_c3a, decls.d_pila_proc;
+    decls.d_lc_tree, decls.d_fv_function_table; --decls.d_c3a, decls.d_pila_proc;
 package semantic is
 
    nt: names_table;
    st: symbol_table;
+   fvft: p_fv_function_table;
 
+   --Number of functions
    fn: func_id;
+
+   --Last identifier stored
+   last_nid: name_id;
 
    --Syntactic tree
    root: pnode;
@@ -18,7 +23,7 @@ package semantic is
    --Lambda calculus lifted tree
    lc_lift_root: lc_pnode;
 
-
+   --Nam ids of default types
    list_nid: name_id;
    cons_nid: name_id;
    nil_nid:  name_id;
@@ -26,8 +31,7 @@ package semantic is
    bool_nid: name_id;
    char_nid: name_id;
 
-   alt_id: Natural;
-
+   --Variable to main function indicate when an error occurred
    error: boolean;
 
    procedure prepare(fname: in String);
