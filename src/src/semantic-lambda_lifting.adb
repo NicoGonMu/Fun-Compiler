@@ -1,82 +1,60 @@
 package body semantic.lambda_lifting is
 
+   procedure replace_T(lc: in out lc_pnode);
    function lift(e: in lc_pnode) return lc_pnode;
    function is_applicative(e: in lc_pnode) return boolean;
-   procedure FV(e: in lc_pnode; fvset: in out fv_set);
-
-   procedure write_lc_tree;
-   procedure write_lambda(lc: in lc_pnode);
-   procedure write_lc_node(lc: in lc_pnode);
-
+   procedure FV(e: in lc_pnode; found: in out Boolean);
 
    procedure lambda_lift(fname: in string) is
+      n: natural;
    begin
       Create(tf, Out_File, fname&"_lifted_lc_tree.txt");
-      init(fvft, Natural(fn) + alpha);
+      init(fvft, Natural(fn) + alpha + 1);
       lc_lift_root := lift(lc_root);
-      write_lc_tree;
-      close(tf);
-   end lambda_lift;
+      write_lc_tree(lc_lift_root, tf);
 
-
-   procedure write_lc_tree is
-   begin
-      write_lc_node(lc_lift_root);
+      ------------ DEBUG: Print function table
       Put_Line(tf, "");
       Put_Line(tf, "Functions table:");
       for i in fvft'Range loop
          Put_Line(tf, to_string(fvft, i));
+         write_lc_tree(get(fvft, i, n), tf);
       end loop;
-   end write_lc_tree;
+      ------------
 
-   procedure write_lambda(lc: in lc_pnode) is
+      close(tf);
+   end lambda_lift;
+
+
+   procedure replace_T(lc: in out lc_pnode) is
+      new_node: lc_pnode;
    begin
-      if lc.appl_func /= null and then lc.appl_func.nt = nd_apply then
-         write_lambda(lc.appl_func);
-      elsif lc.appl_func = null then
-         Put(tf, "NIL ");
+      -- If node is application node, left child = INDEX-n and right child = c_T, make replacement
+      if lc.nt = nd_apply and then lc.appl_func.nt = nd_const and then lc.appl_func.cons_id = c_index and then
+        lc.appl_arg.nt = nd_const and then lc.appl_arg.cons_id = c_T then
+         new_node := new lc_node(nd_const);
+         new_node.cons_id := c_alpha;
+         new_node.cons_val := lc.appl_func.cons_val + 14;
+         lc := new_node;
+
+      -- Else, if node is application node but not INDEX-n c_T, traverse nodes
       else
-         write_lc_node(lc.appl_func);
+         case lc.nt is
+           when nd_apply =>
+         replace_T(lc.appl_func);
+         replace_T(lc.appl_arg);
+      when nd_lambda =>
+               replace_T(lc.lambda_decl);
+            when nd_null | nd_ident | nd_const =>
+               null;
+           end case;
       end if;
 
-      -- Write appl_arg
-      if lc.appl_arg = null then
-         Put(tf, "NIL ");
-      else
-         write_lc_node(lc.appl_arg);
-      end if;
-
-   end write_lambda;
-
-   procedure write_lc_node(lc: in lc_pnode) is
-   begin
-      case lc.nt is
-         when nd_apply =>
-            write_lambda(lc);
-         when nd_ident =>
-            Put(tf, "identof(" & consult(nt, lc.ident_id) & ") ");
-         when nd_lambda =>
-            Put(tf, "lmbd");
-            write_lc_node(lc.lambda_id);
-            Put(tf, ". ");
-            write_lc_node(lc.lambda_decl);
-         when nd_const =>
-            case lc.cons_id is
-               when c_case | c_tuple | c_index | c_val =>
-                  Put(tf, lc.cons_id'Img & " " & lc.cons_val'Img & " ");
-               when others =>
-                  Put(tf, lc.cons_id'Img & " ");
-            end case;
-         when nd_null =>
-            Put(tf, "ND_NULL ");
-      end case;
-   end write_lc_node;
+   end replace_T;
 
    function lift(e: in lc_pnode) return lc_pnode is
       ret: lc_pnode;
-      aux_lcn: lc_pnode;
-      free_vars: p_fv_set;
-      count: Natural;
+      found: Boolean;
    begin
       case e.nt is
          -- Error
@@ -95,7 +73,6 @@ package body semantic.lambda_lifting is
 
          -- lift(x.E)
          when nd_lambda =>
-            Put_Line("New Lmbd");
             -- lift(x.E) = lift(x.lift(E))    if E is not in applicative form
             if not is_applicative(e.lambda_decl) then
                ret := new lc_node(nd_lambda);
@@ -106,50 +83,25 @@ package body semantic.lambda_lifting is
             -- lift(x.E) = alpha v1 ... vn x   if E is in applicative form with FV(x.E) = {v1 ... vn}
             else
                -- 1. Get FV(e) => FV(E) - {x}
-               init(free_vars, last_nid);
-               FV(e.lambda_decl, free_vars.all);
+               found := false;
+               FV(e.lambda_decl, found);
 
                -- 2. Calculate alpha
                alpha := alpha + 1;
 
                -- 3. Store alhpa so that alpha v1 ... vn x = E
-               count := 0;
-               for i in free_vars'Range loop if free_vars(i) then count := count + 1; end if; end loop;
-               put(fvft, alpha, count, e);
+               replace_T(e.lambda_decl);
+               if found then
+                  put(fvft, alpha, 2, e.lambda_decl);
+               else
+                  put(fvft, alpha, 1, e.lambda_decl);
+               end if;
 
                -- 4. Create new lc_node => alpha applied to vars applied to x
-               -- Build parameters tree
-               for i in free_vars'Range loop
-                  if free_vars(i) then
-                     --If first parameter, build first node
-                     if ret = null then
-                        ret := new lc_node(nd_const);
-                        ret.cons_id := c_val;
-                        ret.cons_val := Integer(i);
-
-                     -- Else, build new node and add it to tree
-                     else
-                        aux_lcn := new lc_node(nd_apply);
-                        aux_lcn.appl_func := ret;
-                        aux_lcn.appl_arg := new lc_node(nd_const);
-                        aux_lcn.appl_arg.cons_id := c_val;
-                        aux_lcn.appl_arg.cons_val := Integer(i);
-                        ret := aux_lcn;
-                     end if;
-                  end if;
-               end loop;
-
                -- Build alpha applied to (v1, v2, ..., vn)
-               aux_lcn := new lc_node(nd_apply);
-               aux_lcn.appl_func := new lc_node(nd_const);
-               aux_lcn.appl_func.cons_id := c_val;
-               aux_lcn.appl_func.cons_val := alpha;
-               aux_lcn.appl_arg := ret;
-
-               -- Apply alpha(v1, v2,..., vn) to x
-               ret := new lc_node(nd_apply);
-               ret.appl_func := aux_lcn;
-               ret.appl_arg := e.lambda_id;
+               ret := new lc_node(nd_const);
+               ret.cons_id := c_alpha;
+               ret.cons_val := alpha;
             end if;
       end case;
 
@@ -179,7 +131,7 @@ package body semantic.lambda_lifting is
    end is_applicative;
 
 
-   procedure FV(e: in lc_pnode; fvset: in out fv_set) is
+   procedure FV(e: in lc_pnode; found: in out Boolean) is
       d: description;
    begin
       if e = null then
@@ -187,27 +139,24 @@ package body semantic.lambda_lifting is
       end if;
 
       case e.nt is
-         -- FV(n) = {n}    if n is var
-         when nd_ident  =>
-            d := cons(st, e.ident_id);
-            if d.dt = var_d then
-               put(fvset, e.ident_id);
-               Put_Line(e.ident_id'Img);
-            end if;
-
-         -- FV(c) = null  if c is const
-         when nd_const =>
+         -- FV(n) = {n}    if n is var --> Should not happen
+         when nd_ident =>
             null;
+
+         -- FV(c) = null  if c is const --> If c is "a", set found to true
+         when nd_const =>
+            if e.cons_id = c_a then
+               found := true;
+            end if;
 
          -- FV(E1 E2) = FV(E1) U FV(E2)
          when nd_apply =>
-            FV(e.appl_func, fvset);
-            FV(e.appl_arg, fvset);
+            FV(e.appl_func, found);
+            FV(e.appl_arg, found);
 
          -- FV(x.E) = FV(E) - {x}
          when nd_lambda =>
-            FV(e.lambda_decl, fvset);            -- FV(E)
-            remove(fvset, e.lambda_id.ident_id); -- Remove {x}
+            FV(e.lambda_decl, found); -- FV(E)
 
          when nd_null =>
             raise lc_lift_error;

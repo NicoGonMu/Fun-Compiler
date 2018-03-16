@@ -1,5 +1,8 @@
 package body semantic.messages is
 
+   procedure write_lambda(lc: in lc_pnode; tf: in File_Type);
+   procedure write_lc_node(lc: in lc_pnode; tf: in File_Type);
+
    procedure prepare_messages(fname: in string) is
    begin
       Create(f, out_file, fname&".log");
@@ -248,5 +251,59 @@ package body semantic.messages is
       Put_Line(f, "Conditional must have condition, 'then' statment and 'else' statement.");
       error := true;
    end em_malformedConditional;
+
+
+   ---------------------------------DEBUG---------------------------------------
+
+   procedure write_lc_tree(lc: in lc_pnode; tf: in File_Type) is
+   begin
+      if lc /= null then
+         write_lc_node(lc, tf);
+         Put_Line(tf, "");
+      end if;
+   end write_lc_tree;
+
+   procedure write_lambda(lc: in lc_pnode; tf: in File_Type) is
+   begin
+      if lc.appl_func /= null and then lc.appl_func.nt = nd_apply then
+         write_lambda(lc.appl_func, tf);
+      elsif lc.appl_func = null then
+         Put(tf, "NIL ");
+      else
+         write_lc_node(lc.appl_func, tf);
+      end if;
+
+      -- Write appl_arg
+      if lc.appl_arg = null then
+         Put(tf, "NIL ");
+      else
+         write_lc_node(lc.appl_arg, tf);
+      end if;
+
+   end write_lambda;
+
+   procedure write_lc_node(lc: in lc_pnode; tf: in File_Type) is
+   begin
+      case lc.nt is
+         when nd_apply =>
+            write_lambda(lc, tf);
+         when nd_ident =>
+            Put(tf, "identof(" & consult(nt, lc.ident_id) & ") ");
+         when nd_lambda =>
+            Put(tf, "lmbd");
+            write_lc_node(lc.lambda_id, tf);
+            Put(tf, ". ");
+            write_lc_node(lc.lambda_decl, tf);
+         when nd_const =>
+            case lc.cons_id is
+               when c_case | c_tuple | c_index | c_val | c_alpha =>
+                  Put(tf, lc.cons_id'Img & " " & lc.cons_val'Img & " ");
+               when others =>
+                  Put(tf, lc.cons_id'Img & " ");
+            end case;
+         when nd_null =>
+            Put(tf, "ND_NULL ");
+      end case;
+   end write_lc_node;
 
 end semantic.messages;

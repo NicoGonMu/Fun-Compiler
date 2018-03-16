@@ -35,8 +35,21 @@ package decls.general_defs is
    -- Symbol table constants and types
    type value is new integer;
 
-   type subj_type is (sbt_bool, sbt_chr, sbt_int, sbt_tuple,
-                      sbt_list, sbt_null);
+   type subj_type is (sbt_bool, sbt_chr, sbt_int, sbt_tuple, sbt_list, sbt_null);
+   type type_descr (sbt: subj_type := sbt_null) is
+      record
+         case sbt is
+            when sbt_bool | sbt_chr | sbt_int =>
+               infl, supl: value;
+            when sbt_list =>
+               ftype: subj_type;
+               b: value;
+            when sbt_tuple =>
+               null;
+            when sbt_null =>
+               null;
+         end case;
+      end record;
 
    --Symbol table profundity
    subtype profundity is integer range -1..2;

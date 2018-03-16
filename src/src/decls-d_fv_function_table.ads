@@ -9,7 +9,7 @@ package decls.d_fv_function_table is
 
    procedure init(t: in out p_fv_function_table; len: Natural);
    procedure put(t: out p_fv_function_table; alpha: in Natural; arity: in Natural; tree: in lc_pnode);
-   function get(t: out p_fv_function_table; alpha: in Natural) return fv_function_node;
+   function get(t: out p_fv_function_table; alpha: in Natural; arity: out Natural) return lc_pnode;
    function to_string(t: out p_fv_function_table; alpha: in Natural) return String;
 
 private

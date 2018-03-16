@@ -13,17 +13,20 @@ package body decls.d_fv_function_table is
       end if;
    end put;
 
-   function get(t: out p_fv_function_table; alpha: in Natural) return fv_function_node is
+   function get(t: out p_fv_function_table; alpha: in Natural; arity: out Natural) return lc_pnode is
    begin
-      return t(alpha);
+      arity := t(alpha).arity;
+      return t(alpha).e;
    end get;
 
    function to_string(t: out p_fv_function_table; alpha: in Natural) return String is
+      elem: fv_function_node;
    begin
-      if t(alpha).e = null then
+      elem := t(alpha);
+      if elem.e = null then
          return alpha'Img & " => No tree.";
       else
-         return alpha'Img & " => Arity: " & t(alpha).arity'Img;
+         return alpha'Img & " => Arity: " & elem.arity'Img & ", E: ";
       end if;
    end to_string;
 

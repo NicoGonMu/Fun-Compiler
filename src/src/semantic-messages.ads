@@ -38,6 +38,10 @@ package semantic.messages is
    tc_error: exception;
    lc_error: exception;
    lc_lift_error: exception;
+   fpm_error: exception;
+
+
+   procedure write_lc_tree(lc: in lc_pnode; tf: in File_Type);
 
 
 private

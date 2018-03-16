@@ -2,9 +2,6 @@ with Ada.Text_IO, Ada.Strings.Unbounded;
 use Ada.Text_IO, Ada.Strings.Unbounded;
 package body semantic.c_lc_tree is
    procedure prepare_flist;
-   procedure write_lc_tree;
-   procedure write_lambda(lc: in lc_pnode);
-   procedure write_lc_node(lc: in lc_pnode);
 
    procedure lc_prog(p: in pnode; lc: out lc_pnode);
    procedure lc_defs(p: in pnode);
@@ -18,11 +15,10 @@ package body semantic.c_lc_tree is
 
    procedure lc_eq_decl(p: in pnode);
 
-   procedure lc_data(p: in pnode; lc: out lc_pnode);
+   procedure lc_data(p: in pnode; lc: in out lc_pnode);
 
    function e_to_lc_tree(p: in pnode) return lc_pnode;
    function fcall_to_lc_tree(p: in pnode) return lc_pnode;
-   function list_to_lc_tree(p: in pnode; lc: in lc_pnode; i: out integer) return lc_pnode;
    function tuple_to_lc_tree(p: in pnode; lc: in lc_pnode; i: out integer) return lc_pnode;
 
    --Function that translates a Matching Tree
@@ -36,12 +32,22 @@ package body semantic.c_lc_tree is
    function getType(p: in pnode; isConstructor: out boolean) return pnode;
    function merge_pattern_trees(base: in p_pm_node; new_tree: in p_pm_node) return p_pm_node;
 
+   procedure swap_T(p: in out lc_pnode);
+
+
+
    procedure generate_lc_tree (fname: in string) is
    begin
       prepare_flist;
       Create(tf, Out_File, fname&"_lc_tree.txt");
+
+      -- Build definition tree
       lc_prog(root, lc_root);
-      write_lc_tree;
+      --Build data tree
+      lc_data(root.data, lc_root.appl_arg);
+      lc_root := lc_root.appl_arg;
+
+      write_lc_tree(lc_root, tf);
       close(tf);
       exitbloc(st);
    end generate_lc_tree;
@@ -53,53 +59,6 @@ package body semantic.c_lc_tree is
       end loop;
    end prepare_flist;
 
-   procedure write_lc_tree is
-   begin
-      write_lc_node(lc_root);
-   end write_lc_tree;
-
-   procedure write_lambda(lc: in lc_pnode) is
-   begin
-      if lc.appl_func /= null and then lc.appl_func.nt = nd_apply then
-         write_lambda(lc.appl_func);
-      elsif lc.appl_func = null then
-         Put(tf, "NIL ");
-      else
-         write_lc_node(lc.appl_func);
-      end if;
-
-      -- Write appl_arg
-      if lc.appl_arg = null then
-         Put(tf, "NIL ");
-      else
-         write_lc_node(lc.appl_arg);
-      end if;
-
-   end write_lambda;
-
-   procedure write_lc_node(lc: in lc_pnode) is
-   begin
-      case lc.nt is
-         when nd_apply =>
-            write_lambda(lc);
-         when nd_ident =>
-            Put(tf, "identof(" & consult(nt, lc.ident_id) & ") ");
-         when nd_lambda =>
-            Put(tf, "lmbd");
-            write_lc_node(lc.lambda_id);
-            Put(tf, ". ");
-            write_lc_node(lc.lambda_decl);
-         when nd_const =>
-            case lc.cons_id is
-               when c_case | c_tuple | c_index | c_val =>
-                  Put(tf, lc.cons_id'Img & " " & lc.cons_val'Img & " ");
-               when others =>
-                  Put(tf, lc.cons_id'Img & " ");
-            end case;
-         when nd_null =>
-            Put(tf, "ND_NULL ");
-      end case;
-   end write_lc_node;
 
    -------------------------------------------------------------------
 
@@ -114,18 +73,18 @@ package body semantic.c_lc_tree is
       definition_count := 0;
 
       lc := new lc_node(nd_apply);
-      lc.appl_func := new lc_node(nd_lambda);
-      lc.appl_func.lambda_id := new lc_node(nd_const);
-      lc.appl_func.lambda_id.cons_id := c_Y;
-      lc.appl_func.lambda_decl := new lc_node(nd_lambda);
-      lc.appl_func.lambda_decl.lambda_id := new lc_node(nd_const);
-      lc.appl_func.lambda_decl.lambda_id.cons_id := c_T;
-      lc.appl_func.lambda_decl.lambda_decl := new lc_node(nd_lambda);
+      lc.appl_func := new lc_node(nd_apply);
+      lc.appl_func.appl_func := new lc_node(nd_const);
+      lc.appl_func.appl_func.cons_id := c_Y;
+      lc.appl_func.appl_arg := new lc_node(nd_lambda);
+      lc.appl_func.appl_arg.lambda_id := new lc_node(nd_const);
+      lc.appl_func.appl_arg.lambda_id.cons_id := c_T;
+      lc.appl_func.appl_arg.lambda_decl := new lc_node(nd_lambda);
 
       --First node: TUPLE-n DEF1 DEF2 ... DEFn
       def_lc_tree:= new lc_node(nd_const);
       def_lc_tree.cons_id := c_tuple;
-      lc.appl_func.lambda_decl.lambda_decl := def_lc_tree;
+      lc.appl_func.appl_arg.lambda_decl := def_lc_tree;
 
       --Construct definitions and store them
       lc_defs(defs);
@@ -136,10 +95,10 @@ package body semantic.c_lc_tree is
          -- If function has not appeared, continue
          if flist(i) = 0 then
             def_lc_tree := new lc_node(nd_apply);
-            def_lc_tree.appl_func := lc.appl_func.lambda_decl.lambda_decl;
+            def_lc_tree.appl_func := lc.appl_func.appl_arg.lambda_decl;
             def_lc_tree.appl_arg := new lc_node(nd_const);
             def_lc_tree.appl_arg.cons_id := c_error;
-            lc.appl_func.lambda_decl.lambda_decl := def_lc_tree;
+            lc.appl_func.appl_arg.lambda_decl := def_lc_tree;
 
          else
             definition_count := definition_count + 1;
@@ -177,10 +136,10 @@ package body semantic.c_lc_tree is
 
             -- New application where appl_func = definitions_tree, applied to new definition
             def_lc_tree := new lc_node(nd_apply);
-            def_lc_tree.appl_func := lc.appl_func.lambda_decl.lambda_decl;
+            def_lc_tree.appl_func := lc.appl_func.appl_arg.lambda_decl;
             def_lc_tree.appl_arg := aux_lc_tree;
 
-            lc.appl_func.lambda_decl.lambda_decl := def_lc_tree;
+            lc.appl_func.appl_arg.lambda_decl := def_lc_tree;
 
          end if;
       end loop;
@@ -191,7 +150,6 @@ package body semantic.c_lc_tree is
       end loop;
       def_lc_tree.cons_val := Integer(fn);
 
-      lc_data(data, lc.appl_arg);
    end lc_prog;
 
    procedure lc_defs(p: in pnode) is
@@ -250,8 +208,6 @@ package body semantic.c_lc_tree is
       lc := new lc_node(nd_apply);
       lc.appl_func := new lc_node(nd_const);
       lc.appl_func.cons_id := c_tuple;
-
-      --lc_alts(alts, lc.appl_arg); TODO Check if necessary
 
       --Set TUPLE-n size
       lc.appl_func.cons_val := alt_id;
@@ -501,9 +457,12 @@ package body semantic.c_lc_tree is
 
    end build_pattern_tree;
 
-   procedure lc_data(p: in pnode; lc: out lc_pnode) is
+   procedure lc_data(p: in pnode; lc: in out lc_pnode) is
    begin
       lc := e_to_lc_tree(p);
+
+      -- Switch all aparitions of T for the full construced definition tree
+      swap_T(lc);
    end lc_data;
 
 
@@ -887,24 +846,6 @@ package body semantic.c_lc_tree is
       return ret;
    end fcall_to_lc_tree;
 
-
-   --Recursively construct the tuple lambda calculus tree
-   function list_to_lc_tree (p: in pnode; lc: in lc_pnode; i: out integer) return lc_pnode is
-      elc: lc_pnode;
-   begin
-      elc := new lc_node(nd_apply);
-      elc.appl_func := lc;
-      elc.appl_arg := e_to_lc_tree(p.list_e);
-
-      if p.list_list /= null then
-         elc := list_to_lc_tree(p.list_list, elc, i);
-      end if;
-
-      i := i + 1;
-
-      return elc;
-   end list_to_lc_tree;
-
    --Recursively construct the tuple lambda calculus tree
    -- p: tuple pnode, lc: applying node, i: tuple element counter
    function tuple_to_lc_tree (p: in pnode; lc: in lc_pnode; i: out integer) return lc_pnode is
@@ -1070,6 +1011,18 @@ package body semantic.c_lc_tree is
       update(st, var_id, d);
 
    end bind_variable;
+
+   procedure swap_T(p: in out lc_pnode) is
+   begin
+      case p.nt is
+         when nd_const => if p.cons_id = c_T then p := lc_root.appl_func; end if;
+         when nd_apply => swap_T(p.appl_func); swap_T(p.appl_arg);
+         when nd_lambda => swap_T(p.lambda_decl);
+         when nd_ident => null;
+         when nd_null => raise lc_error;
+      end case;
+   end swap_T;
+
 
    function getType(p: in pnode; isConstructor: out boolean) return pnode is
       d: description;

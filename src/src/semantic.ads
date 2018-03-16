@@ -20,8 +20,9 @@ package semantic is
    --Lambda calculus tree
    lc_root: lc_pnode;
 
-   --Lambda calculus lifted tree
+   --Lambda lifteresults (tree + type)
    lc_lift_root: lc_pnode;
+   result_type: type_descr;
 
    --Nam ids of default types
    list_nid: name_id;
