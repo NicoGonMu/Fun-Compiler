@@ -152,7 +152,7 @@ E:
   ;
 
 COND:
-     rw_if E rw_then E rw_else E {sr_cond($$, $2, $4);}
+     rw_if E rw_then E rw_else E {sr_cond($$, $2, $4, $6);}
   ;
 
 TUPLE:
