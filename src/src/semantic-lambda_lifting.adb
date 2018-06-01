@@ -5,24 +5,27 @@ package body semantic.lambda_lifting is
    function is_applicative(e: in lc_pnode) return boolean;
    procedure FV(e: in lc_pnode; found: in out Boolean);
 
-   procedure lambda_lift(fname: in string) is
+   procedure lambda_lift(fname: in string; verbosity: in boolean) is
       n: natural;
    begin
-      Create(tf, Out_File, fname&"_lifted_lc_tree.txt");
-      init(fvft, Natural(fn) + alpha + 1);
+      init(fvft, Natural(fn) + alpha + 2);
       lc_lift_root := lift(lc_root);
-      write_lc_tree(lc_lift_root, tf);
+      if verbosity then
+         Create(tf, Out_File, fname&"_lifted_lc_tree.txt");
+         write_lc_tree(lc_lift_root, tf);
 
-      ------------ DEBUG: Print function table
-      Put_Line(tf, "");
-      Put_Line(tf, "Functions table:");
-      for i in fvft'Range loop
-         Put_Line(tf, to_string(fvft, i));
-         write_lc_tree(get(fvft, i, n), tf);
-      end loop;
-      ------------
 
-      close(tf);
+         ------------ DEBUG: Print function table
+         Put_Line(tf, "");
+         Put_Line(tf, "Functions table:");
+         for i in fvft'Range loop
+            Put_Line(tf, to_string(fvft, i));
+            write_lc_tree(get(fvft, i, n), tf);
+         end loop;
+         ------------
+
+         close(tf);
+      end if;
    end lambda_lift;
 
 
@@ -34,15 +37,15 @@ package body semantic.lambda_lifting is
         lc.appl_arg.nt = nd_const and then lc.appl_arg.cons_id = c_T then
          new_node := new lc_node(nd_const);
          new_node.cons_id := c_alpha;
-         new_node.cons_val := lc.appl_func.cons_val + 14;
+         new_node.cons_val := lc.appl_func.cons_val + builtin;
          lc := new_node;
 
       -- Else, if node is application node but not INDEX-n c_T, traverse nodes
       else
          case lc.nt is
            when nd_apply =>
-         replace_T(lc.appl_func);
-         replace_T(lc.appl_arg);
+               replace_T(lc.appl_func);
+               replace_T(lc.appl_arg);
       when nd_lambda =>
                replace_T(lc.lambda_decl);
             when nd_null | nd_ident | nd_const =>

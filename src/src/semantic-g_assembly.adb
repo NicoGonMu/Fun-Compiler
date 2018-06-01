@@ -5,6 +5,7 @@ package body semantic.g_assembly is
 
    procedure generate;
    procedure generate_init;
+   procedure generate_main;
    procedure generate_POP         (register: in string);
    procedure generate_PUSH        (register: in string);
    procedure generate_pushf       (fpm_item: in fpm);
@@ -17,7 +18,7 @@ package body semantic.g_assembly is
    procedure generate_index;
    procedure generate_call        (fpm_item: in fpm);
    procedure generate_rtn;
-   procedure generate_apply;
+   procedure generate_apply       (fpm_item: in fpm);
    procedure generate_pack        (fpm_item: in fpm);
    procedure generate_add;
    procedure generate_sub;
@@ -34,6 +35,8 @@ package body semantic.g_assembly is
    procedure generate_eq;
    procedure generate_neq;
    procedure generate_error; -- TODO
+   procedure generate_write;
+
 
 
    procedure generate_assembly (fname: in String) is
@@ -61,10 +64,14 @@ package body semantic.g_assembly is
                generate_init;
             when op_error =>
                generate_error;
+            when op_main =>
+               generate_main;
             when op_pushv =>
                generate_pushv(fpm_item);
-            when op_pushf =>
+            when op_pushc =>
                generate_pushc(fpm_item);
+            when op_pushf =>
+               null;--generate_pushc(fpm_item); --TODO
             when op_drop =>
                generate_drop(fpm_item);
             when op_goto =>
@@ -80,7 +87,7 @@ package body semantic.g_assembly is
             when op_rtn =>
                generate_rtn;
             when op_apply =>
-               generate_apply;
+               generate_apply(fpm_item);
             when op_pack =>
                generate_pack(fpm_item);
             when op_add =>
@@ -126,10 +133,10 @@ package body semantic.g_assembly is
    procedure generate_init is
    begin
       Put_Line(sf, ".section .bss");
-      Put_Line(sf, ".comm iskt: 1000");
-      Put_Line(sf, ".comm ihp: 1000");
+      Put_Line(sf, ".comm iskt, 1000");
+      Put_Line(sf, ".comm ihp, 1000");
       Put_Line(sf, ".section .data");
-      Put_Line(sf, ".comm fun_t:");
+      Put_Line(sf, "fun_t:");
 
       -- Add 2 variables for each defined function (@ and arity)
       for i in fvft'Range loop
@@ -138,13 +145,14 @@ package body semantic.g_assembly is
       end loop;
 
       Put_Line(sf, ".section .text");
-      Put_Line(sf, ".globl main");
+      Put_Line(sf, ".globl _main");
 
       -- Prepare stack
       Put_Line(sf, "movl $istk, %esi"); -- SP := 0
 
       -- Prepare heap
-      Put_Line(sf, "movl $ihp, %edi"); -- HP := 0
+      Put_Line(sf, "movl $ihp, %edi");  -- HP := 0
+      PUt_Line(sf, "addl $1000, %edi"); -- HP := HP + 1000
    end generate_init;
 
    procedure generate_POP(register: in string) is
@@ -164,11 +172,16 @@ package body semantic.g_assembly is
       null; --TODO
    end generate_error;
 
+   procedure generate_main is
+   begin
+      Put_Line(sf, "_main: nop");
+   end generate_main;
+
    procedure generate_pushf (fpm_item: in fpm) is
-      nf: Natural renames fpm_item.addr;
+      nf: Natural;
    begin
       Put_Line(sf, "movl $fun_t, %eax");
-      nf := nf * 4;
+      nf := fpm_item.addr * 4;
       Put_Line(sf, "movl " & Trim(nf'Img) & "(%eax), %eax");
       generate_PUSH("eax");
    end generate_pushf;
@@ -176,7 +189,7 @@ package body semantic.g_assembly is
    procedure generate_pushv (fpm_item: in fpm) is
       v: Natural renames fpm_item.val;
    begin
-      Put_Line(sf, "movl " & Trim(v) & "(%esi), %eax");
+      Put_Line(sf, "movl " & Trim(v'Img) & "(%esi), %eax");
       Put_Line(sf, "addl $4, %esi");
       Put_Line(sf, "movl %eax, (%esi)");
    end generate_pushv;
@@ -198,7 +211,7 @@ package body semantic.g_assembly is
    procedure generate_goto (fpm_item: in fpm) is
       label: Natural renames fpm_item.addr;
    begin
-      Put_Line(sf, "jmp e" & Trim(label'img));
+      Put_Line(sf, "jmp e_" & Trim(label'img));
    end generate_goto;
 
    procedure generate_label (fpm_item: in fpm) is
@@ -213,12 +226,12 @@ package body semantic.g_assembly is
       generate_POP("eax");           -- Get case
       Put_Line(sf, "shll $2, %eax"); -- eax := eax * 2 (position of the jump label)
       lc := lc + 1;
-      Put_Line(sf, "movl $l_case_" & Trim(case_label'Img) & ", &ebx");
+      Put_Line(sf, "movl $l_case_" & Trim(lc'Img) & ", %ebx");
       Put_Line(sf, "addl %ebx, %eax"); -- eax := eax + abx (jump address)
       Put_Line(sf, "jmp *(%eax)");
 
       -- Declare jump labels
-      Put_Line(sf, "l_case_" & Trim(case_label'Img));
+      Put_Line(sf, "l_case_" & Trim(lc'Img) & ": nop");
    end generate_case;
 
    procedure generate_index is
@@ -246,52 +259,49 @@ package body semantic.g_assembly is
       n: Natural renames fpm_item.n;
    begin
       Put_Line(sf, "movl $" & Trim(n'Img) & ", %eax");
-      Put_Line(sf, "addl $4, %edi");                     -- HP := HP + 4
-      Put_Line(sf, "movl %eax, (%edi)");                 -- Top(H) := PAC
-      lc := lc + 1;
-      Put_Line(sf, "l_loop_" & Trim(lc'Img) & ": nop");
-      Put_Line(sf, "cmpl $0, %eax");                     -- While eax > 0 loop
-      Put_Line(sf, "je l_end_loop_" & Trim(lc'Img));
-      generate_POP("ebx");
-      Put_Line(sf, "addl $4, %edi");                     -- HP := HP + 4
-      Put_Line(sf, "movl %ebx, (%edi)");                 -- Top(H) := Top(S)
-      Put_Line(sf, "subl $1, %eax");                     -- eax := eax - 1
-      Put_Line(sf, "jmp l_loop_" & Trim(lc'Img));
-      Put_Line(sf, "l_end_loop_" & Trim(lc'Img));
-      Put_Line(sf, "addl $4, %esi");                     -- SP := SP + 4
-      Put_Line(sf, "addl %edi, (%esi)");                     -- Top(s) := Pointer to Packed items
+      Put_Line(sf, "subl $4, %edi");                   -- HP := HP - 4
+      Put_Line(sf, "movl %eax, (%edi)");               -- Top(H) := PAC
+
+      -- Copy operation
+      Put_Line(sf, "subl $4, %edi");                   -- HP := HP - 4 (Prepare HP for movsl)
+      Put_Line(sf, "movl $" & Trim(n'Img) & ", %ecx"); -- ecx := Number of iterations
+      Put_Line(sf, "std");                             -- After movsl, decrement @
+      Put_Line(sf, "rep movsl");                       -- Repeat "movsl" (move from (%esi) to (%edi)) ecx times
+
+      Put_Line(sf, "addl $4, %edi");                   -- HP := HP + 4 (HP adjustment after movsl)
    end generate_pack;
 
-   procedure generate_apply is
+   procedure generate_apply (fpm_item: in fpm) is
+      n: Natural renames fpm_item.n;
    begin
       generate_POP("eax");
-      Put_Line(sf, "addl $4, %eax");     -- eax := Pointer to PAC
-      Put_Line(sf, "movl (%eax), %ebx"); -- ebx := PAC
-      Put_Line(sf, "imull $4, %ebx");    -- ebx := PAC * 4 (Position of last element)
-      Put_Line(sf, "addl %eax, %ebx");   -- ebx := Pointer to PAC + PAC * 4
-      lc := lc + 1;
-      -- Loop to push all the elements to the stack
-      Put_Line(sf, "l_loop_" & Trim(lc'Img) & ": nop");
-      Put_Line(sf, "cmpl %eax, %ebx");        -- While eax != ebx loop
-      Put_Line(sf, "je l_end_loop_" & Trim(lc'Img));
-      Put_Line(sf, "movl (%ebx), %ecx");      -- ecx := last remaining element
-      generate_PUSH("ecx");                   -- Push element
-      Put_Line(sf, "subl $4, %ebx");          -- ebx := ebx - 4 (One position bellow)
-      Put_Line(sf, "jmp l_loop_" & Trim(lc'Img));
-      Put_Line(sf, "l_end_loop_" & Trim(lc'Img) & ": nop");
+      Put_Line(sf, "addl $8, %eax");   -- eax := Pointer to first element
+      Put_Line(sf, "movl %edi, %ebx"); -- ebx := edi, as edi will be modified
+
+      -- Copy operation
+      Put_Line(sf, "movl %eax, %esi");                 -- esi := Source address
+      Put_Line(sf, "movl %esi, %edi");                 -- edi := Destination address (SP)
+      Put_Line(sf, "movl $" & Trim(n'Img) & ", %ecx"); -- ecx := Number of iterations
+      Put_Line(sf, "cld");                             -- After movsl, increment @
+      Put_Line(sf, "rep movsl");                       -- Repeat "movsl" (move from (%esi) to (%edi)) ecx times
+
+      -- Restore SP and HP
+      Put_Line(sf, "movl %edi, %esi"); -- esi := edi (edi has been used for movsl as destination address (SP))
+      Put_Line(sf, "movl %ebx, %edi"); -- edi := ebx (Restore previous edi value)
    end generate_apply;
 
    procedure generate_add is
    begin
       generate_POP("eax");
-      Put_Line(sf, "movl (%esi), %ebx");
+      generate_POP("ebx");
+      Put_Line(sf, "addl %eax, %ebx");
       generate_PUSH("ebx");
    end generate_add;
 
    procedure generate_sub is
    begin
       generate_POP("eax");
-      Put_Line(sf, "movl (%esi), %ebx");
+      generate_POP("ebx");
       Put_Line(sf, "subl %eax, %ebx");
       generate_PUSH("ebx");
    end generate_sub;
@@ -299,7 +309,7 @@ package body semantic.g_assembly is
    procedure generate_prod is
    begin
       generate_POP("eax");
-      Put_Line(sf, "movl (%esi), %ebx");
+      generate_POP("ebx");
       Put_Line(sf, "imull %eax, %ebx");
       generate_PUSH("ebx");
    end generate_prod;
@@ -356,7 +366,7 @@ package body semantic.g_assembly is
       Put_Line(sf, "cmpl %ebx, %eax");
       Put_Line(sf, "jg l_"& Trim(lc'Img));
       Put_Line(sf, "movl $0, (%esi)");
-      Put_Line(sf, "jmp end_l"& Trim(lc'Img));
+      Put_Line(sf, "jmp end_l_"& Trim(lc'Img));
       Put_Line(sf, "l_" & Trim(lc'Img) & ": nop");
       Put_Line(sf, "movl $1, (%esi)");
       Put_Line(sf, "end_l_" & Trim(lc'Img) & ": nop");
@@ -371,7 +381,7 @@ package body semantic.g_assembly is
       Put_Line(sf, "cmpl %ebx, %eax");
       Put_Line(sf, "jge l_"& Trim(lc'Img));
       Put_Line(sf, "movl $0, (%esi)");
-      Put_Line(sf, "jmp end_l"& Trim(lc'Img));
+      Put_Line(sf, "jmp end_l_"& Trim(lc'Img));
       Put_Line(sf, "l_" & Trim(lc'Img) & ": nop");
       Put_Line(sf, "movl $1, (%esi)");
       Put_Line(sf, "end_l_" & Trim(lc'Img) & ": nop");
@@ -386,7 +396,7 @@ package body semantic.g_assembly is
       Put_Line(sf, "cmpl %ebx, %eax");
       Put_Line(sf, "jl l_"& Trim(lc'Img));
       Put_Line(sf, "movl $0, (%esi)");
-      Put_Line(sf, "jmp end_l"& Trim(lc'Img));
+      Put_Line(sf, "jmp end_l_"& Trim(lc'Img));
       Put_Line(sf, "l_" & Trim(lc'Img) & ": nop");
       Put_Line(sf, "movl $1, (%esi)");
       Put_Line(sf, "end_l_" & Trim(lc'Img) & ": nop");
@@ -401,7 +411,7 @@ package body semantic.g_assembly is
       Put_Line(sf, "cmpl %ebx, %eax");
       Put_Line(sf, "jle l_"& Trim(lc'Img));
       Put_Line(sf, "movl $0, (%esi)");
-      Put_Line(sf, "jmp end_l"& Trim(lc'Img));
+      Put_Line(sf, "jmp end_l_"& Trim(lc'Img));
       Put_Line(sf, "l_" & Trim(lc'Img) & ": nop");
       Put_Line(sf, "movl $1, (%esi)");
       Put_Line(sf, "end_l_" & Trim(lc'Img) & ": nop");
@@ -416,7 +426,7 @@ package body semantic.g_assembly is
       Put_Line(sf, "cmpl %ebx, %eax");
       Put_Line(sf, "je l_"& Trim(lc'Img));
       Put_Line(sf, "movl $0, (%esi)");
-      Put_Line(sf, "jmp end_l"& Trim(lc'Img));
+      Put_Line(sf, "jmp end_l_"& Trim(lc'Img));
       Put_Line(sf, "l_" & Trim(lc'Img) & ": nop");
       Put_Line(sf, "movl $1, (%esi)");
       Put_Line(sf, "end_l_" & Trim(lc'Img) & ": nop");
@@ -431,7 +441,7 @@ package body semantic.g_assembly is
       Put_Line(sf, "cmpl %ebx, %eax");
       Put_Line(sf, "jne l_"& Trim(lc'Img));
       Put_Line(sf, "movl $0, (%esi)");
-      Put_Line(sf, "jmp end_l"& Trim(lc'Img));
+      Put_Line(sf, "jmp end_l_"& Trim(lc'Img));
       Put_Line(sf, "l_" & Trim(lc'Img) & ": nop");
       Put_Line(sf, "movl $1, (%esi)");
       Put_Line(sf, "end_l_" & Trim(lc'Img) & ": nop");

@@ -26,6 +26,9 @@ package decls.general_defs is
    --Max number of generics appearing in an instance
    max_gen:      constant integer := 20;
 
+   --Number of builtin functions
+   builtin:      constant Natural := 14;
+
    type position is
       record
          row:    integer;

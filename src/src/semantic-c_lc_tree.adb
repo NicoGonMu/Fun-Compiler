@@ -36,13 +36,15 @@ package body semantic.c_lc_tree is
    function getType(p: in pnode; isConstructor: out boolean) return pnode;
    function merge_pattern_trees(base: in p_pm_node; new_tree: in p_pm_node) return p_pm_node;
 
-   procedure generate_lc_tree (fname: in string) is
+   procedure generate_lc_tree (fname: in string; verbosity: in boolean) is
    begin
       prepare_flist;
-      Create(tf, Out_File, fname&"_lc_tree.txt");
       lc_prog(root, lc_root);
-      write_lc_tree;
-      close(tf);
+      if verbosity then
+         Create(tf, Out_File, fname&"_lc_tree.txt");
+         write_lc_tree;
+         close(tf);
+      end if;
       exitbloc(st);
    end generate_lc_tree;
 
@@ -202,17 +204,14 @@ package body semantic.c_lc_tree is
       case decl.nt is
          --On data_decl, create node and add it to its description
       when nd_data_decl =>
-         Put_Line("Decl");
          lc_data_decl(decl.data_decl);
 
          --On function declaration, only save name_id on flist
          when nd_func_decl =>
-            Put_Line("Fun");
             lc_func_decl(decl.func_decl);
 
             --On eq_decl, create node and add it do function description
          when nd_eq_decl =>
-            Put_Line("Eq");
             lc_eq_decl(decl.eq_decl);
 
          when others => null;
@@ -448,7 +447,6 @@ package body semantic.c_lc_tree is
 
          --Calculate pts length (number of derivations)
          d := cons(st, pt.fcall_id.identifier_id);
-         Put_Line(consult(nt, pt.fcall_id.identifier_id));
          derivations_count := d.type_alts - 1;
 
          --Extract constructor number
@@ -1017,7 +1015,6 @@ package body semantic.c_lc_tree is
       d: description;
    begin
       d := cons(st, var_id);
-      Put_Line(consult(nt, var_id));
       if d.dt = null_d then
          -- Dummy description for posterior treatment
          d := (var_d, 0, null_id, null);

@@ -20,13 +20,13 @@ package body semantic is
 --      semantic.missatges.conclou_missatges;
 --  end conclou_analisi;
 
---   function imatge(int: in String) return String is --Lleva l'espai del img
---   begin
---      if integer'Value(int) < 0 then --Si es negatiu no fa res
---         return int;
---      end if;
---      return int(int'First + 1..int'last);
---   end imatge;
+   function Trim(int: in String) return String is
+   begin
+      if integer'Value(int) < 0 then
+         return int;
+      end if;
+      return int(int'First + 1..int'last);
+   end Trim;
 
 
 end semantic;

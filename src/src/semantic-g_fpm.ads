@@ -3,7 +3,7 @@ use Text_IO, decls.general_defs, decls.d_tree, decls.d_fpm, semantic.messages;
 
 package semantic.g_FPM is
 
-   procedure generate_FPM(name: in String);
+   procedure generate_FPM(name: in String; verbosity: in boolean);
 
 private
 
@@ -17,6 +17,6 @@ private
    use gci_file;
 
    sf: Text_IO.File_Type;
-   tf: gci_file.File_Type;
+   bf: gci_file.File_Type;
 
 end semantic.g_FPM;

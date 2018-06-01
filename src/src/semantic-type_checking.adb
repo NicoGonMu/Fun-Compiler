@@ -383,7 +383,6 @@ package body semantic.type_checking is
             em_undefinedName(p.pos); raise tc_error;
 
          when others =>
-            Put_Line(tid.nt'Img);
             em_CompilerError(p.pos); raise tc_error;
       end case;
 
@@ -679,7 +678,6 @@ package body semantic.type_checking is
                --New variable
                vpos := vpos + 1;
                auxd := (var_d, vpos, desc.c_tuple_type_fcall.fcall_id.identifier_id, null);
-               Put_Line(consult(nt, p.efcall.fcall_id.identifier_id));
                put(st, p.efcall.fcall_id.identifier_id, auxd, e);
 
             elsif tid.nt = nd_ident then
@@ -705,7 +703,6 @@ package body semantic.type_checking is
                   --New variable
                   vpos := vpos + 1;
                   auxd := (var_d, vpos, desc.c_tuple_type_fcall.fcall_id.identifier_id, null);
-                  Put_Line(consult(nt, p.efcall.fcall_id.identifier_id));
                   put(st, p.efcall.fcall_id.identifier_id, auxd, e);
 
                when nd_type =>
@@ -773,7 +770,6 @@ package body semantic.type_checking is
          if (tid.nt = nd_null) then
             fn := fn + 1;
             auxd := (func_d, fn, desc, null, null, 0, 0);
-            Put_Line(consult(nt, p.efcall.fcall_id.identifier_id));
             put(st, p.efcall.fcall_id.identifier_id, auxd, e);
             if e then em_nameAlreadyUsed(p.pos); raise tc_error; end if;
          elsif (tid.nt /= nd_fcall or else tid.fcall_id /= null) then
@@ -871,7 +867,6 @@ package body semantic.type_checking is
                -- New variable of that type
                vpos := vpos + 1;
                desc := (var_d, vpos, cparams.el_e.efcall.fcall_id.identifier_id, null);
-               Put_Line(consult(nt, pparams.el_e.efcall.fcall_id.identifier_id));
                put(st, pparams.el_e.efcall.fcall_id.identifier_id, desc, e);
                if e then em_nameAlreadyUsed(p.pos); raise tc_error; end if;
             when null_d =>
@@ -906,7 +901,6 @@ package body semantic.type_checking is
                      -- New variable of type dparam
                      vpos := vpos + 1;
                      desc := (var_d, vpos, dparams.el_e.efcall.fcall_id.identifier_id, null);
-                     Put_Line(consult(nt, pparams.el_e.efcall.fcall_id.identifier_id));
                      put(st, pparams.el_e.efcall.fcall_id.identifier_id, desc, e);
                      if e then em_nameAlreadyUsed(p.pos); raise tc_error; end if;
 
@@ -942,7 +936,6 @@ package body semantic.type_checking is
       if (c /= null and then c.fcall_params /= null) then cparams := c.fcall_params.params_el; end if;
 
       while (pparams /= null and cparams /= null) loop
-         Put_Line(consult(nt, cparams.el_e.efcall.fcall_id.identifier_id));
          desc := cons(st, cparams.el_e.efcall.fcall_id.identifier_id);
          case desc.dt is
             when constructor_d =>
@@ -1066,7 +1059,6 @@ package body semantic.type_checking is
 
             when nd_c_tuple_type => --Function call
                pit := getType(dit.el_e);
-               Put_Line(consult(nt, pit.typevar_lid.identifier_id));
                if pit.nt = nd_c_tuple_type then
                   e := compareTrees(p.c_tuple_type_out, pit);
                   if e then em_incorrectType(p.pos, ""); raise tc_error; end if;
@@ -1083,9 +1075,6 @@ package body semantic.type_checking is
                while dit /= null and pit /= null loop
                   ptype := getType(pit.el_e);
                   if ptype.nt = nd_typevar then
-                     Put_Line(consult(nt, ptype.typevar_lid.identifier_id) & " vs " &
-                                consult(nt, dit.el_e.efcall.fcall_id.identifier_id));
-
                      if (ptype.typevar_lid.identifier_id /=
                          dit.el_e.efcall.fcall_id.identifier_id) then
                         em_incorrectType(p.pos, consult(nt, dit.el_e.efcall.fcall_id.identifier_id));

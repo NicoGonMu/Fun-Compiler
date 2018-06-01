@@ -3,7 +3,7 @@ use decls.general_defs;
 package decls.d_fpm is
 
    type opfpm is (op_null, op_init, op_error,
-                  op, pushc, op_pushv, op_pushf, op_drop,                       -- Stack operations
+                  op_pushc, op_pushv, op_pushf, op_drop,                        -- Stack operations
                   op_goto, op_label,                                            -- Jump operations
                   op_case,                                                      -- Case operation
                   op_index,                                                     -- Tuple selection operation
@@ -11,7 +11,8 @@ package decls.d_fpm is
                   op_add, op_sub, op_prod, op_div, op_mod,                      -- Arithmetic operations
                   op_and, op_or, op_not,                                        -- Logic operations
                   op_gt, op_ge, op_lt, op_le, op_eq, op_neq,                    -- Coparison operations
-                  op_write_write);                                              -- I/O operations
+                  op_write_write,                                               -- I/O operations
+                  op_main);
 
    type fpm(op: opfpm := op_null) is
       record
